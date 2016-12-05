@@ -2312,6 +2312,7 @@ do $$
       delete from "routeRoles" where "routePattern"='/providers/:id' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/passthrough/discounts/:id' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/passthrough/jobs/:id/reports' and "httpVerb" = 'GET';
+      delete from "routeRoles" where "routePattern"='/accounts/:accountId/sync' and "httpVerb"='GET';
 
     end if;
 
@@ -2443,12 +2444,6 @@ do $$
 
     perform set_route_role(
       routePattern := '/accounts/:accountId/runStatus',
-      httpVerb := 'GET',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/accounts/:accountId/sync',
       httpVerb := 'GET',
       roleCode := 6060
     );
