@@ -33,12 +33,6 @@ do $$
     -- Remove old masterIntegrationFields from github enterprise auth
     delete from "masterIntegrationFields" where id in (104, 105, 106);
 
-
-    -- Add subscriptionId field in clusterNodeConsoles
-    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodeConsoles' and column_name = 'subscriptionId') then
-      alter table "clusterNodeConsoles" add column "subscriptionId" varchar(24);
-    end if;
-
     -- Remove systemCodes.id and set code as primary key
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'id') then
       alter table "systemCodes" drop column id;
@@ -4920,6 +4914,69 @@ do $$
     -- Remove jobGreenRateStg00 in dailyAggs
     if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'jobGreenRateStg00') then
       alter table "dailyAggs" drop column "jobGreenRateStg00";
+    end if;
+
+    -- Add subscriptionId field in clusterNodeConsoles
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodeConsoles' and column_name = 'subscriptionId') then
+      alter table "clusterNodeConsoles" add column "subscriptionId" varchar(24);
+    end if;
+
+    -- Add subscriptionId field in clusterNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'subscriptionId') then
+      alter table "clusterNodeStats" add column "subscriptionId" varchar(24);
+    end if;
+    -- Add memoryUsageInPercentage field in clusterNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'memoryUsageInPercentage') then
+      alter table "clusterNodeStats" add column "memoryUsageInPercentage" decimal;
+    end if;
+    -- Add cpuLoadInPercentage field in clusterNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'cpuLoadInPercentage') then
+      alter table "clusterNodeStats" add column "cpuLoadInPercentage" decimal;
+    end if;
+    -- Add activeContainersCount field in clusterNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'activeContainersCount') then
+      alter table "clusterNodeStats" add column "activeContainersCount" integer;
+    end if;
+    -- Add totalContainersCount field in clusterNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'totalContainersCount') then
+      alter table "clusterNodeStats" add column "totalContainersCount" integer;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'cdmContainers') then
+      alter table "clusterNodeStats" alter column "cdmContainers" drop not null;
+    end if;
+    if exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'disks') then
+      alter table "clusterNodeStats" alter column "disks" drop not null;
+    end if;
+    if exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'memory') then
+      alter table "clusterNodeStats" alter column "memory" drop not null;
+    end if;
+
+    -- Add memoryUsageInPercentage field in systemNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'memoryUsageInPercentage') then
+      alter table "systemNodeStats" add column "memoryUsageInPercentage" decimal;
+    end if;
+    -- Add cpuLoadInPercentage field in systemNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'cpuLoadInPercentage') then
+      alter table "systemNodeStats" add column "cpuLoadInPercentage" decimal;
+    end if;
+    -- Add activeContainersCount field in systemNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'activeContainersCount') then
+      alter table "systemNodeStats" add column "activeContainersCount" integer;
+    end if;
+    -- Add totalContainersCount field in systemNodeStats
+    if not exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'totalContainersCount') then
+      alter table "systemNodeStats" add column "totalContainersCount" integer;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'cdmContainers') then
+      alter table "systemNodeStats" alter column "cdmContainers" drop not null;
+    end if;
+    if exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'disks') then
+      alter table "systemNodeStats" alter column "disks" drop not null;
+    end if;
+    if exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'memory') then
+      alter table "systemNodeStats" alter column "memory" drop not null;
     end if;
   end
 $$;
