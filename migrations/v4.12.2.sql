@@ -3092,6 +3092,12 @@ do $$
     perform set_route_role(
       routePattern := '/clusterNodeStats',
       httpVerb := 'POST',
+      roleCode := 6040
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodeStats',
+      httpVerb := 'POST',
       roleCode := 6060
     );
 
@@ -4611,6 +4617,12 @@ do $$
      );
 
     -- set systemNodeStats routeRoles
+    perform set_route_role(
+      routePattern := '/systemNodeStats',
+      httpVerb := 'POST',
+      roleCode := 6040
+    );
+
     perform set_route_role(
       routePattern := '/systemNodeStats',
       httpVerb := 'POST',
