@@ -4990,5 +4990,16 @@ do $$
     if exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'memory') then
       alter table "systemNodeStats" alter column "memory" drop not null;
     end if;
+
+    -- Adds foreign key constraint on subscriptionId for clusterNodeConsoles
+    if not exists (select 1 from pg_constraint where conname = 'clusterNodeConsoles_subscriptionId_fkey') then
+      alter table "clusterNodeConsoles" add constraint "clusterNodeConsoles_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    -- Adds foreign key constraint on subscriptionId for clusterNodeStats
+    if not exists (select 1 from pg_constraint where conname = 'clusterNodeStats_subscriptionId_fkey') then
+      alter table "clusterNodeStats" add constraint "clusterNodeStats_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
   end
 $$;
