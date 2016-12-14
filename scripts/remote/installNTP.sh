@@ -3,8 +3,8 @@
 ntp_install() {
   echo "Installing and Starting NTP"
 
-  sudo apt-get install -y ntp
-  sudo /etc/init.d/ntp restart
+  apt-get install -y ntp
+  /etc/init.d/ntp restart
 }
 
 main() {
