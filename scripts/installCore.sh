@@ -22,11 +22,11 @@ _check_component_status() {
 }
 
 install_ntp() {
-  __process_msg "Installing and Starting NTP on service machines"
-  local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
-  local service_machines_count=$(echo $service_machines_list | jq '. | length')
-  for i in $(seq 1 $service_machines_count); do
-    local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
+  __process_msg "Installing and Starting NTP on all machines"
+  local machines_list=$(cat $STATE_FILE | jq '[ .machines[] ]')
+  local machines_count=$(echo $machines_list | jq '. | length')
+  for i in $(seq 1 $machines_count); do
+    local machine=$(echo $machines_list | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installNTP.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installNTP.sh"
@@ -51,8 +51,6 @@ install_docker() {
       local host=$(echo $machine | jq '.ip')
       _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$SCRIPT_DIR_REMOTE"
       _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
-      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installNTP.sh" "$SCRIPT_DIR_REMOTE"
-      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installNTP.sh"
     done
     __process_msg "Please configure http_proxy in /etc/default/docker, if proxy needs to be configured. Press any button to continue, once this is done..."
     read response
