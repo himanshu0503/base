@@ -31,6 +31,7 @@ readonly API_TIMEOUT=600
 export LC_ALL=C
 export RELEASE_VERSION=""
 export DEPLOY_TAG=""
+export UPDATED_APT_PACKAGES=false
 
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"

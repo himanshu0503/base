@@ -21,19 +21,8 @@ _check_component_status() {
   fi
 }
 
-install_ntp() {
-  __process_msg "Installing and Starting NTP on all machines"
-  local machines_list=$(cat $STATE_FILE | jq '[ .machines[] ]')
-  local machines_count=$(echo $machines_list | jq '. | length')
-  for i in $(seq 1 $machines_count); do
-    local machine=$(echo $machines_list | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installNTP.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installNTP.sh"
-  done
-}
-
 install_docker() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "dockerInstalled"
   if [ "$SKIP_STEP" == false ]; then
@@ -61,6 +50,7 @@ install_docker() {
 }
 
 initialize_docker() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "dockerInitialized"
   if [ "$SKIP_STEP" == false ]; then
@@ -168,6 +158,7 @@ initialize_docker_local() {
 }
 
 install_swarm() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "swarmInstalled"
   if [ "$SKIP_STEP" = false ]; then
@@ -234,6 +225,7 @@ install_compose(){
 }
 
 install_database() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "databaseInstalled"
   if [ "$SKIP_STEP" = false ]; then
@@ -274,6 +266,7 @@ install_database_local() {
 }
 
 save_db_credentials_in_statefile() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "databaseInitialized"
 
@@ -374,6 +367,7 @@ initialize_database_local() {
 }
 
 save_db_credentials() {
+  update_packages
   __process_msg "Saving database credentials"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq '.ip')
@@ -396,6 +390,7 @@ save_db_credentials() {
 }
 
 install_vault() {
+  update_packages
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $vault_host | jq '.ip')
 
@@ -412,6 +407,7 @@ install_vault() {
 }
 
 initialize_vault() {
+  update_packages
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $vault_host | jq '.ip')
 
@@ -511,6 +507,7 @@ initialize_vault_local() {
 }
 
 install_rabbitmq() {
+  update_packages
   local db_host=$(cat $STATE_FILE \
     | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host \
@@ -638,6 +635,7 @@ initialize_rabbitmq_local() {
 }
 
 install_gitlab() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "gitlabInitialized"
   if [ "$SKIP_STEP" = false ]; then
@@ -678,6 +676,7 @@ install_gitlab_local() {
 }
 
 install_ecr() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "ecrInitialized"
   if [ "$SKIP_STEP" = false ]; then
@@ -712,6 +711,7 @@ install_ecr_local() {
 }
 
 initialize_workers() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "swarmInitialized"
   if [ "$SKIP_STEP" = false ]; then
@@ -735,6 +735,7 @@ initialize_workers() {
 }
 
 install_redis() {
+  update_packages
   SKIP_STEP=false
   _check_component_status "redisInitialized"
   local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -783,7 +784,6 @@ install_redis_local() {
 main() {
   __process_marker "Installing core"
   if [ "$INSTALL_MODE" == "production" ]; then
-    install_ntp
     install_docker
     initialize_docker
     install_swarm

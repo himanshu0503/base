@@ -125,6 +125,31 @@ setup_node() {
   done
 }
 
+update_packages() {
+  if [ "$UPDATED_APT_PACKAGES" = false ]; then
+    __process_msg "Updating packages"
+    local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+    for i in $(seq 1 $machine_count); do
+      local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+      local host=$(echo $machine | jq '.ip')
+      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/updatePackages.sh" "$SCRIPT_DIR_REMOTE"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/updatePackages.sh $INSTALL_MODE"
+    done
+    UPDATED_APT_PACKAGES=true
+  fi
+}
+
+install_ntp() {
+  __process_msg "Installing ntp"
+  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+  for i in $(seq 1 $machine_count); do
+    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+    local host=$(echo $machine | jq '.ip')
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installNTP.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installNTP.sh $INSTALL_MODE"
+  done
+}
+
 bootstrap() {
   __process_msg "Installing core components on machines"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
@@ -160,6 +185,8 @@ main() {
       check_requirements
       export_language
       setup_node
+      update_packages
+      install_ntp
       bootstrap
     else
       create_ssh_keys

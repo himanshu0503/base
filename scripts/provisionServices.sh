@@ -372,7 +372,11 @@ __run_service() {
     boot_cmd="$boot_cmd \
       --net host \
       --name $service \
-      $image"
+      $image
+      -v /usr/bin/docker:/usr/bin/docker
+      -v /var/run/docker.sock:/var/run/docker.sock
+      -v /tmp/cexec:/tmp/cexec
+      -v /usr/lib/x86_64-linux-gnu/libapparmor.so.1.1.0:/lib/x86_64-linux-gnu/libapparmor.so.1"
 
     eval $boot_cmd
   fi

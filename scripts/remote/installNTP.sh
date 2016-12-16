@@ -1,10 +1,15 @@
 #!/bin/bash -e
 
 ntp_install() {
-  echo "Installing and Starting NTP"
-
-  apt-get install -y ntp
-  /etc/init.d/ntp restart
+  ntp_status_res=$(service ntp status)
+  if [ -z "$ntp_status_res" ]; then
+    echo "Installing and Starting NTP"
+    apt-get install -y ntp
+    service ntp restart
+  elif [ -z "$ntp_status_res" | grep "not running" ]; then
+    echo "Starting NTP"
+    service ntp start
+  fi
 }
 
 main() {
