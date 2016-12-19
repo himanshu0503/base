@@ -1,19 +1,28 @@
 #!/bin/bash -e
 
-ntp_install() {
-  ntp_status_res=$(service ntp status)
-  if [ -z "$ntp_status_res" ]; then
-    echo "Installing and Starting NTP"
-    apt-get install -y ntp
-    service ntp restart
-  elif [ -z "$ntp_status_res" | grep "not running" ]; then
-    echo "Starting NTP"
-    service ntp start
-  fi
+install_ntp() {
+  apt-get install -y ntp
+}
+
+start_ntp() {
+  service ntp restart
 }
 
 main() {
-  ntp_install
+  {
+    check_ntp=$(service --status-all 2>&1 | grep ntp)
+  } || {
+    true
+  }
+  if [ ! -z "$check_ntp" ]; then
+    echo "NTP already installed, skipping."
+    return
+  fi
+
+  pushd /tmp
+  install_ntp
+  start_ntp
+  popd
 }
 
 main

@@ -126,7 +126,7 @@ setup_node() {
 }
 
 update_packages() {
-  if [ "$UPDATED_APT_PACKAGES" = false ]; then
+  if [ $UPDATED_APT_PACKAGES == false ]; then
     __process_msg "Updating packages"
     local machine_count=$(echo $MACHINES_LIST | jq '. | length')
     for i in $(seq 1 $machine_count); do
