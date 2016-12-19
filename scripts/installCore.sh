@@ -24,12 +24,13 @@ _check_component_status() {
 ensure_updated_packages() {
   if [ "$UPDATED_APT_PACKAGES" == false ]; then
     __process_msg "Installing core components on machines"
-    local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+    local machines_list=$(cat $STATE_FILE | jq '[ .machines[] ]')
+    local machines_count=$(echo $machines_list | jq '. | length')
     for i in $(seq 1 $machine_count); do
-      local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+      local machine=$(echo $machines_list | jq '.['"$i-1"']')
       local host=$(echo $machine | jq '.ip')
       _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installBase.sh" "$SCRIPT_DIR_REMOTE"
-      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh $INSTALL_MODE"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh"
     done
     UPDATED_APT_PACKAGES=true
   fi
