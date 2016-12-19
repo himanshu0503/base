@@ -21,22 +21,25 @@ _check_component_status() {
   fi
 }
 
-install_ntp() {
-  __process_msg "Installing and Starting NTP on all machines"
-  local machines_list=$(cat $STATE_FILE | jq '[ .machines[] ]')
-  local machines_count=$(echo $machines_list | jq '. | length')
-  for i in $(seq 1 $machines_count); do
-    local machine=$(echo $machines_list | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installNTP.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installNTP.sh"
-  done
+ensure_updated_packages() {
+  if [ "$UPDATED_APT_PACKAGES" == false ]; then
+    __process_msg "Installing core components on machines"
+    local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+    for i in $(seq 1 $machine_count); do
+      local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+      local host=$(echo $machine | jq '.ip')
+      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installBase.sh" "$SCRIPT_DIR_REMOTE"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh $INSTALL_MODE"
+    done
+    UPDATED_APT_PACKAGES=true
+  fi
 }
 
 install_docker() {
   SKIP_STEP=false
   _check_component_status "dockerInstalled"
   if [ "$SKIP_STEP" == false ]; then
+    ensure_updated_packages
     __process_msg "Installing Docker on management machine"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
@@ -171,6 +174,7 @@ install_swarm() {
   SKIP_STEP=false
   _check_component_status "swarmInstalled"
   if [ "$SKIP_STEP" = false ]; then
+    ensure_updated_packages
     __process_msg "Installing Swarm"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
@@ -237,6 +241,7 @@ install_database() {
   SKIP_STEP=false
   _check_component_status "databaseInstalled"
   if [ "$SKIP_STEP" = false ]; then
+    ensure_updated_packages
     __process_msg "Installing Database"
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
     local host=$(echo $db_host | jq '.ip')
@@ -402,6 +407,7 @@ install_vault() {
   SKIP_STEP=false
   _check_component_status "vaultInstalled"
   if [ "$SKIP_STEP" = false ]; then
+    ensure_updated_packages
     __process_msg "Installing Vault"
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installVault.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
@@ -519,6 +525,7 @@ install_rabbitmq() {
   SKIP_STEP=false
   _check_component_status "rabbitmqInstalled"
   if [ "$SKIP_STEP" = false ]; then
+    ensure_updated_packages
     __process_msg "Installing RabbitMQ"
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
@@ -641,6 +648,7 @@ install_gitlab() {
   SKIP_STEP=false
   _check_component_status "gitlabInitialized"
   if [ "$SKIP_STEP" = false ]; then
+    ensure_updated_packages
     __process_msg "Installing Gitlab"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq -r '.ip')
@@ -681,6 +689,7 @@ install_ecr() {
   SKIP_STEP=false
   _check_component_status "ecrInitialized"
   if [ "$SKIP_STEP" = false ]; then
+    ensure_updated_packages
     __process_msg "Installing Docker on management machine"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
@@ -741,6 +750,7 @@ install_redis() {
   local host=$(echo $redis_host | jq '.ip')
 
   if [ "$SKIP_STEP" = false ]; then
+    ensure_updated_packages
     __process_msg "Installing Redis"
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/redis.conf" "/etc/redis"
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installRedis.sh" "$SCRIPT_DIR_REMOTE"
@@ -783,7 +793,6 @@ install_redis_local() {
 main() {
   __process_marker "Installing core"
   if [ "$INSTALL_MODE" == "production" ]; then
-    install_ntp
     install_docker
     initialize_docker
     install_swarm
