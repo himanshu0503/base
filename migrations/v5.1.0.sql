@@ -3751,6 +3751,12 @@ do $$
     perform set_route_role(
       routePattern := '/projects/:projectId/newBuild',
       httpVerb := 'POST',
+      roleCode := 6050
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/newBuild',
+      httpVerb := 'POST',
       roleCode := 6060
     );
 
