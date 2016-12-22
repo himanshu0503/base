@@ -2288,8 +2288,6 @@ do $$
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id' and "httpVerb"='PUT';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id' and "httpVerb"='DELETE';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/status' and "httpVerb"='POST';
-      delete from "routeRoles" where "routePattern"='/clusterNodes/:clusterNodeId/status' and "httpVerb"='POST';
-      delete from "routeRoles" where "routePattern"='/systemNodes/:systemNodeId/status' and "httpVerb"='POST';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/validate' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/initScript' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/clusterNodeStats/:id' and "httpVerb"='DELETE';
@@ -3007,6 +3005,24 @@ do $$
 
     perform set_route_role(
       routePattern := '/clusterNodes',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:clusterNodeId/status',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:clusterNodeId/status',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:clusterNodeId/status',
       httpVerb := 'POST',
       roleCode := 6060
     );
@@ -4581,6 +4597,12 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6060
     );
+
+    perform set_route_role(
+       routePattern := '/systemNodes/:systemNodeId/status',
+       httpVerb := 'POST',
+       roleCode := 6060
+     );
 
     perform set_route_role(
        routePattern := '/systemNodes/:systemNodeId/validate',
