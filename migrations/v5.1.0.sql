@@ -2193,11 +2193,17 @@ do $$
     end if;
 
     -- Reindex projAccAccIdProjIdU to projAccAccIdProjIdRoleCodeU in projectAccounts table
-    drop index if exists "projAccAccIdProjIdU";
+    if exists (select 1 from pg_indexes where tablename = 'projectAccounts' and indexname = 'projAccAccIdProjIdU') then
+      drop index "projAccAccIdProjIdU";
+    end if;
+    
     create unique index if not exists "projAccAccIdProjIdRoleCodeU" on "projectAccounts" using btree("accountId", "projectId", "roleCode");
 
     -- Reindex subsAccSubsIdAccIdU to subsAccSubsIdAccIdRoleCodeU in subscriptionAccounts table
-    drop index if exists "subsAccSubsIdAccIdU";
+    if exists (select 1 from pg_indexes where tablename = 'subscriptionAccounts' and indexname = 'subsAccSubsIdAccIdU') then
+      drop index "subsAccSubsIdAccIdU";
+    end if;
+
     create unique index if not exists "subsAccSubsIdAccIdRoleCodeU" on "subscriptionAccounts" using btree("accountId", "subscriptionId", "roleCode");
 
     -- drop coloumn isShippableNode from clusterNodes table
