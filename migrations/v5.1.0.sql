@@ -1624,10 +1624,14 @@ do $$
     end if;
 
     -- Add resourceNextTriggerTimeI Index on resources
-    create index if not exists "resourceNextTriggerTimeI" on "resources" using btree("nextTriggerTime");
+    if not exists (select 1 from pg_indexes where tablename = 'resources' and indexname = 'resourceNextTriggerTimeI') then
+      create index "resourceNextTriggerTimeI" on "resources" using btree("nextTriggerTime");
+    end if;
 
     -- Add subsIntPermsProjIdI Index on subscriptionIntegrationPermissions
-    create index if not exists "subsIntPermsProjIdI" on "subscriptionIntegrationPermissions" using btree("projectId");
+    if not exists (select 1 from pg_indexes where tablename = 'subscriptionIntegrationPermissions' and indexname = 'subsIntPermsProjIdI') then
+      create index "subsIntPermsProjIdI" on "subscriptionIntegrationPermissions" using btree("projectId");
+    end if;
 
     -- Remove accountIntegrationId in resources
     if exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'accountIntegrationId') then
@@ -1804,17 +1808,6 @@ do $$
     delete from "systemCodes" where "code" = 3009 and "name" = 'rSyncSteps' and "group" = 'resource';
 
     delete from "systemCodes" where "code" = 3010 and "name" = 'deploySteps' and "group" = 'resource';
-
-    -- Vault
-    create table if not exists "vault_kv_store" (
-      parent_path text collate "C" not null,
-      path        text collate "C",
-      key         text collate "C",
-      value       bytea,
-      constraint pkey primary key (path, key)
-    );
-    create index if not exists parent_path_idx on vault_kv_store(parent_path);
-    alter table "vault_kv_store" owner to "apiuser";
 
     -- Add braintreeSubscriptionId in subscriptions
      if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'braintreeSubscriptionId') then
@@ -2196,15 +2189,19 @@ do $$
     if exists (select 1 from pg_indexes where tablename = 'projectAccounts' and indexname = 'projAccAccIdProjIdU') then
       drop index "projAccAccIdProjIdU";
     end if;
-    
-    create unique index if not exists "projAccAccIdProjIdRoleCodeU" on "projectAccounts" using btree("accountId", "projectId", "roleCode");
+
+    if not exists (select 1 from pg_indexes where tablename = 'projectAccounts' and indexname = 'projAccAccIdProjIdRoleCodeU') then
+      create unique index "projAccAccIdProjIdRoleCodeU" on "projectAccounts" using btree("accountId", "projectId", "roleCode");
+    end if;
 
     -- Reindex subsAccSubsIdAccIdU to subsAccSubsIdAccIdRoleCodeU in subscriptionAccounts table
     if exists (select 1 from pg_indexes where tablename = 'subscriptionAccounts' and indexname = 'subsAccSubsIdAccIdU') then
       drop index "subsAccSubsIdAccIdU";
     end if;
 
-    create unique index if not exists "subsAccSubsIdAccIdRoleCodeU" on "subscriptionAccounts" using btree("accountId", "subscriptionId", "roleCode");
+    if not exists (select 1 from pg_indexes where tablename = 'subscriptionAccounts' and indexname = 'subsAccSubsIdAccIdRoleCodeU') then
+      create unique index "subsAccSubsIdAccIdRoleCodeU" on "subscriptionAccounts" using btree("accountId", "subscriptionId", "roleCode");
+    end if;
 
     -- drop coloumn isShippableNode from clusterNodes table
     if exists (select 1 from information_schema.columns where table_name = 'clusterNodes' and column_name = 'isShippableNode') then
