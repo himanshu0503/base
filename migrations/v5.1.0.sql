@@ -2266,10 +2266,14 @@ do $$
     end if;
 
     -- Drop projectPermissions
-    drop table if exists "projectPermissions";
+    if exists (select 1 from information_schema.columns where table_name = 'projectPermissions') then
+      drop table "projectPermissions";
+    end if;
 
     -- Drop subscriptionPermissions
-    drop table if exists "subscriptionPermissions";
+    if exists (select 1 from information_schema.columns where table_name = 'subscriptionPermissions') then
+      drop table "subscriptionPermissions";
+    end if;
 
     -- remove outdated routeRoles
     if exists (select 1 from information_schema.columns where table_name = 'routeRoles') then
