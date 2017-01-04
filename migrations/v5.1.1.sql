@@ -2278,6 +2278,16 @@ do $$
       drop table "subscriptionPermissions";
     end if;
 
+    -- Drop betaUsers
+    if exists (select 1 from information_schema.columns where table_name = 'betaUsers') then
+      drop table "betaUsers";
+    end if;
+
+    -- Drop superUsers
+    if exists (select 1 from information_schema.columns where table_name = 'superUsers') then
+      drop table "superUsers";
+    end if;
+
     -- remove outdated routeRoles
     if exists (select 1 from information_schema.columns where table_name = 'routeRoles') then
       delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='GET';
