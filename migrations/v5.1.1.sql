@@ -1934,6 +1934,21 @@ do $$
       alter table "projects" add column "builderAccountId" varchar(24);
     end if;
 
+    -- Adds foreign key relationships for projects
+    if not exists (select 1 from pg_constraint where conname = 'projects_enabledBy_fkey') then
+      update projects as p set "enabledBy"=(select id from accounts where "id"=p."enabledBy");
+      alter table "projects" add constraint "projects_enabledBy_fkey" foreign key ("enabledBy") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'projects_ownerAccountId_fkey') then
+      update projects as p set "ownerAccountId"=(select id from accounts where "id"=p."ownerAccountId");
+      alter table "projects" add constraint "projects_ownerAccountId_fkey" foreign key ("ownerAccountId") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'projects_builderAccountId_fkey') then
+      alter table "projects" add constraint "projects_builderAccountId_fkey" foreign key ("builderAccountId") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+
     -- Add column nodeTypeCode to subscriptions table
     if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'nodeTypeCode') then
       alter table "subscriptions" add column "nodeTypeCode" integer;
