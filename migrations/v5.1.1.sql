@@ -4242,6 +4242,18 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/subscriptions/:subscriptionId/cards',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptions/:subscriptionId/cards',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/subscriptions/:subscriptionId',
       httpVerb := 'PUT',
       roleCode := 6010
