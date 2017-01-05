@@ -369,6 +369,16 @@ do $$
       values (6080, 'superUser', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    if not exists (select 1 from "systemCodes" where code = 6090) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (6090, 'betaUser', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 6100) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (6100, 'serviceUser', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
     -- Codes for nodeType
     if not exists (select 1 from "systemCodes" where code = 7000) then
       insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -5056,6 +5066,43 @@ do $$
     -- Adds foreign key constraint on subscriptionId for clusterNodeStats
     if not exists (select 1 from pg_constraint where conname = 'clusterNodeStats_subscriptionId_fkey') then
       alter table "clusterNodeStats" add constraint "clusterNodeStats_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    -- Moves accounts.systemRoles data to accountRoles table
+    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'systemRoles') then
+    begin
+    declare
+      accounts_rec record;
+      begin
+        for accounts_rec in select id, "systemRoles" as roles from accounts where "systemRoles" not like '["user"]' and "systemRoles" not like '[ "user" ]'
+        loop
+          if accounts_rec.roles like '%opsUser%' then
+            if not exists (select 1 from "accountRoles" where "accountId" = accounts_rec.id and "roleCode" = 6070) then
+              insert into "accountRoles" ("accountId", "roleCode", "createdAt", "updatedAt")
+              values (accounts_rec.id, 6070, '2016-06-01', '2016-06-01');
+            end if;
+          end if;
+          if accounts_rec.roles like '%superUser%' then
+            if not exists (select 1 from "accountRoles" where "accountId" = accounts_rec.id and "roleCode" = 6080) then
+              insert into "accountRoles" ("accountId", "roleCode", "createdAt", "updatedAt")
+              values (accounts_rec.id, 6080, '2016-06-01', '2016-06-01');
+            end if;
+          end if;
+          if accounts_rec.roles like '%betaUser%' then
+            if not exists (select 1 from "accountRoles" where "accountId" = accounts_rec.id and "roleCode" = 6090) then
+              insert into "accountRoles" ("accountId", "roleCode", "createdAt", "updatedAt")
+              values (accounts_rec.id, 6090, '2016-06-01', '2016-06-01');
+            end if;
+          end if;
+          if accounts_rec.roles like '%serviceUser%' then
+            if not exists (select 1 from "accountRoles" where "accountId" = accounts_rec.id and "roleCode" = 6100) then
+              insert into "accountRoles" ("accountId", "roleCode", "createdAt", "updatedAt")
+              values (accounts_rec.id, 6100, '2016-06-01', '2016-06-01');
+            end if;
+          end if;
+        end loop;
+      end;
+    end;
     end if;
 
   end
