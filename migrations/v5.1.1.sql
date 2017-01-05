@@ -1929,6 +1929,11 @@ do $$
       update projects set "ownerAccountId" = "enabledBy";
     end if;
 
+    -- Add projects.builderAccountId
+    if not exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'builderAccountId') then
+      alter table "projects" add column "builderAccountId" varchar(24);
+    end if;
+
     -- Add column nodeTypeCode to subscriptions table
     if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'nodeTypeCode') then
       alter table "subscriptions" add column "nodeTypeCode" integer;
