@@ -34,15 +34,42 @@ validate_machines_config() {
         "name": '"$name"',
         "group": '"$group"',
         "ip": '"$host"',
-        "keysUpdated": "false",
-        "sshSuccessful": "false",
-        "isConsistent": "false"
+        "sshSuccessful": "false"
       }]')
 
     local update=$(echo $machines_state \
       | jq '.')
     _update_state "$update"
   done
+
+  local swarm_master=$(cat $STATE_FILE |
+    jq '.machines |=
+    map (
+      if .name=="swarm" then
+        . + {
+              "isDockerInstalled": false,
+              "isDockerInitialized": false,
+              "isMasterInitialized" : false
+            }
+      else
+        .
+      end)'
+  _update_state "$swarm_master"
+
+  local swarm_workers=$(cat $STATE_FILE |
+    jq '.machines |=
+    map (
+      if .group=="services" then
+        . + {
+              "isDockerInstalled": false,
+              "isDockerInitialized": false,
+              "isWorkerInitialized" : false
+            }
+      else
+        .
+      end)'
+  _update_state "$swarm_workers"
+  __process_msg "Successfully validated machines config"
 }
 
 create_ssh_keys() {
@@ -72,21 +99,23 @@ update_ssh_key() {
     __process_msg "SSH keys are required to bootstrap the machines"
     update_ssh_key
   fi
-
-  ##TODO: update state
 }
 
 check_connection() {
-  # TODO: check if ssh into each machine works or not
   __process_msg "Checking machine connection"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
+    local host=$(echo $machine | jq -r '.ip')
     _exec_remote_cmd "$host" "ls"
+
+    local machine_state=$(cat $STATE_FILE |
+      jq '.machines[] | select (.ip="'$host'") | .sshSuccessful=true')
   done
 
-  local update=$(cat $STATE_FILE | jq '.installStatus.machinesSSHSuccessful='true'')
+  local update=$(cat $STATE_FILE |
+    jq '.installStatus.machinesSSHSuccessful='true'')
+
   _update_state "$update"
 
   __process_msg "All hosts reachable"
