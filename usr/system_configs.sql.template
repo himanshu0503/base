@@ -317,3 +317,60 @@ do $$
     end if;
   end
 $$;
+
+-- set not null for newly added fields in systemConfigs
+do $$
+  begin
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'wwwPort') then
+      alter table "systemConfigs" alter column "wwwPort" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'redisUrl') then
+      alter table "systemConfigs" alter column "redisUrl" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'awsAccountId') then
+      alter table "systemConfigs" alter column "awsAccountId" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'jobConsoleBatchSize') then
+      alter table "systemConfigs" alter column "jobConsoleBatchSize" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'jobConsoleBufferTimeInterval') then
+      alter table "systemConfigs" alter column "jobConsoleBufferTimeInterval" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'defaultCronLoopHours') then
+      alter table "systemConfigs" alter column "defaultCronLoopHours" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'apiRetryInterval') then
+      alter table "systemConfigs" alter column "apiRetryInterval" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'vortexUrl') then
+      alter table "systemConfigs" alter column "vortexUrl" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'cloudProviders') then
+      alter table "systemConfigs" alter column "cloudProviders" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'truck') then
+      alter table "systemConfigs" alter column "truck" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotShouldSimulate') then
+      alter table "systemConfigs" alter column "hubspotShouldSimulate" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotTimeLimit') then
+      alter table "systemConfigs" alter column "hubspotTimeLimit" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotListId') then
+      alter table "systemConfigs" alter column "hubspotListId" set not null;
+    end if;
+  end
+$$;
