@@ -175,6 +175,58 @@ generate_system_config() {
   local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.customHostDockerVersion')
   sed -i "s#{{CUSTOM_HOST_DOCKER_VERSION}}#$custom_host_docker_version#g" $system_configs_sql
 
+  __process_msg "Updating : wwwPort"
+  local www_port=$(cat $STATE_FILE | jq -r '.systemSettings.wwwPort')
+  sed -i "s#{{WWW_PORT}}#$www_port#g" $system_configs_sql
+
+  __process_msg "Updating : redisUrl"
+  local redis_url=$(cat $STATE_FILE | jq -r '.systemSettings.redisUrl')
+  sed -i "s#{{REDIS_URL}}#$redis_url#g" $system_configs_sql
+
+  __process_msg "Updating : awsAccountId"
+  local aws_account_id=$(cat $STATE_FILE | jq -r '.systemSettings.awsAccountId')
+  sed -i "s#{{AWS_ACCOUNT_ID}}#$aws_account_id#g" $system_configs_sql
+
+  __process_msg "Updating : jobConsoleBatchSize"
+  local job_console_batch_size=$(cat $STATE_FILE | jq -r '.systemSettings.jobConsoleBatchSize')
+  sed -i "s#{{JOB_CONSOLE_BATCH_SIZE}}#$job_console_batch_size#g" $system_configs_sql
+
+  __process_msg "Updating : jobConsoleBufferTimeInterval"
+  local job_console_buffer_time_interval=$(cat $STATE_FILE | jq -r '.systemSettings.jobConsoleBufferTimeInterval')
+  sed -i "s#{{JOB_CONSOLE_BUFFER_TIME_INTERVAL}}#$job_console_buffer_time_interval#g" $system_configs_sql
+
+  __process_msg "Updating : defaultCronLoopHours"
+  local default_cron_loop_hours=$(cat $STATE_FILE | jq -r '.systemSettings.defaultCronLoopHours')
+  sed -i "s#{{DEFAULT_CRON_LOOP_HOURS}}#$default_cron_loop_hours#g" $system_configs_sql
+
+  __process_msg "Updating : apiRetryInterval"
+  local api_retry_interval=$(cat $STATE_FILE | jq -r '.systemSettings.apiRetryInterval')
+  sed -i "s#{{API_RETRY_INTERVAL}}#$api_retry_interval#g" $system_configs_sql
+
+  __process_msg "Updating : vortexUrl"
+  local vortex_url=$(cat $STATE_FILE | jq -r '.systemSettings.vortexUrl')
+  sed -i "s#{{VORTEX_URL}}#$vortex_url#g" $system_configs_sql
+
+  __process_msg "Updating : cloudProviders"
+  local cloud_providers=$(cat $STATE_FILE | jq -r '.systemSettings.cloudProviders')
+  sed -i "s#{{CLOUD_PROVIDERS}}#$cloud_providers#g" $system_configs_sql
+
+  __process_msg "Updating : truck"
+  local truck=$(cat $STATE_FILE | jq -r '.systemSettings.truck')
+  sed -i "s#{{TRUCK}}#$truck#g" $system_configs_sql
+
+  __process_msg "Updating : hubspotTimeLimit"
+  local hubspot_time_limit=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotTimeLimit')
+  sed -i "s#{{HUBSPOT_TIME_LIMIT}}#$hubspot_time_limit#g" $system_configs_sql
+
+  __process_msg "Updating : hubspotListId"
+  local hubspot_list_id=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotListId')
+  sed -i "s#{{HUBSPOT_LIST_ID}}#$hubspot_list_id#g" $system_configs_sql
+
+  __process_msg "Updating : hubspotShouldSimulate"
+  local hubspot_should_simulate=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotShouldSimulate')
+  sed -i "s#{{HUBSPOT_SHOULD_SIMULATE}}#$hubspot_should_simulate#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 

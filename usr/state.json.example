@@ -507,7 +507,17 @@
     "hubspotShipTimeLimit": 10,
     "hubspotListId": 123,
     "hubspotShouldSimulate": "true",
-    "shippableAwsAccountId": "123456"
+    "shippableAwsAccountId": "123456",
+    "wwwPort": "50000",
+    "awsAccountId": "123456",
+    "jobConsoleBatchSize": 10,
+    "jobConsoleBufferTimeInterval": 3000,
+    "defaultCronLoopHours": 2,
+    "apiRetryInterval": 3,
+    "vortexUrl": "http://172.17.42.1:50000/vortex",
+    "cloudProviders": "ec2",
+    "truck": true,
+    "hubspotTimeLimit": 10
   },
   "machines": [],
   "installStatus": {
