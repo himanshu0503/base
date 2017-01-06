@@ -206,7 +206,7 @@ do $$
             "truck"= {{TRUCK}},
             "hubspotTimeLimit"= {{HUBSPOT_TIME_LIMIT}},
             "hubspotListId"= {{HUBSPOT_LIST_ID}},
-            "hubspotShouldSimulate" = {{HUBSPOT_SHOULD_SIMULATE}},
+            "hubspotShouldSimulate" = {{HUBSPOT_SHOULD_SIMULATE}}
         where id=1;
     end if;
 
@@ -264,7 +264,7 @@ do $$
             "truck",
             "hubspotTimeLimit",
             "hubspotListId",
-            "hubspotShouldSimulate",
+            "hubspotShouldSimulate"
           )
         values
           (
