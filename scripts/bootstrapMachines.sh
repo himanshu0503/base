@@ -14,31 +14,65 @@ validate_machines_config() {
     __process_msg "Machine count: $machine_count"
   fi
 
-  __process_msg "Cleaning up machines array in state.json"
-  local update=$(cat $STATE_FILE \
-    | jq '.machines=[]')
-  _update_state "$update"
 
-  __process_msg "Validated machines config"
+  ## for each machine in machines.json loop through machines in state.json
+  ## if not found, add that machine
+  local is_upgrade=$(cat $STATE_FILE \
+    | jq -r '.isUpgrade')
+
+  if [ $is_upgrade == false ]; then
+    __process_msg "Cleaning up machines array in state.json"
+    local update=$(cat $STATE_FILE \
+      | jq '.machines=[]')
+    _update_state "$update"
+  else
+    __process_msg "Installer running in upgrade mode, not clearing machines list"
+  fi
+
+  local machines_list_state=$(cat $STATE_FILE \
+    | jq '.machines')
+  local machine_count_state=$(echo $machines_list_state \
+    | jq -r '. | length')
 
   for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    local name=$(echo $machine | jq '.name')
-    local group=$(echo $machine | jq '.group')
+    local machine=$(echo $MACHINES_LIST \
+      | jq '.['"$i-1"']')
+    local machine_name=$(echo $machine \
+      | jq -r '.name')
+    local is_machine_available=false
 
-    local machines_state=$(cat $STATE_FILE | jq '
-      .machines |= . + [{
-        "name": '"$name"',
-        "group": '"$group"',
-        "ip": '"$host"',
-        "sshSuccessful": "false"
-      }]')
+    for j in $(seq 1 $machine_count_state); do
+      local machine_state=$(echo $machines_list_state \
+        | jq '.['"$j-1"']')
+      local machine_state_name=$(echo $machine_state \
+        | jq -r '.name')
+      if [ "$machine_name" == "$machine_state_name" ]; then
+        is_machine_available=true
+        __process_msg "Machine: $machine_name already present in state file"
+      fi
+    done
 
-    local update=$(echo $machines_state \
-      | jq '.')
-    _update_state "$update"
+    if [ "$is_machine_available" == false ]; then
+      __process_msg "Adding machine: $machine_name to state file"
+      local host=$(echo $machine | jq '.ip')
+      local name=$(echo $machine | jq '.name')
+      local group=$(echo $machine | jq '.group')
+
+      local machines_state=$(cat $STATE_FILE | jq '
+        .machines |= . + [{
+          "name": '"$name"',
+          "group": '"$group"',
+          "ip": '"$host"',
+          "sshSuccessful": "false"
+        }]')
+
+      local update=$(echo $machines_state \
+        | jq '.')
+      _update_state "$update"
+    fi
   done
+
+  __process_msg "Validated machines config"
 
   local swarm_master_status=$(cat $STATE_FILE |
     jq '.machines[] | select (.name=="swarm") |
