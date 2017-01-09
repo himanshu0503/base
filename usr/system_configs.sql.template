@@ -33,9 +33,9 @@ do $$
         "vortexUrl" VARCHAR(255) NOT NULL,
         "cloudProviders" VARCHAR(80) NOT NULL,
         "truck" BOOLEAN NOT NULL,
-        "hubspotTimeLimit" INTEGER NOT NULL,
-        "hubspotListId" INTEGER NOT NULL,
-        "hubspotShouldSimulate" VARCHAR(5) NOT NULL,
+        "hubspotTimeLimit" INTEGER,
+        "hubspotListId" INTEGER,
+        "hubspotShouldSimulate" VARCHAR(5),
         "createdAt" timestamp with time zone NOT NULL,
         "updatedAt" timestamp with time zone NOT NULL
       );
@@ -342,18 +342,6 @@ do $$
 
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'truck') then
       alter table "systemConfigs" alter column "truck" set not null;
-    end if;
-
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotShouldSimulate') then
-      alter table "systemConfigs" alter column "hubspotShouldSimulate" set not null;
-    end if;
-
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotTimeLimit') then
-      alter table "systemConfigs" alter column "hubspotTimeLimit" set not null;
-    end if;
-
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotListId') then
-      alter table "systemConfigs" alter column "hubspotListId" set not null;
     end if;
   end
 $$;
