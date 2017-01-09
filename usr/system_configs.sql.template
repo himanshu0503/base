@@ -30,7 +30,6 @@ do $$
         "defaultCronLoopHours" INTEGER NOT NULL,
         "apiRetryInterval" INTEGER NOT NULL,
         "vortexUrl" VARCHAR(255) NOT NULL,
-        "cloudProviders" VARCHAR(80) NOT NULL,
         "truck" BOOLEAN NOT NULL,
         "hubspotTimeLimit" INTEGER,
         "hubspotListId" INTEGER,
@@ -121,10 +120,6 @@ do $$
       alter table "systemConfigs" add column "vortexUrl" varchar(255);
     end if;
 
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'cloudProviders') then
-      alter table "systemConfigs" add column "cloudProviders" varchar(80);
-    end if;
-
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'truck') then
       alter table "systemConfigs" add column "truck" BOOLEAN;
     end if;
@@ -191,7 +186,6 @@ do $$
             "defaultCronLoopHours"={{DEFAULT_CRON_LOOP_HOURS}},
             "apiRetryInterval"={{API_RETRY_INTERVAL}},
             "vortexUrl"='{{VORTEX_URL}}',
-            "cloudProviders"='{{CLOUD_PROVIDERS}}',
             "truck"={{TRUCK}},
             "hubspotTimeLimit"={{HUBSPOT_TIME_LIMIT}},
             "hubspotListId"={{HUBSPOT_LIST_ID}},
@@ -248,7 +242,6 @@ do $$
             "defaultCronLoopHours",
             "apiRetryInterval",
             "vortexUrl",
-            "cloudProviders",
             "truck",
             "hubspotTimeLimit",
             "hubspotListId",
@@ -295,7 +288,6 @@ do $$
             {{DEFAULT_CRON_LOOP_HOURS}},
             {{API_RETRY_INTERVAL}},
             '{{VORTEX_URL}}',
-            '{{CLOUD_PROVIDERS}}',
             {{TRUCK}},
             {{HUBSPOT_TIME_LIMIT}},
             {{HUBSPOT_LIST_ID}},
@@ -334,10 +326,6 @@ do $$
 
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'vortexUrl') then
       alter table "systemConfigs" alter column "vortexUrl" set not null;
-    end if;
-
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'cloudProviders') then
-      alter table "systemConfigs" alter column "cloudProviders" set not null;
     end if;
 
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'truck') then

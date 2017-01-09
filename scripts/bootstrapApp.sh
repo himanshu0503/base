@@ -203,10 +203,6 @@ generate_system_config() {
   local vortex_url=$(cat $STATE_FILE | jq -r '.systemSettings.vortexUrl')
   sed -i "s#{{VORTEX_URL}}#$vortex_url#g" $system_configs_sql
 
-  __process_msg "Updating : cloudProviders"
-  local cloud_providers=$(cat $STATE_FILE | jq -r '.systemSettings.cloudProviders')
-  sed -i "s#{{CLOUD_PROVIDERS}}#$cloud_providers#g" $system_configs_sql
-
   __process_msg "Updating : truck"
   local truck=$(cat $STATE_FILE | jq -r '.systemSettings.truck')
   sed -i "s#{{TRUCK}}#$truck#g" $system_configs_sql
