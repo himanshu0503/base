@@ -14,35 +14,122 @@ validate_machines_config() {
     __process_msg "Machine count: $machine_count"
   fi
 
-  __process_msg "Cleaning up machines array in state.json"
-  local update=$(cat $STATE_FILE \
-    | jq '.machines=[]')
-  _update_state "$update"
 
-  ##TODO: check if there is at least one machine "core" group and "services" group
-  ##TODO: if all machines are in consistent state, then skip this
-  __process_msg "Validated machines config"
+  ## for each machine in machines.json loop through machines in state.json
+  ## if not found, add that machine
+  local is_upgrade=$(cat $STATE_FILE \
+    | jq -r '.isUpgrade')
+
+  if [ $is_upgrade == false ]; then
+    __process_msg "Cleaning up machines array in state.json"
+    local update=$(cat $STATE_FILE \
+      | jq '.machines=[]')
+    _update_state "$update"
+  else
+    __process_msg "Installer running in upgrade mode, not clearing machines list"
+  fi
+
+  local machines_list_state=$(cat $STATE_FILE \
+    | jq '.machines')
+  local machine_count_state=$(echo $machines_list_state \
+    | jq -r '. | length')
 
   for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    local name=$(echo $machine | jq '.name')
-    local group=$(echo $machine | jq '.group')
+    local machine=$(echo $MACHINES_LIST \
+      | jq '.['"$i-1"']')
+    local machine_name=$(echo $machine \
+      | jq -r '.name')
+    local is_machine_available=false
 
-    local machines_state=$(cat $STATE_FILE | jq '
-      .machines |= . + [{
-        "name": '"$name"',
-        "group": '"$group"',
-        "ip": '"$host"',
-        "keysUpdated": "false",
-        "sshSuccessful": "false",
-        "isConsistent": "false"
-      }]')
+    for j in $(seq 1 $machine_count_state); do
+      local machine_state=$(echo $machines_list_state \
+        | jq '.['"$j-1"']')
+      local machine_state_name=$(echo $machine_state \
+        | jq -r '.name')
+      if [ "$machine_name" == "$machine_state_name" ]; then
+        is_machine_available=true
+        __process_msg "Machine: $machine_name already present in state file"
+      fi
+    done
 
-    local update=$(echo $machines_state \
-      | jq '.')
-    _update_state "$update"
+    if [ "$is_machine_available" == false ]; then
+      __process_msg "Adding machine: $machine_name to state file"
+      local host=$(echo $machine | jq '.ip')
+      local name=$(echo $machine | jq '.name')
+      local group=$(echo $machine | jq '.group')
+
+      local machines_state=$(cat $STATE_FILE | jq '
+        .machines |= . + [{
+          "name": '"$name"',
+          "group": '"$group"',
+          "ip": '"$host"',
+          "sshSuccessful": "false"
+        }]')
+
+      local update=$(echo $machines_state \
+        | jq '.')
+      _update_state "$update"
+    fi
   done
+
+  __process_msg "Validated machines config"
+
+  local swarm_master_status=$(cat $STATE_FILE |
+    jq '.machines[] | select (.name=="swarm") |
+    .isMasterInitialized')
+
+  if [ $swarm_master_status == null ] || 
+    [ "$swarm_master_status" == false ]; then
+    __process_msg "Initializing default values for swarm master"
+    local swarm_master=$(cat $STATE_FILE |
+      jq '.machines |=
+      map (
+        if .name=="swarm" then
+          . + {
+                "isDockerInstalled": false,
+                "isDockerInitialized": false,
+                "isMasterInitialized" : false
+              }
+        else
+          .
+        end)'
+    )
+    _update_state "$swarm_master"
+  else
+    __process_msg "Swarm master already initialized, skipping"
+  fi
+
+  local service_machines_list=$(cat $STATE_FILE |
+    jq '[ .machines[] | select(.group=="services") ]')
+  local service_machines_count=$(echo $service_machines_list | jq '. | length')
+  for i in $(seq 1 $service_machines_count); do
+    local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
+    local name=$(echo $machine | jq -r '.name')
+    local worker_status=$(echo $machine | jq -r '.isWorkerInitialized')
+
+    if [ $worker_status == null ] || 
+      [ "$worker_status" == false ]; then
+      __process_msg "Initializing default values for worker: $name"
+      local swarm_worker=$(cat $STATE_FILE |
+        jq '.machines |=
+        map (
+          if .name=="'$name'" then
+            . + {
+                  "isDockerInstalled": false,
+                  "isDockerInitialized": false,
+                  "isWorkerInitialized" : false
+                }
+          else
+            .
+          end)'
+      )
+      _update_state "$swarm_worker"
+    else
+      __process_msg "Worker $name already initialized, skipping"
+    fi
+  done
+
+  __process_msg "Successfully validated machines config"
 }
 
 create_ssh_keys() {
@@ -72,21 +159,23 @@ update_ssh_key() {
     __process_msg "SSH keys are required to bootstrap the machines"
     update_ssh_key
   fi
-
-  ##TODO: update state
 }
 
 check_connection() {
-  # TODO: check if ssh into each machine works or not
   __process_msg "Checking machine connection"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
+    local host=$(echo $machine | jq -r '.ip')
     _exec_remote_cmd "$host" "ls"
+
+    local machine_state=$(cat $STATE_FILE |
+      jq '.machines[] | select (.ip="'$host'") | .sshSuccessful=true')
   done
 
-  local update=$(cat $STATE_FILE | jq '.installStatus.machinesSSHSuccessful='true'')
+  local update=$(cat $STATE_FILE |
+    jq '.installStatus.machinesSSHSuccessful='true'')
+
   _update_state "$update"
 
   __process_msg "All hosts reachable"
