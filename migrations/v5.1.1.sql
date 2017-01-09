@@ -2669,6 +2669,14 @@ do $$
       roleCode := 6060
     );
 
+    -- set accountRoles routeRoles
+
+    perform set_route_role(
+      routePattern := '/accountRoles',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set accountTokens routeRoles
 
     perform set_route_role(
