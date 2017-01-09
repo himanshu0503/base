@@ -266,7 +266,6 @@ do $$
             '{{SERVICE_USER_TOKEN}}',
             '{{VAULT_URL}}',
             '{{VAULT_TOKEN}}',
-            {{VAULT_REFRESH_TIME_SEC}},
             '{{AMQP_URL}}',
             '{{AMQP_URL_ROOT}}',
             '{{AMQP_URL_ADMIN}}',
