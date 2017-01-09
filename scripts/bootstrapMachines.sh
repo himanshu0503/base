@@ -248,6 +248,7 @@ main() {
     __process_msg "Bootstrapping machines in production mode"
     validate_machines_config
     create_ssh_keys
+    update_ssh_key
 
     local machines_list=$(cat $STATE_FILE \
       | jq '.machines')
@@ -277,11 +278,12 @@ main() {
             end)'
         )
         _update_state "$machine_update"
+      else
+        __process_msg "Setting machine bootstrap status from machine config"
       fi
 
       if [ $machine_bootstrapped == false ]; then
-        __process_msg "Machine: $name not bootstrapped, processing"
-        update_ssh_key
+        __process_msg "Machine: $machine_name not bootstrapped, processing"
         check_connection
         check_requirements
         export_language
@@ -298,6 +300,7 @@ main() {
             end)'
         )
         _update_state "$machine_update"
+        __process_msg "Successfully bootstrapped machine: $machine_name"
       else
         __process_msg "Machine: $name already bootstrapped, skipping"
       fi
