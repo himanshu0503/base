@@ -170,7 +170,7 @@ check_connection() {
     _exec_remote_cmd "$host" "ls"
 
     local machine_state=$(cat $STATE_FILE |
-      jq '.machines[] |=
+      jq '.machines |=
         map (
           if .ip="'$host'" then
             .sshSuccessful=true
@@ -179,7 +179,7 @@ check_connection() {
           end
         )'
       )
-    _update_state "machine_state"
+    _update_state "$machine_state"
   done
 
   local update=$(cat $STATE_FILE |

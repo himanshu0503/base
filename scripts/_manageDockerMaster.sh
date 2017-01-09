@@ -4,7 +4,7 @@ install_docker_master() {
   local swarm_master_host=$(cat $STATE_FILE |
     jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local master_docker_installed=$(echo $swarm_master_host |
-    jq -r '.dockerInstalled')
+    jq -r '.isDockerInstalled')
 
   ##TODO: remove once 'installStatus.dockerInstalled' flag is removed
   if [ -z ${master_docker_installed+x} ]; then
@@ -53,7 +53,7 @@ initialize_docker_master() {
   local host=$(echo $swarm_master_host \
     | jq '.ip')
   local master_docker_initialized=$(echo $swarm_master_host |
-    jq -r '.dockerInitialized')
+    jq -r '.isDockerInitialized')
 
   ##TODO: remove once 'installStatus.dockerInitialized' flag is removed
   if [ -z ${master_docker_initialized+x} ]; then
