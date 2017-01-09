@@ -170,14 +170,21 @@ check_connection() {
     _exec_remote_cmd "$host" "ls"
 
     local machine_state=$(cat $STATE_FILE |
-      jq '.machines[] | select (.ip="'$host'") | .sshSuccessful=true')
+      jq '.machines[] |=
+        map (
+          if .ip="'$host'" then
+            .sshSuccessful=true
+          else
+            .
+          end
+        )'
+      )
+    _update_state "machine_state"
   done
 
   local update=$(cat $STATE_FILE |
     jq '.installStatus.machinesSSHSuccessful='true'')
-
   _update_state "$update"
-
   __process_msg "All hosts reachable"
 }
 

@@ -36,6 +36,16 @@ ensure_updated_packages() {
   fi
 }
 
+configure_swarm_master() {
+  __process_msg "Configuring swarm master"
+  source "$SCRIPTS_DIR/_manageDockerMaster.sh"
+}
+
+configure_swarm_workers() {
+  __process_msg "Configuring swarm workers"
+  source "$SCRIPTS_DIR/_manageDockerWorkers.sh"
+}
+
 install_docker() {
   SKIP_STEP=false
   _check_component_status "dockerInstalled"
@@ -169,51 +179,6 @@ initialize_docker_local() {
   local docker_login_cmd=$(eval "/tmp/docker_login.sh")
   __process_msg "Docker login generated, logging into ecr "
   eval "$docker_login_cmd"
-}
-
-install_swarm() {
-  SKIP_STEP=false
-  _check_component_status "swarmInstalled"
-  if [ "$SKIP_STEP" = false ]; then
-    ensure_updated_packages
-    __process_msg "Installing Swarm"
-    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-    local host=$(echo $gitlab_host | jq '.ip')
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installSwarm.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
-
-    __process_msg "Initializing docker swarm master"
-    _exec_remote_cmd "$host" "docker swarm leave --force || true"
-    local swarm_init_cmd="docker swarm init --advertise-addr $host"
-    _exec_remote_cmd "$host" "$swarm_init_cmd"
-
-    local swarm_worker_token="swarm_worker_token.txt"
-    local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
-    _exec_remote_cmd "$host" "'docker swarm join-token -q worker > $swarm_worker_token_remote'"
-    _copy_script_local $host "$swarm_worker_token_remote"
-
-    local script_dir_local="/tmp/shippable"
-    local swarm_worker_token_local="$script_dir_local/$swarm_worker_token"
-    local swarm_worker_token=$(cat $swarm_worker_token_local)
-
-    local swarm_worker_token_update=$(cat $STATE_FILE | jq '
-      .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
-    update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
-
-    __process_msg "Running Swarm in drain mode"
-    local swarm_master_host_name="swarm_master_host_name.txt"
-    local swarm_master_host_name_remote="$SCRIPT_DIR_REMOTE/$swarm_master_host_name"
-    _exec_remote_cmd "$host" "'docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
-    _copy_script_local $host "$swarm_master_host_name_remote"
-
-    local swarm_master_host_name_remote="$script_dir_local/$swarm_master_host_name"
-    local swarm_master_host_name=$(cat $swarm_master_host_name_remote)
-    _exec_remote_cmd "$host" "docker node update  --availability drain $swarm_master_host_name"
-
-    _update_install_status "swarmInstalled"
-  else
-    __process_msg "Swarm already installed, skipping"
-  fi
 }
 
 install_compose(){
@@ -721,28 +686,6 @@ install_ecr_local() {
   fi
 }
 
-initialize_workers() {
-  SKIP_STEP=false
-  _check_component_status "swarmInitialized"
-  if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Initializing swarm workers on service machines"
-    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-    local gitlab_host_ip=$(echo $gitlab_host | jq -r '.ip')
-
-    local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
-    local service_machines_count=$(echo $service_machines_list | jq '. | length')
-    for i in $(seq 1 $service_machines_count); do
-      local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
-      local host=$(echo $machine | jq '.ip')
-      local swarm_worker_token=$(cat $STATE_FILE | jq '.systemSettings.swarmWorkerToken')
-      _exec_remote_cmd "$host" "docker swarm leave || true"
-      _exec_remote_cmd "$host" "docker swarm join --token $swarm_worker_token $gitlab_host_ip"
-    done
-    _update_install_status "swarmInitialized"
-  else
-    __process_msg "Swarm already initialized, skipping"
-  fi
-}
 
 install_redis() {
   SKIP_STEP=false
@@ -794,9 +737,8 @@ install_redis_local() {
 main() {
   __process_marker "Installing core"
   if [ "$INSTALL_MODE" == "production" ]; then
-    install_docker
-    initialize_docker
-    install_swarm
+    configure_swarm_master
+    configure_swarm_workers
     install_database
     save_db_credentials_in_statefile
     save_db_credentials
@@ -805,7 +747,6 @@ main() {
     install_rabbitmq
     install_gitlab
     install_ecr
-    initialize_workers
     install_redis
   else
     install_docker_local
