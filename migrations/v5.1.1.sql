@@ -5110,6 +5110,7 @@ do $$
           end if;
         end loop;
       end;
+      alter table "accounts" drop column "systemRoles";
     end;
     end if;
 
