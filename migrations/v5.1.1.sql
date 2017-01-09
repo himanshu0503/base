@@ -1683,21 +1683,21 @@ do $$
       alter table "buildJobs" alter column "isSerial" SET DEFAULT true;
     end if;
 
-    --Add execImage column to systemMachineImages
+    -- Add execImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'execImage') then
       alter table "systemMachineImages" add column "execImage" varchar(80);
       update "systemMachineImages" set "execImage"='shipimg/mexec:master.3859' where "execImage" is null;
       alter table "systemMachineImages" alter column "execImage" set not null;
     end if;
 
-    --Add runShImage column to systemMachineImages
+    -- Add runShImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'runShImage') then
       alter table "systemMachineImages" add column "runShImage" varchar(80);
       update "systemMachineImages" set "runShImage"='shipimg/micro50:stepExec.server.6262' where "runShImage" is null;
       alter table "systemMachineImages" alter column "runShImage" set not null;
     end if;
 
-    --Add execImage column to systemConfigs
+    -- Add execImage column to systemConfigs
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'execImage') then
       alter table "systemConfigs" add column "execImage" varchar(255);
       update "systemConfigs" set "execImage"='shipimg/mexec:master.3859' where "execImage" is null;
@@ -2036,7 +2036,7 @@ do $$
       alter table "buildJobConsoles" add constraint "buildJobConsoles_buildJobId_fkey" foreign key ("buildJobId") references "buildJobs"(id) on update restrict on delete restrict;
     end if;
 
-  --Adds foreign key relationships for accountIntegrations
+  -- Adds foreign key relationships for accountIntegrations
     if not exists (select 1 from pg_constraint where conname = 'accountIntegrations_accountId_fkey') then
       alter table "accountIntegrations" add constraint "accountIntegrations_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
     end if;
@@ -2060,7 +2060,7 @@ do $$
       alter table "accountProfiles" add constraint "accountProfiles_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
     end if;
 
-  --Adds foreign key relationships for systemIntegrations
+  -- Adds foreign key relationships for systemIntegrations
     if not exists (select 1 from pg_constraint where conname = 'systemIntegrations_masterIntegrationId_fkey') then
       alter table "systemIntegrations" add constraint "systemIntegrations_masterIntegrationId_fkey" foreign key ("masterIntegrationId") references "masterIntegrations"(id) on update restrict on delete restrict;
     end if;
@@ -2074,7 +2074,7 @@ do $$
       alter table "subscriptionIntegrations" add constraint "subscriptionIntegrations_accountIntegrationId_fkey" foreign key ("accountIntegrationId") references "accountIntegrations"(id) on update restrict on delete restrict;
     end if;
 
-  --Adds foreign key relationships for projects
+  -- Adds foreign key relationships for projects
     if not exists (select 1 from pg_constraint where conname = 'projects_providerId_fkey') then
       alter table "projects" add constraint "projects_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
     end if;
@@ -2082,7 +2082,7 @@ do $$
       alter table "projects" add constraint "projects_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
     end if;
 
-  --Adds foreign key relationships for projectDailyAggs
+  -- Adds foreign key relationships for projectDailyAggs
     if not exists (select 1 from pg_constraint where conname = 'projectDailyAggs_projectId_fkey') then
       alter table "projectDailyAggs" add constraint "projectDailyAggs_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
     end if;
@@ -2238,7 +2238,7 @@ do $$
       alter table "clusterNodes" drop column "isShippableNode";
     end if;
 
-    --adds column dynamicNodesSystemIntegrationId in systemConfigs table
+    -- adds column dynamicNodesSystemIntegrationId in systemConfigs table
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'dynamicNodesSystemIntegrationId') then
       alter table "systemConfigs" add column "dynamicNodesSystemIntegrationId" varchar(24);
     end if;
