@@ -137,7 +137,8 @@ create_ssh_keys() {
 
 update_ssh_key() {
   ##TODO: ask user to update ssh keys in machines
-  __process_msg "Please run the following command on all the machines (including this one), type (y) when done"
+  local host=$1
+  __process_msg "Please run the following command on the host $host, type (y) when done"
   echo ""
   echo "echo `cat $SSH_PUBLIC_KEY` | sudo tee -a /root/.ssh/authorized_keys"
   echo ""
@@ -221,7 +222,6 @@ main() {
     __process_msg "Bootstrapping machines in production mode"
     validate_machines_config
     create_ssh_keys
-    update_ssh_key
 
     local machines_list=$(cat $STATE_FILE \
       | jq '.machines')
@@ -259,6 +259,7 @@ main() {
 
       if [ $machine_bootstrapped == false ]; then
         __process_msg "Machine: $machine_name not bootstrapped, processing"
+        update_ssh_key "$host"
         check_connection "$host"
         check_requirements "$host"
         export_language "$host"
