@@ -278,7 +278,7 @@ main() {
         _update_state "$machine_update"
         __process_msg "Successfully bootstrapped machine: $machine_name"
       else
-        __process_msg "Machine: $name already bootstrapped, skipping"
+        __process_msg "Machine: $machine_name already bootstrapped, skipping"
       fi
     done
     local update=$(cat $STATE_FILE |
