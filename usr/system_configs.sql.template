@@ -92,67 +92,54 @@ do $$
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'wwwPort') then
       alter table "systemConfigs" add column "wwwPort" INTEGER;
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'redisUrl') then
       alter table "systemConfigs" add column "redisUrl" varchar(255);
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'awsAccountId') then
       alter table "systemConfigs" add column "awsAccountId" varchar(12);
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'jobConsoleBatchSize') then
       alter table "systemConfigs" add column "jobConsoleBatchSize" INTEGER;
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'jobConsoleBufferTimeInterval') then
       alter table "systemConfigs" add column "jobConsoleBufferTimeInterval" INTEGER;
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'defaultCronLoopHours') then
       alter table "systemConfigs" add column "defaultCronLoopHours" INTEGER;
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'apiRetryInterval') then
       alter table "systemConfigs" add column "apiRetryInterval" INTEGER;
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'vortexUrl') then
       alter table "systemConfigs" add column "vortexUrl" varchar(255);
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'cloudProviders') then
       alter table "systemConfigs" add column "cloudProviders" varchar(80);
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'truck') then
       alter table "systemConfigs" add column "truck" BOOLEAN;
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotShouldSimulate') then
       alter table "systemConfigs" add column "hubspotShouldSimulate" BOOLEAN;
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotTimeLimit') then
       alter table "systemConfigs" add column "hubspotTimeLimit" INTEGER;
-      -- add default value
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotListId') then
       alter table "systemConfigs" add column "hubspotListId" INTEGER;
-      -- add default value
     end if;
 
     alter table "systemConfigs" owner to "apiuser";
@@ -194,19 +181,19 @@ do $$
             "consoleMaxLifespan"={{CONSOLE_MAX_LIFESPAN}},
             "consoleCleanupHour"={{CONSOLE_CLEANUP_HOUR}},
             "customHostDockerVersion"='{{CUSTOM_HOST_DOCKER_VERSION}}',
-            "wwwPort"= {{WWW_PORT}},
-            "redisUrl"= '{{REDIS_URL}}',
-            "awsAccountId"= '{{AWS_ACCOUNT_ID}}',
-            "jobConsoleBatchSize"= {{JOB_CONSOLE_BATCH_SIZE}},
-            "jobConsoleBufferTimeInterval"= {{JOB_CONSOLE_BUFFER_TIME_INTERVAL}},
-            "defaultCronLoopHours"= {{DEFAULT_CRON_LOOP_HOURS}},
-            "apiRetryInterval"= {{API_RETRY_INTERVAL}},
-            "vortexUrl"= '{{VORTEX_URL}}',
-            "cloudProviders"= '{{CLOUD_PROVIDERS}}',
-            "truck"= {{TRUCK}},
-            "hubspotTimeLimit"= {{HUBSPOT_TIME_LIMIT}},
-            "hubspotListId"= {{HUBSPOT_LIST_ID}},
-            "hubspotShouldSimulate" = {{HUBSPOT_SHOULD_SIMULATE}}
+            "wwwPort"={{WWW_PORT}},
+            "redisUrl"='{{REDIS_URL}}',
+            "awsAccountId"='{{AWS_ACCOUNT_ID}}',
+            "jobConsoleBatchSize"={{JOB_CONSOLE_BATCH_SIZE}},
+            "jobConsoleBufferTimeInterval"={{JOB_CONSOLE_BUFFER_TIME_INTERVAL}},
+            "defaultCronLoopHours"={{DEFAULT_CRON_LOOP_HOURS}},
+            "apiRetryInterval"={{API_RETRY_INTERVAL}},
+            "vortexUrl"='{{VORTEX_URL}}',
+            "cloudProviders"='{{CLOUD_PROVIDERS}}',
+            "truck"={{TRUCK}},
+            "hubspotTimeLimit"={{HUBSPOT_TIME_LIMIT}},
+            "hubspotListId"={{HUBSPOT_LIST_ID}},
+            "hubspotShouldSimulate"={{HUBSPOT_SHOULD_SIMULATE}}
         where id=1;
     end if;
 
