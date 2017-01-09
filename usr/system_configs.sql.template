@@ -35,7 +35,7 @@ do $$
         "truck" BOOLEAN NOT NULL,
         "hubspotTimeLimit" INTEGER,
         "hubspotListId" INTEGER,
-        "hubspotShouldSimulate" VARCHAR(5),
+        "hubspotShouldSimulate" BOOLEAN,
         "createdAt" timestamp with time zone NOT NULL,
         "updatedAt" timestamp with time zone NOT NULL
       );
@@ -131,7 +131,7 @@ do $$
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotShouldSimulate') then
-      alter table "systemConfigs" add column "hubspotShouldSimulate" varchar(5);
+      alter table "systemConfigs" add column "hubspotShouldSimulate" BOOLEAN;
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotTimeLimit') then
