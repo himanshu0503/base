@@ -25,7 +25,7 @@ do $$
         "execImage" VARCHAR(255) NOT NULL,
         "wwwPort" INTEGER NOT NULL,
         "redisUrl" VARCHAR(255) NOT NULL,
-        "awsAccountId" VARCHAR(12) NOT NULL,
+        "awsAccountId" VARCHAR(12),
         "jobConsoleBatchSize" INTEGER NOT NULL,
         "jobConsoleBufferTimeInterval" INTEGER NOT NULL,
         "defaultCronLoopHours" INTEGER NOT NULL,
@@ -327,10 +327,6 @@ do $$
 
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'redisUrl') then
       alter table "systemConfigs" alter column "redisUrl" set not null;
-    end if;
-
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'awsAccountId') then
-      alter table "systemConfigs" alter column "awsAccountId" set not null;
     end if;
 
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'jobConsoleBatchSize') then
