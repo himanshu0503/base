@@ -233,6 +233,8 @@ main() {
         | jq '.['"$i-1"']')
       local machine_name=$(echo $machine \
         | jq -r '.name')
+      local host=$(echo $machine \
+        | jq -r '.ip')
       local machine_bootstrapped=$(echo $machine \
         | jq -r '.isBootstrapped')
 
