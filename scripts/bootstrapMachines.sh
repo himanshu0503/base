@@ -154,85 +154,58 @@ update_ssh_key() {
 
 check_connection() {
   __process_msg "Checking machine connection"
-  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
-  for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq -r '.ip')
-    _exec_remote_cmd "$host" "ls"
+  local host=$1
+  _exec_remote_cmd "$host" "ls"
 
-    local machine_state=$(cat $STATE_FILE |
-      jq '.machines |=
-        map (
-          if .ip="'$host'" then
-            .sshSuccessful=true
-          else
-            .
-          end
-        )'
-      )
-    _update_state "$machine_state"
-  done
+  local machine_state=$(cat $STATE_FILE |
+    jq '.machines |=
+      map (
+        if .ip="'$host'" then
+          .sshSuccessful=true
+        else
+          .
+        end
+      )'
+    )
+  _update_state "$machine_state"
 
-  local update=$(cat $STATE_FILE |
-    jq '.installStatus.machinesSSHSuccessful='true'')
-  _update_state "$update"
-  __process_msg "All hosts reachable"
+  __process_msg "host: $host reachable"
 }
 
 check_requirements() {
   # TODO: check machine config: memory, cpu disk, arch os type
   __process_msg "Validating machine requirements"
-  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
-  for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/checkRequirements.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/checkRequirements.sh"
-  done
+  local host=$1
+  _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/checkRequirements.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/checkRequirements.sh"
 }
 
 export_language() {
   __process_msg "Exporting Language Preferences"
-  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
-  for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    _exec_remote_cmd "$host" "export LC_ALL=C"
-  done
+  local host=$1
+  _exec_remote_cmd "$host" "export LC_ALL=C"
 }
 
 setup_node() {
   __process_msg "Configuring ulimits on machines"
-  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
-  for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/setupNode.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/setupNode.sh"
-  done
+  local host=$1
+  _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/setupNode.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/setupNode.sh"
 }
 
 bootstrap() {
   __process_msg "Installing core components on machines"
-  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
-  for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installBase.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh $INSTALL_MODE"
-  done
+  local host=$1
+  _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installBase.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh $INSTALL_MODE"
   UPDATED_APT_PACKAGES=true
 }
 
 install_ntp() {
   __process_msg "Installing ntp"
-  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
-  for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installNTP.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installNTP.sh $INSTALL_MODE"
-  done
+  local host=$1
+  _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installNTP.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installNTP.sh $INSTALL_MODE"
 }
 
 bootstrap_local() {
@@ -284,12 +257,12 @@ main() {
 
       if [ $machine_bootstrapped == false ]; then
         __process_msg "Machine: $machine_name not bootstrapped, processing"
-        check_connection
-        check_requirements
-        export_language
-        setup_node
-        bootstrap
-        install_ntp
+        check_connection "$host"
+        check_requirements "$host"
+        export_language "$host"
+        setup_node "$host"
+        bootstrap "$host"
+        install_ntp "$host"
         local machine_update=$(cat $STATE_FILE |
           jq '.machines |=
           map (
@@ -305,6 +278,9 @@ main() {
         __process_msg "Machine: $name already bootstrapped, skipping"
       fi
     done
+    local update=$(cat $STATE_FILE |
+      jq '.installStatus.machinesSSHSuccessful='true'')
+    _update_state "$update"
   else
     __process_msg "Bootstrapping machines in local mode"
     local machines_list=$(cat $STATE_FILE \
