@@ -1860,11 +1860,17 @@ do $$
        alter table "transactions" alter column "price" set DEFAULT 0;
      end if;
 
-  -- Adds serviceUser account details in accounts table for local
-     if not exists (select 1 from "accounts" where "id" = '540e55445e5bad6f98764522' and "systemRoles" like '%serviceUser%') then
-       insert into "accounts" ("id", "systemRoles", "createdAt", "updatedAt")
-       values ('540e55445e5bad6f98764522', '[ "serviceUser", "superUser" ]', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
+  -- Adds account details in accounts table
+     if not exists (select 1 from "accounts" where "id" = '540e55445e5bad6f98764522') then
+       insert into "accounts" ("id", "createdAt", "updatedAt")
+       values ('540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
      end if;
+
+   -- Adds accountRole for serviceUser
+     if not exists (select 1 from "accountRoles" where "accountId" = '540e55445e5bad6f98764522' and "roleCode" = 6100) then
+       insert into "accountRoles" ("accountId", "roleCode", "createdAt", "updatedAt")
+       values ('540e55445e5bad6f98764522', 6100, '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
+      end if;
 
   -- Adds serviceUser token in accountTokens table for local
      if not exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
