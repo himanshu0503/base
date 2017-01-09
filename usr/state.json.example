@@ -482,7 +482,6 @@
     "runMode": "dev",
     "noProxy": "",
     "httpsProxy": "",
-    "vaultRefreshTimeInSec": 900,
     "dbname": "shipdb",
     "redisUrl": "172.17.42.1:6379",
     "defaultMinionCount": 1,

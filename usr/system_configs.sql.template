@@ -12,7 +12,6 @@ do $$
         "serviceUserToken" VARCHAR(36) NOT NULL,
         "vaultUrl" VARCHAR(255),
         "vaultToken" VARCHAR(45),
-        "vaultRefreshTimeInSec" INT,
         "amqpUrl" VARCHAR(255),
         "amqpUrlRoot" VARCHAR(255),
         "amqpUrlAdmin" VARCHAR(255),
@@ -142,6 +141,10 @@ do $$
       alter table "systemConfigs" add column "hubspotListId" INTEGER;
     end if;
 
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'vaultRefreshTimeInSec') then
+      alter table "systemConfigs" drop column "vaultRefreshTimeInSec";
+    end if;
+
     alter table "systemConfigs" owner to "apiuser";
   end
 $$;
@@ -160,7 +163,6 @@ do $$
             "serviceUserToken"='{{SERVICE_USER_TOKEN}}',
             "vaultUrl"='{{VAULT_URL}}',
             "vaultToken"='{{VAULT_TOKEN}}',
-            "vaultRefreshTimeInSec"={{VAULT_REFRESH_TIME_SEC}},
             "amqpUrl"='{{AMQP_URL}}',
             "amqpUrlRoot"='{{AMQP_URL_ROOT}}',
             "amqpUrlAdmin"='{{AMQP_URL_ADMIN}}',
@@ -217,7 +219,6 @@ do $$
             "serviceUserToken",
             "vaultUrl",
             "vaultToken",
-            "vaultRefreshTimeInSec",
             "amqpUrl",
             "amqpUrlRoot",
             "amqpUrlAdmin",

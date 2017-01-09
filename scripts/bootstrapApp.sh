@@ -88,10 +88,6 @@ generate_system_config() {
   local vault_token=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken')
   sed -i "s#{{VAULT_TOKEN}}#$vault_token#g" $system_configs_sql
 
-  __process_msg "Updating : vaultRefreshTime"
-  local vault_refresh_time=$(cat $STATE_FILE | jq -r '.systemSettings.vaultRefreshTimeInSec')
-  sed -i "s#{{VAULT_REFRESH_TIME_SEC}}#$vault_refresh_time#g" $system_configs_sql
-
   __process_msg "Updating : amqpUrl"
   local amqp_url=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrl')
   sed -i "s#{{AMQP_URL}}#$amqp_url#g" $system_configs_sql

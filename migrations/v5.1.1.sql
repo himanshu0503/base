@@ -5113,5 +5113,13 @@ do $$
     end;
     end if;
 
+    -- Drop Vault related fields from accounts table
+    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'secretsToken') then
+      alter table "accounts" drop column "secretsToken";
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'lastSecretsTokenRefreshedAt') then
+      alter table "accounts" drop column "lastSecretsTokenRefreshedAt";
+    end if;
   end
 $$;
