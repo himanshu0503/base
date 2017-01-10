@@ -510,9 +510,7 @@
   },
   "machines": [],
   "installStatus": {
-    "machinesSSHSuccessful": false,
     "replicasConfigured": false,
-    "machinesBootstrapped": false,
     "databaseInstalled": false,
     "databaseInitialized": false,
     "vaultInstalled": false,
@@ -521,11 +519,7 @@
     "rabbitmqInitialized": false,
     "gitlabInstalled": false,
     "gitlabInitialized": false,
-    "dockerInstalled": false,
-    "dockerInitialized": false,
     "composeInstalled": false,
-    "swarmInstalled": false,
-    "swarmInitialized": false,
     "redisInstalled": false,
     "redisInitialized": false,
     "serviceuserTokenGenerated": false
