@@ -36,39 +36,103 @@ ensure_updated_packages() {
   fi
 }
 
-configure_swarm_master() {
-  __process_msg "Configuring swarm master"
-  source "$SCRIPTS_DIR/_manageDockerMaster.sh"
+install_docker() {
+  SKIP_STEP=false
+  _check_component_status "dockerInstalled"
+  if [ "$SKIP_STEP" == false ]; then
+    ensure_updated_packages
+    __process_msg "Installing Docker on management machine"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host | jq '.ip')
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
+
+    __process_msg "Installing Docker on service machines"
+    local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
+    local service_machines_count=$(echo $service_machines_list | jq '. | length')
+    for i in $(seq 1 $service_machines_count); do
+      local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
+      local host=$(echo $machine | jq '.ip')
+      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$SCRIPT_DIR_REMOTE"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
+    done
+    __process_msg "Please configure http_proxy in /etc/default/docker, if proxy needs to be configured. Press any button to continue, once this is done..."
+    read response
+    _update_install_status "dockerInstalled"
+  else
+    __process_msg "Docker already installed, skipping"
+  fi
 }
 
-configure_swarm_workers() {
-  __process_msg "Configuring swarm workers"
-  source "$SCRIPTS_DIR/_manageDockerWorkers.sh"
+initialize_docker() {
+  SKIP_STEP=false
+  _check_component_status "dockerInitialized"
+  if [ "$SKIP_STEP" == false ]; then
+    __process_msg "Initializing Docker on management machine"
+    local gitlab_host=$(cat $STATE_FILE \
+      | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host \
+      | jq '.ip')
+
+    local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
+    local credentials_file="$USR_DIR/credentials"
+
+    __process_msg "Loading: installerAccessKey"
+    local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
+    if [ -z "$aws_access_key" ]; then
+      __process_msg "Please update 'systemSettings.installerAccessKey' in state.json and run installer again"
+      exit 1
+    fi
+    sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
+
+    __process_msg "Loading: installerSecretKey"
+    local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
+    if [ -z "$aws_secret_key" ]; then
+      __process_msg "Please update 'systemSettings.installerSecretKey' in state.json and run installer again"
+      exit 1
+    fi
+    sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
+
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/docker-credential-ecr-login" "/usr/bin/"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/config.json" "/root/.docker/"
+    _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
+
+    __process_msg "Initialzed Docker on swarm master"
+
+    __process_msg "Initializing Docker on microservice machines"
+    local service_machines_list=$(cat $STATE_FILE \
+      | jq '[ .machines[] | select(.group=="services") ]')
+    local service_machines_count=$(echo $service_machines_list \
+      | jq '. | length')
+    for i in $(seq 1 $service_machines_count); do
+      local machine=$(echo $service_machines_list \
+        | jq '.['"$i-1"']')
+      local host=$(echo $machine \
+        | jq '.ip')
+      __process_msg "Initializing docker on: $host"
+      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/docker-credential-ecr-login" "/usr/bin/"
+      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/config.json" "/root/.docker/"
+      _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
+      __process_msg "Successfully initialized docker on: $host"
+    done
+
+    __process_msg "Initialized Docker on all service machines"
+
+    _update_install_status "dockerInitialized"
+  else
+    __process_msg "Docker already initialized, skipping"
+  fi
 }
 
 install_docker_local() {
-  __process_msg "Checking Docker on localhost"
-  
-  local swarm_master_host=$(cat $STATE_FILE |
-    jq '.machines[] | select (.name=="localhost")')
-  local master_docker_installed=$(echo $swarm_master_host |
-    jq -r '.isDockerInstalled')
-
-  if [ "$master_docker_installed" == false ]; then
+  SKIP_STEP=false
+  _check_component_status "dockerInstalled"
+  if [ "$SKIP_STEP" == false ]; then
+    __process_msg "Checking Docker on localhost"
     source "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$INSTALL_MODE"
-    local swarm_master=$(cat $STATE_FILE |
-      jq '.machines |=
-      map (
-        if .name=="swarm" then
-          . + {
-                "isDockerInstalled": true,
-                "isDockerInitialized": true
-              }
-        else
-          .
-        end)'
-    )
-    _update_state "$swarm_master"
+
+    _update_install_status "dockerInstalled"
+    _update_install_status "dockerInitialized"
   else
     __process_msg "Docker already installed, skipping"
     __process_msg "Docker already initialized, skipping"
@@ -105,6 +169,51 @@ initialize_docker_local() {
   local docker_login_cmd=$(eval "/tmp/docker_login.sh")
   __process_msg "Docker login generated, logging into ecr "
   eval "$docker_login_cmd"
+}
+
+install_swarm() {
+  SKIP_STEP=false
+  _check_component_status "swarmInstalled"
+  if [ "$SKIP_STEP" = false ]; then
+    ensure_updated_packages
+    __process_msg "Installing Swarm"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host | jq '.ip')
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installSwarm.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
+
+    __process_msg "Initializing docker swarm master"
+    _exec_remote_cmd "$host" "docker swarm leave --force || true"
+    local swarm_init_cmd="docker swarm init --advertise-addr $host"
+    _exec_remote_cmd "$host" "$swarm_init_cmd"
+
+    local swarm_worker_token="swarm_worker_token.txt"
+    local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
+    _exec_remote_cmd "$host" "'docker swarm join-token -q worker > $swarm_worker_token_remote'"
+    _copy_script_local $host "$swarm_worker_token_remote"
+
+    local script_dir_local="/tmp/shippable"
+    local swarm_worker_token_local="$script_dir_local/$swarm_worker_token"
+    local swarm_worker_token=$(cat $swarm_worker_token_local)
+
+    local swarm_worker_token_update=$(cat $STATE_FILE | jq '
+      .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
+    update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
+
+    __process_msg "Running Swarm in drain mode"
+    local swarm_master_host_name="swarm_master_host_name.txt"
+    local swarm_master_host_name_remote="$SCRIPT_DIR_REMOTE/$swarm_master_host_name"
+    _exec_remote_cmd "$host" "'docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
+    _copy_script_local $host "$swarm_master_host_name_remote"
+
+    local swarm_master_host_name_remote="$script_dir_local/$swarm_master_host_name"
+    local swarm_master_host_name=$(cat $swarm_master_host_name_remote)
+    _exec_remote_cmd "$host" "docker node update  --availability drain $swarm_master_host_name"
+
+    _update_install_status "swarmInstalled"
+  else
+    __process_msg "Swarm already installed, skipping"
+  fi
 }
 
 install_compose(){
@@ -612,6 +721,28 @@ install_ecr_local() {
   fi
 }
 
+initialize_workers() {
+  SKIP_STEP=false
+  _check_component_status "swarmInitialized"
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Initializing swarm workers on service machines"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local gitlab_host_ip=$(echo $gitlab_host | jq -r '.ip')
+
+    local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
+    local service_machines_count=$(echo $service_machines_list | jq '. | length')
+    for i in $(seq 1 $service_machines_count); do
+      local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
+      local host=$(echo $machine | jq '.ip')
+      local swarm_worker_token=$(cat $STATE_FILE | jq '.systemSettings.swarmWorkerToken')
+      _exec_remote_cmd "$host" "docker swarm leave || true"
+      _exec_remote_cmd "$host" "docker swarm join --token $swarm_worker_token $gitlab_host_ip"
+    done
+    _update_install_status "swarmInitialized"
+  else
+    __process_msg "Swarm already initialized, skipping"
+  fi
+}
 
 install_redis() {
   SKIP_STEP=false
@@ -663,8 +794,9 @@ install_redis_local() {
 main() {
   __process_marker "Installing core"
   if [ "$INSTALL_MODE" == "production" ]; then
-    configure_swarm_master
-    configure_swarm_workers
+    install_docker
+    initialize_docker
+    install_swarm
     install_database
     save_db_credentials_in_statefile
     save_db_credentials
@@ -673,6 +805,7 @@ main() {
     install_rabbitmq
     install_gitlab
     install_ecr
+    initialize_workers
     install_redis
   else
     install_docker_local
