@@ -47,14 +47,28 @@ configure_swarm_workers() {
 }
 
 install_docker_local() {
-  SKIP_STEP=false
-  _check_component_status "dockerInstalled"
-  if [ "$SKIP_STEP" == false ]; then
-    __process_msg "Checking Docker on localhost"
-    source "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$INSTALL_MODE"
+  __process_msg "Checking Docker on localhost"
+  
+  local swarm_master_host=$(cat $STATE_FILE |
+    jq '.machines[] | select (.name=="localhost")')
+  local master_docker_installed=$(echo $swarm_master_host |
+    jq -r '.isDockerInstalled')
 
-    _update_install_status "dockerInstalled"
-    _update_install_status "dockerInitialized"
+  if [ "$master_docker_installed" == false ]; then
+    source "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$INSTALL_MODE"
+    local swarm_master=$(cat $STATE_FILE |
+      jq '.machines |=
+      map (
+        if .name=="swarm" then
+          . + {
+                "isDockerInstalled": true,
+                "isDockerInitialized": true
+              }
+        else
+          .
+        end)'
+    )
+    _update_state "$swarm_master"
   else
     __process_msg "Docker already installed, skipping"
     __process_msg "Docker already initialized, skipping"

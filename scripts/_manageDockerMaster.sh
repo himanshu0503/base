@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 install_docker_master() {
+  __process_msg "Installing Docker on swarm master"
   local swarm_master_host=$(cat $STATE_FILE |
     jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local master_docker_installed=$(echo $swarm_master_host |
@@ -52,69 +53,44 @@ initialize_docker_master() {
     jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local host=$(echo $swarm_master_host \
     | jq '.ip')
-  local master_docker_initialized=$(echo $swarm_master_host |
-    jq -r '.isDockerInitialized')
 
-  ##TODO: remove once 'installStatus.dockerInitialized' flag is removed
-  if [ -z ${master_docker_initialized+x} ]; then
-    __process_msg "Setting swarm master docker initialized status to global docker install status"
-    local docker_initialized_status=$(cat $STATE_FILE |
-      jq -r '.installStatus.dockerInitialized')
-    master_docker_initialized=$docker_initialized_status
-    local swarm_master=$(cat $STATE_FILE |
-      jq '.machines |=
-      map (
-        if .name=="swarm" then
-          .isDockerInitialized="'$docker_initialized_status'"
-        else
-          .
-        end)'
-    )
-    _update_state "$swarm_master"
-  else
-    __process_msg "Using the docker initialized status set in swarm master config"
+  ## Alaways initialize because ecr credentials expire afer 12 hours
+  __process_msg "Initializing docker on swarm master $host"
+
+  local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
+  local credentials_file="$USR_DIR/credentials"
+
+  __process_msg "Loading: installerAccessKey"
+  local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
+  if [ -z "$aws_access_key" ]; then
+    __process_msg "Please update 'systemSettings.installerAccessKey' in state.json and run installer again"
+    exit 1
   fi
+  sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
 
-  if [ "$master_docker_initialized" == false ]; then
-    __process_msg "Docker not initialized on master, initializing"
-
-    local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
-    local credentials_file="$USR_DIR/credentials"
-
-    __process_msg "Loading: installerAccessKey"
-    local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
-    if [ -z "$aws_access_key" ]; then
-      __process_msg "Please update 'systemSettings.installerAccessKey' in state.json and run installer again"
-      exit 1
-    fi
-    sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
-
-    __process_msg "Loading: installerSecretKey"
-    local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
-    if [ -z "$aws_secret_key" ]; then
-      __process_msg "Please update 'systemSettings.installerSecretKey' in state.json and run installer again"
-      exit 1
-    fi
-    sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
-
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/docker-credential-ecr-login" "/usr/bin/"
-    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/config.json" "/root/.docker/"
-    _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
-
-    local swarm_master=$(cat $STATE_FILE |
-      jq '.machines |=
-      map (
-        if .name=="swarm" then
-          .isDockerInitialized=true
-        else
-          .
-        end)'
-    )
-    _update_state "$swarm_master"
-    __process_msg "Initialzed Docker on swarm master"
-  else
-    __process_msg "Docker already initialized on swarm master, skipping"
+  __process_msg "Loading: installerSecretKey"
+  local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
+  if [ -z "$aws_secret_key" ]; then
+    __process_msg "Please update 'systemSettings.installerSecretKey' in state.json and run installer again"
+    exit 1
   fi
+  sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
+
+  _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/docker-credential-ecr-login" "/usr/bin/"
+  _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/config.json" "/root/.docker/"
+  _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
+
+  local swarm_master=$(cat $STATE_FILE |
+    jq '.machines |=
+    map (
+      if .name=="swarm" then
+        .isDockerInitialized=true
+      else
+        .
+      end)'
+  )
+  _update_state "$swarm_master"
+  __process_msg "Initialized Docker on swarm master"
 }
 
 initialize_swarm_master() {

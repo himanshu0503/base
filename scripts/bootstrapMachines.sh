@@ -299,7 +299,10 @@ main() {
           "group": "core",
           "ip": "127.0.0.1",
           "sshSuccessful": "true",
-          "isBootstrapped": "false"
+          "isBootstrapped": "false",
+          "isDockerInstalled": "false",
+          "isDockerInitialized": "false",
+          "isMasterInitialized" : "false"
         }]'
         )
       _update_state "$update"
