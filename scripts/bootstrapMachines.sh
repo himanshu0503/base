@@ -11,13 +11,13 @@ validate_machines_config() {
   local is_upgrade=$(cat $STATE_FILE \
     | jq -r '.isUpgrade')
 
-  if [ $is_upgrade == false ]; then
+  if [ $machine_count -gt 0 ]; then
+    __process_msg "Machines already added, not removing existing entries"
+  else
     __process_msg "Cleaning up machines array in state.json"
     local update=$(cat $STATE_FILE \
       | jq '.machines=[]')
     _update_state "$update"
-  else
-    __process_msg "Installer running in upgrade mode, not clearing machines list"
   fi
 
   local machines_list_state=$(cat $STATE_FILE \
