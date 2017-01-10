@@ -168,6 +168,8 @@ install() {
   source "$SCRIPTS_DIR/bootstrapApp.sh"
   source "$SCRIPTS_DIR/provisionServices.sh"
   source "$SCRIPTS_DIR/cleanup.sh"
+
+  __process_msg "Installation successfully completed !!!"
 }
 
 install_release() {
