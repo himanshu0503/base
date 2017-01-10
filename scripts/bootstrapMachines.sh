@@ -8,9 +8,6 @@ validate_machines_config() {
   MACHINES_LIST=$(cat $MACHINES_CONFIG | jq '.')
   local machine_count=$(echo $MACHINES_LIST | jq -r '. | length')
 
-  local is_upgrade=$(cat $STATE_FILE \
-    | jq -r '.isUpgrade')
-
   if [ $machine_count -gt 0 ]; then
     __process_msg "Machines already added, not removing existing entries"
   else
