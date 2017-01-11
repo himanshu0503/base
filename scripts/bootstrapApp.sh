@@ -28,6 +28,21 @@ generate_serviceuser_token() {
   fi
 }
 
+generate_root_bucket_name() {
+  __process_msg "Generating root bucket name"
+  local root_bucket_name=$(cat $STATE_FILE | jq -r '.systemSettings.rootS3Bucket')
+
+  if [ "$root_bucket_name" == "" ] || [ "$root_bucket_name" == null ]; then
+    __process_msg "Root bucket name not set, setting it to random value"
+    local random_uuid=$(cat /proc/sys/kernel/random/uuid)
+    local install_mode=$(cat $STATE_FILE | jq -r '.installMode')
+    root_bucket_name="shippable-$install_mode-$random_uuid"
+    root_bucket_name=$(cat $STATE_FILE | jq '.systemSettings.rootS3Bucket="'$root_bucket_name'"')
+  else
+    __process_msg "Root bucket name already set to: $root_bucket_name, skipping"
+  fi
+}
+
 update_system_node_keys() {
   local private_key=""
   while read line; do
@@ -218,6 +233,10 @@ generate_system_config() {
   __process_msg "Updating : hubspotShouldSimulate"
   local hubspot_should_simulate=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotShouldSimulate')
   sed -i "s#{{HUBSPOT_SHOULD_SIMULATE}}#$hubspot_should_simulate#g" $system_configs_sql
+
+  __process_msg "Updating : rootS3Bucket"
+  local root_s3_bucket=$(cat $STATE_FILE | jq -r '.systemSettings.rootS3Bucket')
+  sed -i "s#{{ROOT_S3_BUCKET}}#$root_s3_bucket#g" $system_configs_sql
 
   __process_msg "Successfully generated 'systemConfig' table data"
 }
@@ -594,6 +613,7 @@ update_service_list() {
 main() {
   __process_marker "Updating system config"
   generate_serviceuser_token
+  generate_root_bucket_name
 
   local is_upgrade=$(cat $STATE_FILE | jq -r '.isUpgrade')
   if [ "$INSTALL_MODE" == "production" ]; then

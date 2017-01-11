@@ -517,7 +517,8 @@
     "hubspotShipTimeLimit": 10,
     "hubspotListId": 123,
     "hubspotShouldSimulate": "true",
-    "shippableAwsAccountId": "123456"
+    "shippableAwsAccountId": "123456",
+    "rootS3Bucket": ""
   },
   "machines": [],
   "installStatus": {
