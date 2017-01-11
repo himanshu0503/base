@@ -467,7 +467,6 @@
     "defaultCronLoopHours": 2,
     "apiRetryInterval": 3,
     "vortexUrl": "http://172.17.42.1:50000/vortex",
-    "cloudProviders": "ec2",
     "truck": true,
     "hubspotTimeLimit": 10,
     "hubspotListId": 100,
