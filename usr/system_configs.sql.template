@@ -34,6 +34,7 @@ do $$
         "hubspotTimeLimit" INTEGER,
         "hubspotListId" INTEGER,
         "hubspotShouldSimulate" BOOLEAN,
+        "rootS3Bucket" VARCHAR(64),
         "createdAt" timestamp with time zone NOT NULL,
         "updatedAt" timestamp with time zone NOT NULL
       );
@@ -140,6 +141,10 @@ do $$
       alter table "systemConfigs" drop column "vaultRefreshTimeInSec";
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'rootS3Bucket') then
+      alter table "systemConfigs" add column "rootS3Bucket" varchar(64);
+    end if;
+
     alter table "systemConfigs" owner to "apiuser";
   end
 $$;
@@ -189,7 +194,8 @@ do $$
             "truck"={{TRUCK}},
             "hubspotTimeLimit"={{HUBSPOT_TIME_LIMIT}},
             "hubspotListId"={{HUBSPOT_LIST_ID}},
-            "hubspotShouldSimulate"={{HUBSPOT_SHOULD_SIMULATE}}
+            "hubspotShouldSimulate"={{HUBSPOT_SHOULD_SIMULATE}},
+            "rootS3Bucket"='{{ROOT_S3_BUCKET}}'
         where id=1;
     end if;
 
