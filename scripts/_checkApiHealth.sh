@@ -16,7 +16,7 @@ test_api_endpoint() {
     fi
   else
     __process_msg "API timeout exceeded. Unable to connect to API."
-    exit
+    exit 1
   fi
 
   api_response=$(curl -s -o /dev/null -w "%{http_code}" $api_url) || true
