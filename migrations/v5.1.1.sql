@@ -2401,6 +2401,11 @@ do $$
       alter table "systemConfigs" add column "customHostDockerVersion" varchar(24);
     end if;
 
+    -- Add "isConsolesArchived" field to jobs table
+    if not exists (select 1 from information_schema.columns where table_name = 'jobs' and column_name = 'isConsolesArchived') then
+      alter table "jobs" add column "isConsolesArchived" boolean NOT NULL DEFAULT false;
+    end if;
+
     -- update Git Store integration type
     update "masterIntegrations" set "level" = 'system' where "masterIntegrationId" = 1 and "name" = 'Git store' and type = 'scm';
 
