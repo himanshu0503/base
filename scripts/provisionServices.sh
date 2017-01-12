@@ -161,7 +161,8 @@ __save_service_config() {
       [ "$env_var" == "COMPONENT" ]; then
 
       if [ $service == "deploy" ] || [ $service == "manifest" ] \
-        || [ $service == "release" ] || [ $service == "rSync" ]; then
+        || [ $service == "provision" ] || [ $service == "release" ] \
+        || [ $service == "rSync" ]; then
           __map_env_vars $env_var "stepExec" "$service"
         env_values="$env_values -e $env_var=$env_value"
       else
