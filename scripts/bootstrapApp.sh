@@ -879,12 +879,20 @@ __save_service_config() {
   fi
 }
 
-pull_images() {
+save_service_config() {
   local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
   local services_count=$(echo $services | jq '. | length')
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
     __save_service_config $service "" " --name $service --network ingress --with-registry-auth --endpoint-mode vip" $service
+  done
+}
+
+pull_images() {
+  local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
+  local services_count=$(echo $services | jq '. | length')
+  for i in $(seq 1 $services_count); do
+    local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
     local service_image=$(cat $STATE_FILE \
       | jq -r '.services[] | select (.name=="'$service'") | .image')
     __pull_image_globally "$service_image"
@@ -899,6 +907,7 @@ main() {
   local is_upgrade=$(cat $STATE_FILE | jq -r '.isUpgrade')
   if [ "$INSTALL_MODE" == "production" ]; then
     update_service_list
+    save_service_config
     pull_images
     update_system_node_keys
     generate_system_config
@@ -923,6 +932,7 @@ main() {
     restart_api
   else
     update_service_list
+    save_service_config
     update_system_node_keys
     generate_system_config
     create_system_config_local
