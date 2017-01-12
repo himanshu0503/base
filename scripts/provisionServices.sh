@@ -369,8 +369,6 @@ provision_services() {
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
     local provisioned_service=$(echo $provisioned_services | jq -r '.[] | select (.=="'$service'")')
     if [ -z "$provisioned_service" ]; then
-      local service_image=$(cat $STATE_FILE \
-        | jq -r '.services[] | select (.name=="'$service'") | .image')
       __run_service "$service"
     fi
   done
