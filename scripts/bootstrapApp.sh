@@ -459,6 +459,12 @@ provision_api_local() {
 
   sudo docker rm -f api || true
 
+  # Pull image before attempting to run to ensure the image is always updated in
+  # case it was overwritten. Like in case of :latest.
+  local pull_api_cmd="sudo docker pull $image"
+  __process_msg "Pulling $image..."
+  local pull_result=$(eval $pull_api_cmd)
+
   local boot_api_cmd="sudo docker run -d \
     $port_mapping \
     $env_variables \
@@ -917,7 +923,6 @@ main() {
     restart_api
   else
     update_service_list
-    pull_images
     update_system_node_keys
     generate_system_config
     create_system_config_local
