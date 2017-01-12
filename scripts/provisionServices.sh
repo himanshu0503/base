@@ -110,6 +110,167 @@ _update_install_status() {
   _update_state "$update"
 }
 
+__save_service_config() {
+  local service=$1
+  local ports=$2
+  local opts=$3
+  local component=$4
+  local job_type=$5
+
+  __process_msg "Saving image for $service"
+  local system_images_registry=$(cat $STATE_FILE | jq -r '.systemSettings.systemImagesRegistry')
+  local service_repository=$(cat $release_file | jq -r --arg service "$service" '
+    .serviceConfigs[] |
+    select (.name==$service) | .repository')
+  #local service_tag=$service"."$RELEASE_VERSION
+  local service_tag=$(cat $STATE_FILE \
+      | jq -r '.deployTag')
+  local service_image="$system_images_registry/$service_repository:$service_tag"
+  __process_msg "Image version generated for $service : $service_image"
+  local image_update=$(cat $STATE_FILE | jq --arg service "$service" '
+    .services  |=
+    map(if .name == "'$service'" then
+        .image = "'$service_image'"
+      else
+        .
+      end
+    )'
+  )
+  update=$(echo $image_update | jq '.' | tee $STATE_FILE)
+  __process_msg "Successfully updated $service image"
+
+  __process_msg "Saving config for $service"
+  local env_vars=$(cat $release_file | jq --arg service "$service" '
+    .serviceConfigs[] |
+    select (.name==$service) | .envs')
+  __process_msg "Found envs for $service: $env_vars"
+
+  local env_vars_count=$(echo $env_vars | jq '. | length')
+  __process_msg "Successfully read from version file: $service.envs ($env_vars_count)"
+
+  env_values=""
+  for i in $(seq 1 $env_vars_count); do
+    local env_var=$(echo $env_vars | jq -r '.['"$i-1"']')
+
+    # Never apply TRUCK env in production mode
+    if [ "$env_var" == "TRUCK" ] && [ "$INSTALL_MODE" == "production" ]; then
+      continue
+    fi
+
+    if [ "$env_var" == "JOB_TYPE" ] || \
+      [ "$env_var" == "COMPONENT" ]; then
+
+      if [ $service == "deploy" ] || [ $service == "manifest" ] \
+        || [ $service == "release" ] || [ $service == "rSync" ]; then
+          __map_env_vars $env_var "stepExec" "$service"
+        env_values="$env_values -e $env_var=$env_value"
+      else
+        __map_env_vars $env_var $component $job_type
+        env_values="$env_values -e $env_var=$env_value"
+      fi
+    else
+      __map_env_vars $env_var $component $job_type
+      env_values="$env_values -e $env_var=$env_value"
+    fi
+
+  done
+
+  # Proxy
+  __process_msg "Adding $service proxy mapping"
+  http_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpProxy')
+  https_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpsProxy')
+  no_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.noProxy')
+
+  if [ ! -z $http_proxy ]; then
+    env_values="$env_values -e http_proxy=$http_proxy -e HTTP_PROXY=$http_proxy"
+    __process_msg "Successfully updated $service http_proxy mapping"
+  fi
+
+  if [ ! -z $https_proxy ]; then
+    env_values="$env_values -e https_proxy=$https_proxy -e HTTPS_PROXY=$https_proxy"
+    __process_msg "Successfully updated $service https_proxy mapping"
+  fi
+
+  if [ ! -z $no_proxy ]; then
+    env_values="$env_values -e no_proxy=$no_proxy -e NO_PROXY=$no_proxy"
+    __process_msg "Successfully updated $service no_proxy mapping"
+  fi
+
+  local state_env=$(cat $STATE_FILE | jq --arg service "$service" '
+    .services  |=
+    map(if .name == $service then
+        .env = "'$env_values'"
+      else
+        .
+      end
+    )'
+  )
+  update=$(echo $state_env | jq '.' | tee $STATE_FILE)
+
+  local volumes=$(cat $release_file | jq --arg service "$service" '
+    .serviceConfigs[] |
+    select (.name==$service) | .volumes')
+  if [ "$volumes" != "null" ]; then
+    local volumes_update=""
+    local volumes_count=$(echo $volumes | jq '. | length')
+    for i in $(seq 1 $volumes_count); do
+      local volume=$(echo $volumes | jq -r '.['"$i-1"']')
+      volumes_update="$volumes_update -v $volume"
+    done
+    volumes_update=$(cat $STATE_FILE | jq --arg service "$service" '
+      .services  |=
+      map(if .name == $service then
+          .volumes = "'$volumes_update'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $volumes_update | jq '.' | tee $STATE_FILE)
+    __process_msg "Successfully updated $service volumes"
+  fi
+
+  # Ports
+  # TODO: Fetch from systemConfig
+  local port_mapping=$ports
+
+  if [ ! -z $ports ]; then
+    __process_msg "Generating $service port mapping"
+    __process_msg "$service port mapping : $port_mapping"
+    local port_update=$(cat $STATE_FILE | jq --arg service "$service" '
+      .services  |=
+      map(if .name == $service then
+          .port = "'$port_mapping'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $port_update | jq '.' | tee $STATE_FILE)
+    __process_msg "Successfully updated $service port mapping"
+  fi
+
+  # Opts
+  # TODO: Fetch from systemConfig
+  local opts=$3
+  __process_msg "$service opts : $opts"
+
+  if [ ! -z $opts ]; then
+    __process_msg "Generating $service opts"
+    local opt_update=$(cat $STATE_FILE | jq --arg service "$service" '
+      .services  |=
+      map(if .name == $service then
+          .opts = "'$opts'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $opt_update | jq '.' | tee $STATE_FILE)
+    __process_msg "Successfully updated $service opts"
+  fi
+}
+
 __run_service() {
   service=$1
   delay=$2
@@ -196,6 +357,7 @@ __run_service() {
 
 provision_www() {
   local sleep_time=30
+  __save_service_config www " --publish 50001:50001/tcp" "--mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
   __run_service "www" $sleep_time
 }
 
