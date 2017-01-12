@@ -4,16 +4,6 @@ readonly release_file="$VERSIONS_DIR/$RELEASE_VERSION".json
 local pulled_images="[]"
 export SKIP_STEP=false
 
-load_services() {
-  local service_count=$(cat $STATE_FILE | jq '.services | length')
-  if [[ $service_count -lt 3 ]]; then
-    __process_msg "Shippable requires at least api, www and sync to boot"
-    exit 1
-  else
-    __process_msg "Service count : $service_count"
-  fi
-}
-
 __map_env_vars() {
   if [ "$1" == "DBNAME" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
@@ -271,30 +261,6 @@ __save_service_config() {
   fi
 }
 
-__pull_image_globally() {
-  local service_image="$1"
-  __process_msg "Pulling service image on all service machines: $service_image"
-  local service_machines_list=$(cat $STATE_FILE \
-    | jq '[ .machines[] | select(.group=="services") ]')
-  local service_machines_count=$(echo $service_machines_list \
-    | jq '. | length')
-
-  if [ $service_machines_count -gt 0 ]; then
-    for i in $(seq 1 $service_machines_count); do
-      local machine=$(echo $service_machines_list \
-        | jq '.['"$i-1"']')
-      local host=$(echo $machine \
-        | jq '.ip')
-      __process_msg "Pulling image: $service_image on host: $host"
-      local pull_command="sudo su -c \'docker pull $service_image\'"
-      _exec_remote_cmd "$host" "$pull_command"
-      __process_msg "Successfully pulled image: $service_image on host: $host"
-    done
-  else
-    __process_msg "No service machines configured to pull images"
-  fi
-}
-
 __run_service() {
   service=$1
   delay=$2
@@ -385,23 +351,6 @@ provision_www() {
   __run_service "www" $sleep_time
 }
 
-provision_services() {
-  local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
-  local services_count=$(echo $services | jq '. | length')
-  local provisioned_services="[\"www\",\"api\"]"
-  for i in $(seq 1 $services_count); do
-    local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
-    local provisioned_service=$(echo $provisioned_services | jq -r '.[] | select (.=="'$service'")')
-    if [ -z "$provisioned_service" ]; then
-      __save_service_config $service "" " --name $service --network ingress --with-registry-auth --endpoint-mode vip" $service
-      local service_image=$(cat $STATE_FILE \
-        | jq -r '.services[] | select (.name=="'$service'") | .image')
-      __pull_image_globally "$service_image"
-      __run_service "$service"
-    fi
-  done
-}
-
 remove_services_prod() {
   #TODO: Handle the scenario where the installer is not running on the swarm machine
   local running_services=$(docker service inspect --format='{{json .Spec.Name}},' $(sudo docker service ls -q))
@@ -448,9 +397,7 @@ remove_services_local() {
 
 main() {
   __process_marker "Provisioning services"
-  load_services
   provision_www
-  provision_services
   if [ "$INSTALL_MODE" == "production" ]; then
     remove_services_prod
   else
