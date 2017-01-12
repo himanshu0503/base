@@ -459,12 +459,6 @@ provision_api_local() {
 
   sudo docker rm -f api || true
 
-  # Pull image before attempting to run to ensure the image is always updated in
-  # case it was overwritten. Like in case of :latest.
-  local pull_api_cmd="sudo docker pull $image"
-  __process_msg "Pulling $image..."
-  local pull_result=$(eval $pull_api_cmd)
-
   local boot_api_cmd="sudo docker run -d \
     $port_mapping \
     $env_variables \
@@ -610,16 +604,6 @@ update_service_list() {
   source "$SCRIPTS_DIR/_manageServices.sh"
 }
 
-load_services() {
-  local service_count=$(cat $STATE_FILE | jq '.services | length')
-  if [[ $service_count -lt 3 ]]; then
-    __process_msg "Shippable requires at least api, www and sync to boot"
-    exit 1
-  else
-    __process_msg "Service count : $service_count"
-  fi
-}
-
 __map_env_vars() {
   if [ "$1" == "DBNAME" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
@@ -701,6 +685,30 @@ __map_env_vars() {
   else
     echo "No handler for env : $1, exiting"
     exit 1
+  fi
+}
+
+__pull_image_globally() {
+  local service_image="$1"
+  __process_msg "Pulling service image on all service machines: $service_image"
+  local service_machines_list=$(cat $STATE_FILE \
+    | jq '[ .machines[] | select(.group=="services") ]')
+  local service_machines_count=$(echo $service_machines_list \
+    | jq '. | length')
+
+  if [ $service_machines_count -gt 0 ]; then
+    for i in $(seq 1 $service_machines_count); do
+      local machine=$(echo $service_machines_list \
+        | jq '.['"$i-1"']')
+      local host=$(echo $machine \
+        | jq '.ip')
+      __process_msg "Pulling image: $service_image on host: $host"
+      local pull_command="sudo su -c \'docker pull $service_image\'"
+      _exec_remote_cmd "$host" "$pull_command"
+      __process_msg "Successfully pulled image: $service_image on host: $host"
+    done
+  else
+    __process_msg "No service machines configured to pull images"
   fi
 }
 
@@ -865,128 +873,15 @@ __save_service_config() {
   fi
 }
 
-__pull_image_globally() {
-  local service_image="$1"
-  __process_msg "Pulling service image on all service machines: $service_image"
-  local service_machines_list=$(cat $STATE_FILE \
-    | jq '[ .machines[] | select(.group=="services") ]')
-  local service_machines_count=$(echo $service_machines_list \
-    | jq '. | length')
-
-  if [ $service_machines_count -gt 0 ]; then
-    for i in $(seq 1 $service_machines_count); do
-      local machine=$(echo $service_machines_list \
-        | jq '.['"$i-1"']')
-      local host=$(echo $machine \
-        | jq '.ip')
-      __process_msg "Pulling image: $service_image on host: $host"
-      local pull_command="sudo su -c \'docker pull $service_image\'"
-      _exec_remote_cmd "$host" "$pull_command"
-      __process_msg "Successfully pulled image: $service_image on host: $host"
-    done
-  else
-    __process_msg "No service machines configured to pull images"
-  fi
-}
-
-__run_service() {
-  service=$1
-  delay=$2
-  __process_msg "Provisioning $service on swarm cluster"
-  local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
-
-  local port_mapping=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .port')
-  local env_variables=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .env')
-  local name=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .name')
-  local opts=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .opts')
-  local image=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .image')
-  local replicas=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .replicas')
-  local volumes=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .volumes')
-
-  if [ "$INSTALL_MODE" == "production" ]; then
-    local boot_cmd="docker service create"
-
-    if [ $port_mapping != "null" ]; then
-      boot_cmd="$boot_cmd $port_mapping"
-    fi
-
-    if [ $env_variables != "null" ]; then
-      boot_cmd="$boot_cmd $env_variables"
-    fi
-
-    if [ $replicas != "null" ]; then
-      boot_cmd="$boot_cmd --replicas $replicas"
-    else
-      boot_cmd="$boot_cmd --mode global"
-    fi
-
-    if [ $opts != "null" ]; then
-      boot_cmd="$boot_cmd $opts"
-    fi
-
-    boot_cmd="$boot_cmd $image"
-    _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
-
-    if [ ! -z "$delay" ]; then
-      __process_msg "Waiting "$delay"s before "$1" restart..."
-      sleep $delay
-    fi
-
-    _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
-  else
-    sudo docker rm -f $service || true
-
-    # Pull image before attempting to run to ensure the image is always updated in
-    # case it was overwritten. Like in case of :latest.
-    # Don't try to pull an image if it was already pulled earlier during the install,
-    # it will slow down provisioning.
-    local is_image_pulled=$(echo $pulled_images | jq -r '.[] | select (.=="'$image'")')
-    if [ -z "$is_image_pulled" ]; then
-      pulled_images=$(echo $pulled_images | jq '. + ["'$image'"]')
-      local pull_service_cmd="sudo docker pull $image"
-      __process_msg "Pulling $image..."
-      local pull_result=$(eval $pull_service_cmd)
-    fi
-
-    boot_cmd="sudo docker run -d "
-
-    if [ $port_mapping != "null" ]; then
-      boot_cmd="$boot_cmd $port_mapping"
-    fi
-
-    if [ $env_variables != "null" ]; then
-      boot_cmd="$boot_cmd $env_variables"
-    fi
-
-    if [ $volumes != "null" ]; then
-      boot_cmd="$boot_cmd $volumes"
-    fi
-
-    boot_cmd="$boot_cmd \
-      --net host \
-      --name $service \
-      $image"
-
-    eval $boot_cmd
-  fi
-  __process_msg "Successfully provisioned $service"
-}
-
-provision_services() {
+pull_images() {
   local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
   local services_count=$(echo $services | jq '. | length')
-  local provisioned_services="[\"www\",\"api\"]"
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
-    local provisioned_service=$(echo $provisioned_services | jq -r '.[] | select (.=="'$service'")')
-    if [ -z "$provisioned_service" ]; then
-      __save_service_config $service "" " --name $service --network ingress --with-registry-auth --endpoint-mode vip" $service
-      local service_image=$(cat $STATE_FILE \
-        | jq -r '.services[] | select (.name=="'$service'") | .image')
-      __pull_image_globally "$service_image"
-      __run_service "$service"
-    fi
+    __save_service_config $service "" " --name $service --network ingress --with-registry-auth --endpoint-mode vip" $service
+    local service_image=$(cat $STATE_FILE \
+      | jq -r '.services[] | select (.name=="'$service'") | .image')
+    __pull_image_globally "$service_image"
   done
 }
 
@@ -998,8 +893,7 @@ main() {
   local is_upgrade=$(cat $STATE_FILE | jq -r '.isUpgrade')
   if [ "$INSTALL_MODE" == "production" ]; then
     update_service_list
-    load_services
-    provision_services
+    pull_images
     update_system_node_keys
     generate_system_config
     create_system_config
@@ -1023,8 +917,7 @@ main() {
     restart_api
   else
     update_service_list
-    load_services
-    provision_services
+    pull_images
     update_system_node_keys
     generate_system_config
     create_system_config_local
