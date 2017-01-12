@@ -539,6 +539,19 @@
       ]
     },
     {
+      "name": "provision",
+      "repository": "micro",
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT",
+        "JOB_TYPE"
+      ]
+    },
+    {
       "name": "release",
       "repository": "micro",
       "envs": [
