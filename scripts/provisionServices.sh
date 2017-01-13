@@ -372,49 +372,39 @@ provision_www() {
 stop_state_less_services() {
   local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
   local services_count=$(echo $services | jq '. | length')
-  local provisioned_services="[\"www\",\"api\"]"
-  local state_full_services="[\"deploy\",\"jobRequest\",\"charon\",\"release\",\"manifest\"]"
+
+  # www and api are already provisioned
+  local state_full_services="[\"www\",\"api\",\"deploy\",\"jobRequest\",\"charon\",\"release\",\"manifest\"]"
 
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
-    local provisioned_service=$(echo $provisioned_services | jq -r '.[] | select (.=="'$service'")')
     local state_full_service=$(echo $state_full_services | jq -r '.[] | select (.=="'$service'")')
-    if [ -z "$provisioned_service" ]; then
-      if [ -z "$state_full_service" ]; then
-        __stop_state_less_service "$service"
-      fi
+    if [ -z "$state_full_service" ]; then
+      __stop_state_less_service "$service"
     fi
   done
 }
 
 provision_state_full_services() {
-  local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
-  local services_count=$(echo $services | jq '. | length')
   local state_full_services="[\"deploy\",\"jobRequest\",\"charon\",\"release\",\"manifest\"]"
+  local services_count=$(echo $state_full_services | jq '. | length')
 
   for i in $(seq 1 $services_count); do
-    local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
-    local state_full_service=$(echo $state_full_services | jq -r '.[] | select (.=="'$service'")')
-    if [ ! -z "$state_full_service" ]; then
-      __run_service "$service"
-    fi
+    local service=$(echo $state_full_services | jq -r '.['"$i-1"']')
+    __run_service "$service"
   done
 }
 
 provision_state_less_services() {
   local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
   local services_count=$(echo $services | jq '. | length')
-  local provisioned_services="[\"www\",\"api\"]"
-  local state_full_services="[\"deploy\",\"jobRequest\",\"charon\",\"release\",\"manifest\"]"
+  local provisioned_services="[\"www\",\"api\",\"deploy\",\"jobRequest\",\"charon\",\"release\",\"manifest\"]"
 
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
     local provisioned_service=$(echo $provisioned_services | jq -r '.[] | select (.=="'$service'")')
-    local state_full_service=$(echo $state_full_services | jq -r '.[] | select (.=="'$service'")')
     if [ -z "$provisioned_service" ]; then
-      if [ -z "$state_full_service" ]; then
-        __run_service "$service"
-      fi
+      __run_service "$service"
     fi
   done
 }
