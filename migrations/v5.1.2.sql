@@ -5190,5 +5190,10 @@ do $$
     if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'lastSecretsTokenRefreshedAt') then
       alter table "accounts" drop column "lastSecretsTokenRefreshedAt";
     end if;
+
+    -- Remove isSyncing in projects
+    if exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'isSyncing') then
+      alter table "projects" drop column "isSyncing";
+    end if;
   end
 $$;
