@@ -2419,7 +2419,7 @@ do $$
       delete from "routeRoles" where "routePattern"='/passthrough/discounts/:id' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/passthrough/jobs/:id/reports' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/accounts/:accountId/sync' and "httpVerb"='GET';
-
+      delete from "routeRoles" where "routePattern"='/projects/:projectId/sync' and "httpVerb"='GET';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -3768,30 +3768,6 @@ do $$
     perform set_route_role(
       routePattern := '/projects/:projectId/disable',
       httpVerb := 'POST',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/projects/:projectId/sync',
-      httpVerb := 'GET',
-      roleCode := 6000
-    );
-
-    perform set_route_role(
-      routePattern := '/projects/:projectId/sync',
-      httpVerb := 'GET',
-      roleCode := 6010
-    );
-
-    perform set_route_role(
-      routePattern := '/projects/:projectId/sync',
-      httpVerb := 'GET',
-      roleCode := 6020
-    );
-
-    perform set_route_role(
-      routePattern := '/projects/:projectId/sync',
-      httpVerb := 'GET',
       roleCode := 6060
     );
 
