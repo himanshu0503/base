@@ -3503,6 +3503,24 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set jobTestReports routeRoles
 
     perform set_route_role(
