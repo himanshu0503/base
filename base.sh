@@ -54,18 +54,23 @@ __process_msg() {
 }
 
 __process_error() {
-  local message="$@"
-  local bold_red_text='\033[1;31m'
+  local message="$1"
+  local error="$2"
+  local bold_red_text='\e[91m'
   local reset_text='\033[0m'
-  printf "$bold_red_text|___ $@$reset_text\n"
+
+  echo -e "$bold_red_text|___ $message$reset_text"
+  echo -e "     $error"
 }
 
 __check_valid_state_json() {
   {
-    cat $STATE_FILE | jq . &> /dev/null
+    json_errors=$( { cat $STATE_FILE | jq  . ; } 2>&1 )
   } || {
-    __process_error "state.json is invalid JSON, please fix the following errors before continuing:"
-    cat $STATE_FILE | jq .
+    message="state.json is invalid JSON, please fix the following "
+    message+="error(s) before continuing:"
+    __process_error $message $json_errors
+    exit 1
   }
 }
 
