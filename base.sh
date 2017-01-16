@@ -53,6 +53,27 @@ __process_msg() {
   echo "|___ $@"
 }
 
+__process_error() {
+  local message="$1"
+  local error="$2"
+  local bold_red_text='\e[91m'
+  local reset_text='\033[0m'
+
+  echo -e "$bold_red_text|___ $message$reset_text"
+  echo -e "     $error"
+}
+
+__check_valid_state_json() {
+  {
+    json_errors=$( { cat $STATE_FILE | jq  . ; } 2>&1 )
+  } || {
+    message="state.json is invalid JSON, please fix the following "
+    message+="error(s) before continuing:"
+    __process_error $message $json_errors
+    exit 1
+  }
+}
+
 __check_dependencies() {
   __process_marker "Installing dependencies"
 
@@ -285,6 +306,7 @@ if [[ $# -gt 0 ]]; then
         if [[ ! $# -eq 1 ]]; then
           __process_msg "Specify the state file to be used for install."
         else
+          __check_valid_state_json
           __check_dependencies
           __set_is_upgrade false
           install_file $1
@@ -297,6 +319,7 @@ if [[ $# -gt 0 ]]; then
         if [[ ! $# -eq 1 ]]; then
           __process_msg "Mention the release version to be installed."
         else
+          __check_valid_state_json
           __check_dependencies
           __set_is_upgrade true
           release_version=$(cat $STATE_FILE | jq -r '.release')
@@ -309,6 +332,7 @@ if [[ $# -gt 0 ]]; then
       {
         shift
         __process_marker "Booting shippable installer"
+        __check_valid_state_json
         __check_dependencies
         __set_is_upgrade false
         use_latest_release

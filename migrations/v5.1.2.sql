@@ -2419,7 +2419,7 @@ do $$
       delete from "routeRoles" where "routePattern"='/passthrough/discounts/:id' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/passthrough/jobs/:id/reports' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/accounts/:accountId/sync' and "httpVerb"='GET';
-
+      delete from "routeRoles" where "routePattern"='/projects/:projectId/sync' and "httpVerb"='GET';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -3768,30 +3768,6 @@ do $$
     perform set_route_role(
       routePattern := '/projects/:projectId/disable',
       httpVerb := 'POST',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/projects/:projectId/sync',
-      httpVerb := 'GET',
-      roleCode := 6000
-    );
-
-    perform set_route_role(
-      routePattern := '/projects/:projectId/sync',
-      httpVerb := 'GET',
-      roleCode := 6010
-    );
-
-    perform set_route_role(
-      routePattern := '/projects/:projectId/sync',
-      httpVerb := 'GET',
-      roleCode := 6020
-    );
-
-    perform set_route_role(
-      routePattern := '/projects/:projectId/sync',
-      httpVerb := 'GET',
       roleCode := 6060
     );
 
@@ -5213,6 +5189,11 @@ do $$
 
     if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'lastSecretsTokenRefreshedAt') then
       alter table "accounts" drop column "lastSecretsTokenRefreshedAt";
+    end if;
+
+    -- Remove isSyncing in projects
+    if exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'isSyncing') then
+      alter table "projects" drop column "isSyncing";
     end if;
   end
 $$;
