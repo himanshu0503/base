@@ -14,7 +14,8 @@
     "timeTrigger",
     "versionTrigger",
     "ini",
-    "nexec"
+    "nexec",
+    "logup"
   ],
   "integrationServices": [
     {
@@ -622,6 +623,17 @@
         "SHIPPABLE_API_URL",
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_WWW_URL",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "logup",
+      "repository": "micro",
+      "envs": [
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN",
         "RUN_MODE",
         "COMPONENT"
       ]
