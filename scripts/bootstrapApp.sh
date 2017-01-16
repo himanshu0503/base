@@ -38,6 +38,7 @@ generate_root_bucket_name() {
     local install_mode=$(cat $STATE_FILE | jq -r '.installMode')
     root_bucket_name="shippable-$install_mode-$random_uuid"
     root_bucket_name=$(cat $STATE_FILE | jq '.systemSettings.rootS3Bucket="'$root_bucket_name'"')
+    _update_state "$root_bucket_name"
   else
     __process_msg "Root bucket name already set to: $root_bucket_name, skipping"
   fi
