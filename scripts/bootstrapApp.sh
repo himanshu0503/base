@@ -900,6 +900,29 @@ pull_images() {
   done
 }
 
+__stop_state_less_service() {
+  service=$1
+  local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
+  _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
+}
+
+stop_state_less_services() {
+  local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
+  local services_count=$(echo $services | jq '. | length')
+
+  # www and api are statefull services
+  local state_full_services="[\"www\",\"api\"]"
+
+  for i in $(seq 1 $services_count); do
+    local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
+    local state_full_service=$(echo $state_full_services | jq -r '.[] | select (.=="'$service'")')
+    if [ -z "$state_full_service" ]; then
+      __stop_state_less_service "$service"
+    fi
+  done
+}
+
 main() {
   __process_marker "Updating system config"
   generate_serviceuser_token
@@ -917,6 +940,7 @@ main() {
       run_migrations
     fi
     generate_api_config
+    stop_state_less_services
     provision_api
     check_api_health
     if [ $is_upgrade = false ]; then

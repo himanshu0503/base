@@ -272,16 +272,11 @@ __save_service_config() {
   fi
 }
 
-__stop_state_less_service() {
-  service=$1
-  local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
-  _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
-}
-
 __run_service() {
   service=$1
   delay=$2
+  restart=$3
+
   __process_msg "Provisioning $service on swarm cluster"
   local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
@@ -316,7 +311,10 @@ __run_service() {
     fi
 
     boot_cmd="$boot_cmd $image"
-    _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
+
+    if ["$restart" == true]; then
+      _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
+    fi
 
     if [ ! -z "$delay" ]; then
       __process_msg "Waiting "$delay"s before "$1" restart..."
@@ -365,40 +363,15 @@ __run_service() {
 
 provision_www() {
   local sleep_time=30
+  local restart=true
   __save_service_config www " --publish 50001:50001/tcp" "--mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
-  __run_service "www" $sleep_time
-}
-
-stop_state_less_services() {
-  local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
-  local services_count=$(echo $services | jq '. | length')
-
-  # www and api are already provisioned
-  local state_full_services="[\"www\",\"api\",\"deploy\",\"jobRequest\",\"charon\",\"release\",\"manifest\"]"
-
-  for i in $(seq 1 $services_count); do
-    local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
-    local state_full_service=$(echo $state_full_services | jq -r '.[] | select (.=="'$service'")')
-    if [ -z "$state_full_service" ]; then
-      __stop_state_less_service "$service"
-    fi
-  done
-}
-
-provision_state_full_services() {
-  local state_full_services="[\"deploy\",\"jobRequest\",\"charon\",\"release\",\"manifest\"]"
-  local services_count=$(echo $state_full_services | jq '. | length')
-
-  for i in $(seq 1 $services_count); do
-    local service=$(echo $state_full_services | jq -r '.['"$i-1"']')
-    __run_service "$service"
-  done
+  __run_service "www" $sleep_time $restart
 }
 
 provision_state_less_services() {
   local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
   local services_count=$(echo $services | jq '. | length')
-  local provisioned_services="[\"www\",\"api\",\"deploy\",\"jobRequest\",\"charon\",\"release\",\"manifest\"]"
+  local provisioned_services="[\"www\",\"api\"]"
 
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
@@ -457,8 +430,6 @@ main() {
   __process_marker "Provisioning services"
   load_services
   provision_www
-  stop_state_less_services
-  provision_state_full_services
   provision_state_less_services
   if [ "$INSTALL_MODE" == "production" ]; then
     remove_services_prod
