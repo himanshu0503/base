@@ -588,7 +588,6 @@
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_API_URL",
         "SHIPPABLE_API_TOKEN",
-        "RUN_MODE",
         "COMPONENT"
       ]
     }
