@@ -312,7 +312,7 @@ __run_service() {
 
     boot_cmd="$boot_cmd $image"
 
-    if ["$restart" == true]; then
+    if [ "$restart" == true ]; then
       _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
     fi
 
