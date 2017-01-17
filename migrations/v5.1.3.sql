@@ -3760,6 +3760,24 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/projects/:projectId/createCi',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/createCi',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/createCi',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/projects/:projectId/disable',
       httpVerb := 'POST',
       roleCode := 6020
