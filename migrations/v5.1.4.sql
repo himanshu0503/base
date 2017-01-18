@@ -3914,6 +3914,30 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+      routePattern := '/projects/:projectId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set projectAccounts routeRoles
 
     perform set_route_role(
