@@ -2878,6 +2878,30 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/buildJobs',
       httpVerb := 'POST',
       roleCode := 6060
