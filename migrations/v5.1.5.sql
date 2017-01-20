@@ -3399,6 +3399,36 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/jobs/:jobId/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6040
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/jobCoverageReports',
       httpVerb := 'POST',
       roleCode := 6010
@@ -3584,6 +3614,36 @@ do $$
 
     perform set_route_role(
       routePattern := '/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6040
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/jobTestReports',
       httpverb := 'GET',
       roleCode := 6060
     );
