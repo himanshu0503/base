@@ -252,8 +252,7 @@ create_system_config() {
   local db_name="shipdb"
 
   _copy_script_remote $db_ip "$USR_DIR/system_configs.sql" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs.sql"
-  _update_install_status "systemConfigUpdated"
+  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -v ON_ERROR_STOP=1 -f $SCRIPT_DIR_REMOTE/system_configs.sql"
   __process_msg "Successfully created systemConfigs table"
 }
 
@@ -263,9 +262,8 @@ create_system_config_local() {
   local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
 
   sudo cp -vr $system_configs_file $db_mount_dir
-  sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs.sql
+  sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -v ON_ERROR_STOP=1 -f /tmp/data/system_configs.sql
 
-  _update_install_status "systemConfigUpdated"
   __process_msg "Successfully created systemConfigs table on local db"
 }
 
@@ -497,7 +495,7 @@ run_migrations() {
   else
     local migrations_file_name=$(basename $migrations_file_path)
     _copy_script_remote $db_ip $migrations_file_path "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/$migrations_file_name"
+    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -v ON_ERROR_STOP=1 -f $SCRIPT_DIR_REMOTE/$migrations_file_name"
   fi
 }
 
@@ -515,7 +513,7 @@ run_migrations_local() {
   else
     local db_mount_dir="$LOCAL_SCRIPTS_DIR/data/migrations.sql"
     sudo cp -vr $migrations_file $db_mount_dir
-    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/migrations.sql
+    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -v ON_ERROR_STOP=1 -f /tmp/data/migrations.sql
   fi
 }
 
