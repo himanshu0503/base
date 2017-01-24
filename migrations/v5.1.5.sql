@@ -1183,6 +1183,10 @@ do $$
       values (107, '507f1f77bcf86cd799439011', 'providerId', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    if exists (select 1 from "masterIntegrationFields" where "id" = 107 and "isRequired" = true) then
+      update "masterIntegrationFields" set "isRequired" = false where "id" = 107;
+    end if;
+
     -- JENKINS
     if not exists (select 1 from "masterIntegrations" where "name" = 'Jenkins' and "typeCode" = 5009) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
