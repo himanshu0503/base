@@ -94,8 +94,6 @@ validate_systemIntegrations() {
       local enabled_master_integration_type=$(echo $enabled_master_integration \
         | jq -r '.type')
 
-
-      echo $enabled_master_integration_name
       if [ "$enabled_system_integration_master_name" == "$enabled_master_integration_name" ] && \
         [ "$enabled_system_integration_master_type" == "$enabled_master_integration_type" ]; then
         # found associated master integration
@@ -200,7 +198,7 @@ upsert_systemIntegrations() {
       # post a new system integration
       __process_msg "Adding new system integration: $enabled_system_integration_master_name"
       local enabled_master_integration=$(echo $ENABLED_MASTER_INTEGRATIONS \
-        | jq '.[] | 
+        | jq '.[] |
           select
             (.name == "'$enabled_system_integration_master_name'"
             and .type == "'$enabled_system_integration_master_type'")')
@@ -247,7 +245,7 @@ delete_systemIntegrations() {
   #   and try again
 
   # get all systemIntegrations from db
-  # if systemIntegrations not in state, DELETE from db 
+  # if systemIntegrations not in state, DELETE from db
 
   true
 }
