@@ -890,12 +890,19 @@ save_service_config() {
 
 pull_images() {
   local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
+  local pulled_images="[]"
   local services_count=$(echo $services | jq '. | length')
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
     local service_image=$(cat $STATE_FILE \
       | jq -r '.services[] | select (.name=="'$service'") | .image')
-    __pull_image_globally "$service_image"
+    local is_image_pulled=$(echo $pulled_images | jq -r '.[] | select (.=="'$service_image'")')
+    if [ -z "$is_image_pulled" ]; then
+      pulled_images=$(echo $pulled_images | jq '. + ["'$service_image'"]')
+      __pull_image_globally "$service_image"
+    else
+      __process_msg "Skipping $service_image image pull for service $service as its already pulled"
+    fi
   done
 }
 
