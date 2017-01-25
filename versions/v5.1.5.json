@@ -34,7 +34,7 @@
       "services": []
     },
     {
-      "name": "githubEnterprise",
+      "name": "ghe",
       "type": "auth",
       "services": []
     },
