@@ -21,7 +21,7 @@
       "type": "auth"
     },
     {
-      "name": "githubEnterprise",
+      "name": "ghe",
       "type": "auth"
     },
     {
@@ -191,7 +191,7 @@
     },
     {
       "name": "github enterprise auth",
-      "masterName": "githubEnterprise",
+      "masterName": "ghe",
       "masterType": "auth",
       "formJSONValues": [
         {

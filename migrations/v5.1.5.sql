@@ -1157,9 +1157,15 @@ do $$
     end if;
 
     -- github enterprise auth
-    if not exists (select 1 from "masterIntegrations" where "name" = 'githubEnterprise' and "typeCode" = 5007) then
+
+    -- rename from githubEnterprise to ghe if it exists
+    if exists (select 1 from "masterIntegrations" where "id" = '507f1f77bcf86cd799439011' and "name" = 'githubEnterprise') then
+      update "masterIntegrations" set name = 'ghe' where "id" = '507f1f77bcf86cd799439011';
+    end if;
+
+    if not exists (select 1 from "masterIntegrations" where "name" = 'ghe' and "typeCode" = 5007) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('507f1f77bcf86cd799439011', 36, 'githubEnterprise', 'github enterprise auth', 'auth', true, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('507f1f77bcf86cd799439011', 36, 'ghe', 'github enterprise auth', 'auth', true, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for github enterprise
