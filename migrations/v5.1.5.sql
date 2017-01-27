@@ -2017,6 +2017,9 @@ do $$
       alter table "projects" add column "builderAccountId" varchar(24);
     end if;
 
+    -- Set builderAccountId for projects with only a ownerAccountId
+      UPDATE projects SET "builderAccountId" = "ownerAccountId" WHERE "builderAccountId" IS NULL AND "ownerAccountId" IS NOT NULL;
+
     -- Adds foreign key relationships for projects
     if not exists (select 1 from pg_constraint where conname = 'projects_enabledBy_fkey') then
       update projects as p set "enabledBy"=(select id from accounts where "id"=p."enabledBy");
