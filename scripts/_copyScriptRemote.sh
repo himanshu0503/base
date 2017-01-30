@@ -27,8 +27,8 @@ _copy_script_remote() {
 
   __process_msg "Copying $script_path_local to remote host: $script_path_remote"
   _exec_remote_cmd $host "mkdir -p $script_dir_remote"
-  copy_cmd="rsync -q -avz -e \
-    'ssh -q \
+  copy_cmd="rsync -avz -e \
+    'ssh \
       -o StrictHostKeyChecking=no \
       -o NumberOfPasswordPrompts=0 \
       -p $port \

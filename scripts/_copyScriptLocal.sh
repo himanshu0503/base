@@ -19,8 +19,8 @@ _copy_script_local() {
   }
 
   mkdir -p $script_dir_local
-  copy_cmd="rsync -q -avz -e \
-    'ssh -q \
+  copy_cmd="rsync -avz -e \
+    'ssh \
       -o StrictHostKeyChecking=no \
       -o NumberOfPasswordPrompts=0 \
       -p $port \

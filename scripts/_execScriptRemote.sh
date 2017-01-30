@@ -12,7 +12,7 @@ _exec_remote_cmd() {
   shift
   local cmd="$@"
 
-  local remote_cmd="ssh -q \
+  local remote_cmd="ssh \
     -o StrictHostKeyChecking=no \
     -o NumberOfPasswordPrompts=0 \
     -o ConnectTimeout=$timeout \
@@ -40,7 +40,7 @@ _exec_remote_cmd_proxyless() {
   local cmd="$@"
   shift
 
-  local remote_cmd="ssh -q \
+  local remote_cmd="ssh \
     -o StrictHostKeyChecking=no \
     -o NumberOfPasswordPrompts=0 \
     -o ConnectTimeout=$timeout \
