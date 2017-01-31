@@ -26,7 +26,7 @@ update_exec_runsh_images() {
 
   #TODO: Add fields for execRepo and runshRepo in state files and use it from there
   local exec_image_repo="shipimg/mexec"
-  local runSh_image_repo="shipimg/runsh"
+  local runSh_image_repo="shipimg/genexec"
 
   local exec_image="$exec_image_repo:$deploy_tag"
   local runSh_image="$runSh_image_repo:$deploy_tag"
