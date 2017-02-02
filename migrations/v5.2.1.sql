@@ -1441,17 +1441,17 @@ do $$
     end if;
 
     -- masterIntegrationFields for gitlabCreds
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 1) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 152) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (152, '574ee696d49b091400b71112', 'username', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 2) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 153) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (153, '574ee696d49b091400b71112', 'password', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 3) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 154) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (154, '574ee696d49b091400b71112', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;

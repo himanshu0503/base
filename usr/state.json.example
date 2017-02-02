@@ -298,6 +298,33 @@
       ]
     },
     {
+      "name": "state",
+      "masterName": "gitlabCreds",
+      "masterType": "generic",
+      "formJSONValues": [
+        {
+          "label": "username",
+          "value": "root"
+        },
+        {
+          "label": "subscriptionProjectLimit",
+          "value": "100"
+        },
+        {
+          "label": "password",
+          "value": "shippable1234"
+        },
+        {
+          "label": "url",
+          "value": "http://172.17.42.1/api/v3"
+        },
+        {
+          "label": "sshPort",
+          "value": "22"
+        }
+      ]
+    },
+    {
       "name": "filestore",
       "masterName": "amazonKeys",
       "masterType": "generic",
