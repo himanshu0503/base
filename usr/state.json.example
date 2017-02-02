@@ -171,6 +171,10 @@
     {
       "name": "amazonKeys",
       "type": "generic"
+    },
+    {
+      "name": "gitlabCreds",
+      "type": "generic"
     }
   ],
   "systemIntegrations": [
