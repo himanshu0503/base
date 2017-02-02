@@ -1420,7 +1420,7 @@ do $$
     -- amazonKeys
     if not exists (select 1 from "masterIntegrations" where "name" = 'amazonKeys' and "typeCode" = 5012) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57467326b3cbfc0c004f9111', 46, 'amazonKeys', 'Amazon Keys', 'generic', false, 'generc', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57467326b3cbfc0c004f9111', 46, 'amazonKeys', 'Amazon Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for amazonKeys
