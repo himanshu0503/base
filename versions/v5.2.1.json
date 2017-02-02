@@ -79,6 +79,13 @@
       ]
     },
     {
+      "name": "KUBERNETES",
+      "type": "deploy",
+      "services": [
+        "certgen"
+      ]
+    },
+    {
       "name": "TRIPUB",
       "type": "deploy",
       "services": [

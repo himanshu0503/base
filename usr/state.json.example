@@ -57,6 +57,10 @@
       "type": "deploy"
     },
     {
+      "name": "KUBERNETES",
+      "type": "deploy"
+    },
+    {
       "name": "TRIPUB",
       "type": "deploy"
     },
