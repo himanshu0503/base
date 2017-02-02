@@ -152,6 +152,30 @@
       "services": []
     },
     {
+      "name": "gmailCreds",
+      "type": "generic",
+      "services": [
+        "nf",
+        "email"
+      ]
+    },
+    {
+      "name": "mailgunCreds",
+      "type": "generic",
+      "services": [
+        "nf",
+        "email"
+      ]
+    },
+    {
+      "name": "smtpCreds",
+      "type": "generic",
+      "services": [
+        "nf",
+        "email"
+      ]
+    },
+    {
       "name": "gmail",
       "type": "notification",
       "services": [
