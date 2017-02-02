@@ -25,7 +25,7 @@ get_enabled_masterIntegrations() {
     ## NOTE: we're assuming we have at least 5 master integrations in global list
 
     ENABLED_MASTER_INTEGRATIONS=$(echo $response \
-      | jq '[ .[] | select(.isEnabled==true and .level=="system") ]')
+      | jq '[ .[] | select(.isEnabled==true and (.level=="system" or .level=="generic")) ]')
     local enabled_integrations_length=$(echo $ENABLED_MASTER_INTEGRATIONS | jq -r '. | length')
     __process_msg "Successfully fetched master integration list: $enabled_integrations_length"
   else
