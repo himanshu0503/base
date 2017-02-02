@@ -163,6 +163,10 @@
     {
       "name": "hubspot",
       "type": "mktg"
+    },
+    {
+      "name": "amazonKeys",
+      "type": "generic"
     }
   ],
   "systemIntegrations": [
@@ -186,10 +190,6 @@
         {
           "value": "https://mybbs.com",
           "label": "wwwUrl"
-        },
-        {
-          "name": "amazonKeys",
-          "type": "generic"
         }
       ]
     },
@@ -301,7 +301,6 @@
         {
           "label": "secretKey",
           "value": "xxxx"
-        },
         }
       ]
     },
