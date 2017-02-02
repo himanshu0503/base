@@ -290,6 +290,22 @@
       ]
     },
     {
+      "name": "filestore",
+      "masterName": "amazonKeys",
+      "masterType": "generic",
+      "formJSONValues": [
+        {
+          "label": "accessKey",
+          "value": "xxxx"
+        },
+        {
+          "label": "secretKey",
+          "value": "xxxx"
+        },
+        }
+      ]
+    },
+    {
       "name": "AWS",
       "masterName": "AWS",
       "masterType": "cloudproviders",
