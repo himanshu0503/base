@@ -186,6 +186,10 @@
         {
           "value": "https://mybbs.com",
           "label": "wwwUrl"
+        },
+        {
+          "name": "amazonKeys",
+          "type": "generic"
         }
       ]
     },
