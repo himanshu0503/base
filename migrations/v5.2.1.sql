@@ -1890,6 +1890,11 @@ do $$
       alter table "systemIntegrations" alter column "formJSONValues" drop not null;
     end if;
 
+    -- Drop unique index on systemIntegrations.name column
+    if exists (select 1 from pg_indexes where tablename = 'systemIntegrations' and indexname = 'sysIntNameU') then
+      drop index "sysIntNameU";
+    end if;
+
     -- Add isConsistent to resources and set it as false
     if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'isConsistent') then
       alter table "resources" add column "isConsistent" boolean NOT NULL DEFAULT false;

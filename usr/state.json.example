@@ -175,6 +175,18 @@
     {
       "name": "gitlabCreds",
       "type": "generic"
+    },
+    {
+      "name": "smtpCreds",
+      "type": "generic"
+    },
+    {
+      "name": "gmailCreds",
+      "type": "generic"
+    },
+    {
+      "name": "mailgunCreds",
+      "type": "generic"
     }
   ],
   "systemIntegrations": [
@@ -352,6 +364,91 @@
          "label": "secretKey",
          "value": "xxxx"
        }
+      ]
+    },
+    {
+      "name": "notification",
+      "masterName": "smtpCreds",
+      "masterType": "generic",
+      "formJSONValues": [
+        {
+          "label": "emailAuthUser",
+          "value": ""
+        },
+        {
+          "label": "emailAuthPassword",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "host",
+          "value": ""
+        },
+        {
+          "label": "port",
+          "value": ""
+        },
+        {
+          "label": "secure",
+          "value": ""
+        },
+        {
+          "label": "hostname",
+          "value": ""
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "notification",
+      "masterName": "mailgunCreds",
+      "masterType": "generic",
+      "formJSONValues": [
+        {
+          "label": "apiKey",
+          "value": ""
+        },
+        {
+          "label": "domain",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "notification",
+      "masterName": "gmailCreds",
+      "masterType": "generic",
+      "formJSONValues": [
+        {
+          "label": "username",
+          "value": ""
+        },
+        {
+          "label": "password",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
       ]
     },
     {
