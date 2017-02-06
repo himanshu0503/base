@@ -1584,6 +1584,114 @@ do $$
       values (174, '57aafd0673ea26cb053f1116', 'braintreePublicKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    -- githubKeys master integration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'githubKeys' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('577de63321333398d11a1117', 52, 'githubKeys', 'Github Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- masterIntegrationFields for githubKeys
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 175) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (175, '577de63321333398d11a1117', 'clientId', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 176) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (176, '577de63321333398d11a1117', 'clientSecret', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 177) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (177, '577de63321333398d11a1117', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 178) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (178, '577de63321333398d11a1117', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- bitbucketKeys
+    if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucketKeys' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('577de63321333398d11a1118', 53, 'bitbucketKeys', 'Bitbucket Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- masterIntegrationFields for bitbucketKeys
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 179) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (179, '577de63321333398d11a1118', 'clientId', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 180) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (180, '577de63321333398d11a1118', 'clientSecret', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 181) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (181, '577de63321333398d11a1118', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 182) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (182, '577de63321333398d11a1118', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- bitbucketserverKeys master integration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucketserverKeys' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('577de63321333398d11a1119', 54, 'bitbucketserverKeys', 'Bitbucket Server Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- bitbucketserverKeys master integration fields
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 183) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (183, '577de63321333398d11a1119', 'clientId', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 184) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (184, '577de63321333398d11a1119', 'clientSecret', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 185) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (185, '577de63321333398d11a1119', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 186) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (186, '577de63321333398d11a1119', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- githubenterpriseKeys master integration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'githubenterpriseKeys' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('507f1f77bcf86cd799431120', 55, 'githubenterpriseKeys', 'Github Enterprise Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- masterIntegrationFields for githubenterpriseKeys
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 187) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (187, '507f1f77bcf86cd799431120', 'clientId', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 188) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (188, '507f1f77bcf86cd799431120', 'clientSecret', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 189) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (189, '507f1f77bcf86cd799431120', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 190) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (190, '507f1f77bcf86cd799431120', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
     -- Add systemImages
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 1) then
