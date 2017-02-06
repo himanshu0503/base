@@ -2179,6 +2179,11 @@ do $$
       alter table "projects" add column "builderAccountId" varchar(24);
     end if;
 
+    -- Add projects.isOrphaned
+    if not exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'isOrphaned') then
+      alter table "projects" add column "isOrphaned" boolean;
+    end if;
+
     -- Set builderAccountId for projects with only a ownerAccountId
       UPDATE projects SET "builderAccountId" = "ownerAccountId" WHERE "builderAccountId" IS NULL AND "ownerAccountId" IS NOT NULL;
 
