@@ -187,7 +187,11 @@
     {
       "name": "mailgunCreds",
       "type": "generic"
-    }
+    },
+    {
+      "name": "braintreeKeys",
+      "type": "generic"
+    },
   ],
   "systemIntegrations": [
     {
@@ -578,6 +582,29 @@
       "masterName": "braintree",
       "masterType": "payment",
       "name": "braintree"
+    },
+    {
+      "formJSONValues": [
+        {
+          "value": "",
+          "label": "braintreeMerchantId"
+        },
+        {
+          "value": "",
+          "label": "braintreePrivateKey"
+        },
+        {
+          "value": "",
+          "label": "braintreeEnvironment"
+        },
+        {
+          "value": "",
+          "label": "braintreePublicKey"
+        }
+      ],
+      "masterName": "braintreeKeys",
+      "masterType": "generic",
+      "name": "payment"
     },
     {
       "name": "hubspot",
