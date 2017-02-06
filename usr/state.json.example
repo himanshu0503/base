@@ -109,23 +109,11 @@
       "type": "notification"
     },
     {
-      "name": "gmail",
-      "type": "notification"
-    },
-    {
       "name": "hipchat",
       "type": "notification"
     },
     {
-      "name": "mailgun",
-      "type": "notification"
-    },
-    {
       "name": "Slack",
-      "type": "notification"
-    },
-    {
-      "name": "SMTP",
       "type": "notification"
     },
     {
@@ -135,10 +123,6 @@
     {
       "name": "irc",
       "type": "notification"
-    },
-    {
-      "name": "braintree",
-      "type": "payment"
     },
     {
       "name": "bitbucket",
@@ -154,10 +138,6 @@
     },
     {
       "name": "github",
-      "type": "scm"
-    },
-    {
-      "name": "Git store",
       "type": "scm"
     },
     {
@@ -283,33 +263,6 @@
         {
           "label": "url",
           "value": "https://bitbucket.org"
-        }
-      ]
-    },
-    {
-      "name": "gitlab",
-      "masterName": "Git store",
-      "masterType": "scm",
-      "formJSONValues": [
-        {
-          "label": "username",
-          "value": "root"
-        },
-        {
-          "label": "subscriptionProjectLimit",
-          "value": "100"
-        },
-        {
-          "label": "password",
-          "value": "shippable1234"
-        },
-        {
-          "label": "url",
-          "value": "http://172.17.42.1/api/v3"
-        },
-        {
-          "label": "sshPort",
-          "value": "22"
         }
       ]
     },
@@ -456,91 +409,6 @@
       ]
     },
     {
-      "name": "smtp",
-      "masterName": "SMTP",
-      "masterType": "notification",
-      "formJSONValues": [
-        {
-          "label": "emailAuthUser",
-          "value": ""
-        },
-        {
-          "label": "emailAuthPassword",
-          "value": "xxx"
-        },
-        {
-          "label": "emailSender",
-          "value": "noreply@shippable.com"
-        },
-        {
-          "label": "host",
-          "value": ""
-        },
-        {
-          "label": "port",
-          "value": ""
-        },
-        {
-          "label": "secure",
-          "value": ""
-        },
-        {
-          "label": "hostname",
-          "value": ""
-        },
-        {
-          "label": "proxy",
-          "value": ""
-        }
-      ]
-    },
-    {
-      "name": "mailgun",
-      "masterName": "mailgun",
-      "masterType": "notification",
-      "formJSONValues": [
-        {
-          "label": "apiKey",
-          "value": ""
-        },
-        {
-          "label": "domain",
-          "value": "xxx"
-        },
-        {
-          "label": "emailSender",
-          "value": "noreply@shippable.com"
-        },
-        {
-          "label": "proxy",
-          "value": ""
-        }
-      ]
-    },
-    {
-      "name": "gmail",
-      "masterName": "gmail",
-      "masterType": "notification",
-      "formJSONValues": [
-        {
-          "label": "username",
-          "value": ""
-        },
-        {
-          "label": "password",
-          "value": "xxx"
-        },
-        {
-          "label": "emailSender",
-          "value": "noreply@shippable.com"
-        },
-        {
-          "label": "proxy",
-          "value": ""
-        }
-      ]
-    },
-    {
       "name": "s3",
       "masterName": "S3",
       "masterType": "artifact",
@@ -558,30 +426,6 @@
           "label": "region"
         }
       ]
-    },
-    {
-      "formJSONValues": [
-        {
-          "value": "",
-          "label": "braintreeMerchantId"
-        },
-        {
-          "value": "",
-          "label": "braintreePrivateKey"
-        },
-        {
-          "value": "",
-          "label": "braintreeEnvironment"
-        },
-        {
-          "value": "",
-          "label": "braintreePublicKey"
-        }
-      ],
-      "masterDisplayName": "braintree",
-      "masterName": "braintree",
-      "masterType": "payment",
-      "name": "braintree"
     },
     {
       "formJSONValues": [
