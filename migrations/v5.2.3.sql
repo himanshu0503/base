@@ -2558,7 +2558,7 @@ do $$
 
     -- Adds proxyBuildJobPropertyBag column in jobs table
     if not exists (select 1 from information_schema.columns where table_name = 'jobs' and column_name = 'proxyBuildJobPropertyBag') then
-      alter table "jobs" add column "proxyBuildJobPropertyBag" TEXT ;
+      alter table "jobs" add column "proxyBuildJobPropertyBag" TEXT;
     end if;
 
     -- remove outdated routeRoles
