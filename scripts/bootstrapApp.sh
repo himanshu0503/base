@@ -505,8 +505,6 @@ run_migrations_local() {
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
   local db_name="shipdb"
 
-  ##TODO: this should be the latest release file
-  ##TODO update the version in state after migration is run
   local migrations_file="$MIGRATIONS_DIR/$RELEASE_VERSION.sql"
   if [ ! -f $migrations_file ]; then
     __process_msg "No migrations found for this release, skipping"
