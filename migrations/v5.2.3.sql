@@ -2556,6 +2556,11 @@ do $$
       drop table "superUsers";
     end if;
 
+    -- Adds proxyBuildJobPropertyBag column in jobs table
+    if not exists (select 1 from information_schema.columns where table_name = 'jobs' and column_name = 'proxyBuildJobPropertyBag') then
+      alter table "jobs" add column "proxyBuildJobPropertyBag" TEXT;
+    end if;
+
     -- remove outdated routeRoles
     if exists (select 1 from information_schema.columns where table_name = 'routeRoles') then
       delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='GET';
