@@ -5513,5 +5513,10 @@ do $$
     if exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'isSyncing') then
       alter table "projects" drop column "isSyncing";
     end if;
+
+    -- Drop systemMachineImages.execImage
+    if exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'execImage') then
+      alter table "systemMachineImages" drop column "execImage";
+    end if;
   end
 $$;
