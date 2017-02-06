@@ -3,6 +3,7 @@
 export ENABLED_MASTER_INTEGRATIONS=""
 export AVAILABLE_SYSTEM_INTEGRATIONS=""
 export ENABLED_SYSTEM_INTEGRATIONS=""
+export DB_SYSTEM_INTEGRATIONS=""
 
 get_enabled_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
@@ -38,7 +39,7 @@ get_enabled_systemIntegrations() {
   __process_msg "GET-ing enabled system integrations from db"
   local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local system_integrations_get_endpoint="$api_url/systemIntegrations?isEnabled=true"
+  local system_integrations_get_endpoint="$api_url/systemIntegrations"
 
   local response=$(curl \
     -H "Content-Type: application/json" \
@@ -47,7 +48,8 @@ get_enabled_systemIntegrations() {
     --silent)
   response=$(echo $response | jq '.')
 
-  AVAILABLE_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
+  DB_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
+  AVAILABLE_SYSTEM_INTEGRATIONS=$(echo $response | jq '[ .[] | select (.isEnabled == true) ]')
   local available_integrations_length=$(echo $AVAILABLE_SYSTEM_INTEGRATIONS | jq -r '. | length')
   __process_msg "Successfully fetched enabled system integrations from db: $available_integrations_length"
 
@@ -243,11 +245,48 @@ delete_systemIntegrations() {
   # for each SI in list
   # if there is no MI, ask user to delete SI from list
   #   and try again
+  __process_msg "DELETE-ing removed system integrations from state.json, from db, if any"
+  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
 
-  # get all systemIntegrations from db
-  # if systemIntegrations not in state, DELETE from db
+  local system_integrations=$(cat $STATE_FILE | jq '.systemIntegrations')
 
-  true
+  local db_system_integrations=$(echo $DB_SYSTEM_INTEGRATIONS \
+    | jq '.')
+  local db_system_integrations_length=$(echo $db_system_integrations \
+    | jq -r '. | length')
+  for i in $(seq 1 $db_system_integrations_length); do
+    local db_system_integration=$(echo $db_system_integrations \
+      | jq '.['"$i-1"']')
+    local db_system_integration_name=$(echo $db_system_integration \
+      | jq -r '.name')
+    local db_system_integration_master_name=$(echo $db_system_integration \
+      | jq -r '.masterName')
+    local db_system_integration_master_type=$(echo $db_system_integration \
+      | jq -r '.masterType')
+    local system_integration=$(echo $system_integrations \
+      | jq -r -c '[ .[] | select (.masterName == "'$db_system_integration_master_name'" and .masterType == "'$db_system_integration_master_type'" and .name == "'$db_system_integration_name'") ]')
+    local system_integration_length=$(echo $system_integration \
+      | jq -r '. | length')
+    if [ $system_integration_length -eq 0 ]; then
+      local db_system_integration_id=$(echo $db_system_integration \
+        | jq -r '.id')
+      local integrations_delete_endpoint="$api_url/systemIntegrations/$db_system_integration_id"
+      local delete_call_resp_code=$(curl \
+        -H "Content-Type: application/json" \
+        -H "Authorization: apiToken $api_token" \
+        -X DELETE \
+        $integrations_delete_endpoint \
+        --write-out "%{http_code}\n" \
+        --silent \
+        --output /dev/null)
+      if [ "$delete_call_resp_code" -gt "299" ]; then
+        echo "Error deleting integration for $db_system_integration_master_name(status code $delete_call_resp_code)"
+      else
+        echo "Sucessfully deleted integration for $db_system_integration_master_name"
+      fi
+    fi
+  done
 }
 
 main() {
