@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-cleanup() {
+cleanup_stale_images() {
+  __process_msg "Cleaning up stale images"
+
   local deploy_version=$(cat $STATE_FILE \
     | jq -r '.deployTag')
 
@@ -39,13 +41,49 @@ cleanup() {
   done
 }
 
-main() {
-  __process_marker "Cleaning up stale images"
-  
-  if [ "$INSTALL_MODE" == "production" ]; then
-    cleanup
+cleanup_db() {
+  __process_msg "Cleaning up DB"
+
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local db_ip=$(echo $db_host | jq -r '.ip')
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
+
+  local db_cleanup_file_path="$POST_INSTALL_MIGRATIONS_DIR/$RELEASE_VERSION-post_install.sql"
+  if [ ! -f $db_cleanup_file_path ]; then
+    __process_msg "No cleanup migrations found for this release, skipping"
   else
-    __process_msg "Installer running locally, not performing cleanup"
+    local cleanup_file_name=$(basename $db_cleanup_file_path)
+    _copy_script_remote $db_ip $db_cleanup_file_path "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -v ON_ERROR_STOP=1 -f $SCRIPT_DIR_REMOTE/$cleanup_file_name"
+  fi
+}
+
+clean_up_db_local() {
+  __process_msg "Cleaning up DB"
+
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
+
+  local db_cleanup_file_path="$POST_INSTALL_MIGRATIONS_DIR/$RELEASE_VERSION-post_install.sql"
+  if [ ! -f $db_cleanup_file_path ]; then
+    __process_msg "No cleanup migrations found for this release, skipping"
+  else
+    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data/cleanup.sql"
+    sudo cp -vr $db_cleanup_file_path $db_mount_dir
+    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -v ON_ERROR_STOP=1 -f /tmp/data/cleanup.sql
+  fi
+}
+
+main() {
+  __process_marker "Cleaning up"
+
+  if [ "$INSTALL_MODE" == "production" ]; then
+    cleanup_db
+    cleanup_stale_images
+  else
+    clean_up_db_local
+    __process_msg "Installer running locally, not cleaning up images"
   fi
 }
 

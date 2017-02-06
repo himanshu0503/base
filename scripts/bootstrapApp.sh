@@ -247,9 +247,7 @@ create_system_config() {
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq -r '.ip')
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-
-  #TODO: fetch db_name from state.json
-  local db_name="shipdb"
+  local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
 
   _copy_script_remote $db_ip "$USR_DIR/system_configs.sql" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -v ON_ERROR_STOP=1 -f $SCRIPT_DIR_REMOTE/system_configs.sql"
@@ -487,7 +485,7 @@ run_migrations() {
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq -r '.ip')
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-  local db_name="shipdb"
+  local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
 
   local migrations_file_path="$MIGRATIONS_DIR/$RELEASE_VERSION.sql"
   if [ ! -f $migrations_file_path ]; then
@@ -503,10 +501,8 @@ run_migrations_local() {
   __process_msg "Running migrations.sql"
 
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-  local db_name="shipdb"
+  local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
 
-  ##TODO: this should be the latest release file
-  ##TODO update the version in state after migration is run
   local migrations_file="$MIGRATIONS_DIR/$RELEASE_VERSION.sql"
   if [ ! -f $migrations_file ]; then
     __process_msg "No migrations found for this release, skipping"

@@ -16,6 +16,7 @@ readonly IFS=$'\n\t'
 readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly VERSIONS_DIR="$ROOT_DIR/versions"
 readonly MIGRATIONS_DIR="$ROOT_DIR/migrations"
+readonly POST_INSTALL_MIGRATIONS_DIR="$MIGRATIONS_DIR/post_install"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly USR_DIR="$ROOT_DIR/usr"
 readonly LOG_FILE="$USR_DIR/logs.txt"
