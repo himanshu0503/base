@@ -5,24 +5,20 @@
   "isUpgrade": false,
   "masterIntegrations": [
     {
-      "name": "S3",
-      "type": "artifact"
+      "name": "bitbucketKeys",
+      "type": "generic"
     },
     {
-      "name": "bitbucket",
-      "type": "auth"
+      "name": "bitbucketserverKeys",
+      "type": "generic"
     },
     {
-      "name": "bitbucketServer",
-      "type": "auth"
+      "name": "githubKeys",
+      "type": "generic"
     },
     {
-      "name": "github",
-      "type": "auth"
-    },
-    {
-      "name": "ghe",
-      "type": "auth"
+      "name": "githubenterpriseKeys",
+      "type": "generic"
     },
     {
       "name": "AWS",
@@ -405,25 +401,6 @@
         {
           "label": "proxy",
           "value": ""
-        }
-      ]
-    },
-    {
-      "name": "s3",
-      "masterName": "S3",
-      "masterType": "artifact",
-      "formJSONValues": [
-        {
-          "value": "xxx",
-          "label": "accessKey"
-        },
-        {
-          "value": "xxx",
-          "label": "secretKey"
-        },
-        {
-          "value": "",
-          "label": "region"
         }
       ]
     },
