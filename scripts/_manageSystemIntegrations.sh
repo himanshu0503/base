@@ -133,6 +133,8 @@ upsert_systemIntegrations() {
   for i in $(seq 1 $enabled_system_integrations_length); do
     local enabled_system_integration=$(echo $enabled_system_integrations \
       | jq '.['"$i-1"']')
+    local enabled_system_integration_name=$(echo $enabled_system_integration \
+      | jq -r '.name')
     local enabled_system_integration_master_name=$(echo $enabled_system_integration \
       | jq -r '.masterName')
     local enabled_system_integration_master_type=$(echo $enabled_system_integration \
@@ -145,13 +147,16 @@ upsert_systemIntegrations() {
     for j in $(seq 1 $available_system_integrations_length); do
       local available_system_integration=$(echo $available_system_integrations \
         | jq '.['"$j-1"']')
+      local available_system_integration_name=$(echo $available_system_integration \
+        | jq -r '.name')
       local available_system_integration_master_name=$(echo $available_system_integration \
         | jq -r '.masterName')
       local available_system_integration_master_type=$(echo $available_system_integration \
         | jq -r '.masterType')
 
       if [ $enabled_system_integration_master_name == $available_system_integration_master_name ] && \
-        [ $enabled_system_integration_master_type == $available_system_integration_master_type ]; then
+        [ $enabled_system_integration_master_type == $available_system_integration_master_type ] && \
+        [ $enabled_system_integration_name == $available_system_integration_name ]; then
         is_system_integration_available=true
         system_integration_to_update=$enabled_system_integration
         system_integration_in_db=$available_system_integration
@@ -160,7 +165,7 @@ upsert_systemIntegrations() {
 
     if [ $is_system_integration_available == true ]; then
       # put the system integration with values in state.json
-      __process_msg "System integration already present, updating it: $enabled_system_integration_master_name"
+      __process_msg "Updating existing System integration: $enabled_system_integration_name of type: $enabled_system_integration_master_name"
       local db_system_integration_id=$(echo $system_integration_in_db \
         | jq -r '.id')
       local db_system_integration_name=$(echo $system_integration_in_db \
@@ -198,7 +203,8 @@ upsert_systemIntegrations() {
     else
       # find the master integration for this system integration
       # post a new system integration
-      __process_msg "Adding new system integration: $enabled_system_integration_master_name"
+      __process_msg "Adding new system integration: $enabled_system_integration_name of type: $enabled_system_integration_master_name"
+
       local enabled_master_integration=$(echo $ENABLED_MASTER_INTEGRATIONS \
         | jq '.[] |
           select
