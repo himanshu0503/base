@@ -472,7 +472,6 @@
     "swarmWorkerToken": "",
     "vaultToken": "",
     "wwwUrl": "http://localhost:50001",
-    "dynamicNodesSystemIntegrationId": "5745a34a25cf521200e83fe9",
     "dbPassword": "testing1234",
     "defaultPipelineCount": 1,
     "serverEnabled": false,

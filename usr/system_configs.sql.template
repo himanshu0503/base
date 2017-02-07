@@ -40,11 +40,6 @@ do $$
       );
     end if;
 
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'dynamicNodesSystemIntegrationId') then
-      alter table "systemConfigs" add column "dynamicNodesSystemIntegrationId" VARCHAR(24);
-      -- add default value
-    end if;
-
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePrivateKey') then
       alter table "systemConfigs" add column "systemNodePrivateKey" TEXT;
       -- add default value
@@ -174,7 +169,6 @@ do $$
             "rootQueueList"='{{ROOT_QUEUE_LIST}}',
             "execImage"='{{EXEC_IMAGE}}',
             "updatedAt"='{{UPDATED_AT}}',
-            "dynamicNodesSystemIntegrationId"='{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}',
             "systemNodePrivateKey"='{{SYSTEM_NODE_PRIVATE_KEY}}',
             "systemNodePublicKey"='{{SYSTEM_NODE_PUBLIC_KEY}}',
             "allowSystemNodes"={{ALLOW_SYSTEM_NODES}},
@@ -231,7 +225,6 @@ do $$
             "execImage",
             "createdAt",
             "updatedAt",
-            "dynamicNodesSystemIntegrationId",
             "systemNodePrivateKey",
             "systemNodePublicKey",
             "allowSystemNodes",
@@ -277,7 +270,6 @@ do $$
             '{{EXEC_IMAGE}}',
             '{{CREATED_AT}}',
             '{{UPDATED_AT}}',
-            '{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}',
             '{{SYSTEM_NODE_PRIVATE_KEY}}',
             '{{SYSTEM_NODE_PUBLIC_KEY}}',
             {{ALLOW_SYSTEM_NODES}},
