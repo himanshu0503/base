@@ -171,9 +171,9 @@
   ],
   "systemIntegrations": [
     {
-      "name": "bitbucket server auth",
-      "masterName": "bitbucketServer",
-      "masterType": "auth",
+      "name": "auth",
+      "masterName": "bitbucketserverKeys",
+      "masterType": "generic",
       "formJSONValues": [
         {
           "value": "superSecret",
@@ -194,9 +194,9 @@
       ]
     },
     {
-      "name": "github enterprise auth",
-      "masterName": "ghe",
-      "masterType": "auth",
+      "name": "auth",
+      "masterName": "githubenterpriseKeys",
+      "masterType": "generic",
       "formJSONValues": [
         {
           "value": "superSecret",
@@ -217,9 +217,9 @@
       ]
     },
     {
-      "name": "github.com",
-      "masterName": "github",
-      "masterType": "auth",
+      "name": "auth",
+      "masterName": "githubKeys",
+      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "clientId",
@@ -240,9 +240,9 @@
       ]
     },
     {
-      "name": "bitbucket.com",
-      "masterName": "bitbucket",
-      "masterType": "auth",
+      "name": "auth",
+      "masterName": "bitbucketKeys",
+      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "clientId",
