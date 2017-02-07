@@ -2617,7 +2617,7 @@ do $$
     end if;
 
     -- drop column dynamicNodesSystemIntegrationId from systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'dynamicNodesSystemIntegrationId') then
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'dynamicNodesSystemIntegrationId') then
       alter table "systemConfigs" drop column "dynamicNodesSystemIntegrationId";
     end if;
 
