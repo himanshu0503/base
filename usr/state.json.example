@@ -21,10 +21,6 @@
       "type": "generic"
     },
     {
-      "name": "AWS",
-      "type": "cloudproviders"
-    },
-    {
       "name": "ACS",
       "type": "deploy"
     },
@@ -305,9 +301,9 @@
       ]
     },
     {
-      "name": "AWS",
-      "masterName": "AWS",
-      "masterType": "cloudproviders",
+      "name": "provision",
+      "masterName": "amazonKeys",
+      "masterType": "generic",
       "formJSONValues": [
        {
          "label": "accessKey",
