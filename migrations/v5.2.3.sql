@@ -5653,5 +5653,12 @@ do $$
     if exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'execImage') then
       alter table "systemMachineImages" drop column "execImage";
     end if;
+
+    -- Add "drydockTag" to systemMachineImages
+    if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'drydockTag') then
+      alter table "systemMachineImages" add column "drydockTag" varchar(50);
+      update "systemMachineImages" set "drydockTag" = 'prod';
+      alter table "systemMachineImages" alter column "drydockTag" set not null;
+    end if;
   end
 $$;
