@@ -165,7 +165,7 @@ upsert_systemIntegrations() {
 
     if [ $is_system_integration_available == true ]; then
       # put the system integration with values in state.json
-      __process_msg "Updating existing System integration: $enabled_system_integration_name of type: $enabled_system_integration_master_name"
+      __process_msg "Updating existing system integration: $enabled_system_integration_name of type: $enabled_system_integration_master_name"
       local db_system_integration_id=$(echo $system_integration_in_db \
         | jq -r '.id')
       local db_system_integration_name=$(echo $system_integration_in_db \
