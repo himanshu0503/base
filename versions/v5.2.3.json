@@ -19,37 +19,32 @@
   ],
   "integrationServices": [
     {
-      "name": "bitbucket",
-      "type": "auth",
+      "name": "bitbucketKeys",
+      "type": "generic",
       "services": []
     },
     {
-      "name": "bitbucketServer",
-      "type": "auth",
+      "name": "bitbucketserverKeys",
+      "type": "generic",
       "services": []
     },
     {
-      "name": "github",
-      "type": "auth",
+      "name": "githubKeys",
+      "type": "generic",
       "services": []
     },
     {
-      "name": "ghe",
-      "type": "auth",
+      "name": "githubenterpriseKeys",
+      "type": "generic",
       "services": []
     },
     {
-      "name": "AWS",
-      "type": "cloudproviders",
+      "name": "amazonKeys",
+      "type": "generic",
       "services": [
         "marshaller",
         "ec2"
       ]
-    },
-    {
-      "name": "amazons3",
-      "type": "cloudproviders",
-      "services": []
     },
     {
       "name": "AWS",
@@ -176,38 +171,6 @@
       ]
     },
     {
-      "name": "gmail",
-      "type": "notification",
-      "services": [
-        "nf",
-        "email"
-      ]
-    },
-    {
-      "name": "mailgun",
-      "type": "notification",
-      "services": [
-        "nf",
-        "email"
-      ]
-    },
-    {
-      "name": "SMTP",
-      "type": "notification",
-      "services": [
-        "nf",
-        "email"
-      ]
-    },
-    {
-      "name": "Email",
-      "type": "notification",
-      "services": [
-        "nf",
-        "email"
-      ]
-    },
-    {
       "name": "hipchat",
       "type": "notification",
       "services": [
@@ -240,8 +203,8 @@
       ]
     },
     {
-      "name": "braintree",
-      "type": "payment",
+      "name": "braintreeKeys",
+      "type": "generic",
       "services": [
         "braintree"
       ]
@@ -267,13 +230,8 @@
       "services": []
     },
     {
-      "name": "Git store",
-      "type": "scm",
-      "services": []
-    },
-    {
-      "name": "hubspot",
-      "type": "mktg",
+      "name": "hubspotToken",
+      "type": "generic",
       "services": [
         "hubspotSync"
       ]
