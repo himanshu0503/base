@@ -151,10 +151,6 @@ generate_system_config() {
   __process_msg "Updating : updatedAt"
   sed -i "s#{{UPDATED_AT}}#$created_at#g" $system_configs_sql
 
-  __process_msg "Updating : dynamicNodesSystemIntegrationId"
-  local dynamic_nodes_system_integration_id=$(cat $STATE_FILE | jq -r '.systemSettings.dynamicNodesSystemIntegrationId')
-  sed -i "s#{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}#$dynamic_nodes_system_integration_id#g" $system_configs_sql
-
   __process_msg "Updating : systemNodePrivateKey"
   local system_node_private_key=$(cat $STATE_FILE | jq '.systemSettings.systemNodePrivateKey' | sed s/\"//g)
   sed -i "s#{{SYSTEM_NODE_PRIVATE_KEY}}#$system_node_private_key#g" $system_configs_sql
@@ -527,33 +523,6 @@ manage_systemMachineImages() {
   __process_msg "Configuring system machine images"
   source "$SCRIPTS_DIR/_manageSystemMachineImages.sh"
 }
-
-update_dynamic_nodes_integration_id() {
-  __process_msg "Updating dynamic node system integartion id"
-  local api_url=""
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local system_integration_endpoint="$api_url/systemIntegrations"
-
-  local query="?masterType=cloudproviders&name=AWS-ROOT"
-  local system_integrations=$(curl \
-    -H "Content-Type: application/json" \
-    -H "Authorization: apiToken $api_token" \
-    -X GET $system_integration_endpoint$query \
-    --silent)
-
-    local system_integrations_length=$(echo $system_integrations | jq -r '. | length')
-    if [ $system_integrations_length -gt 0 ]; then
-      local system_integration=$(echo $system_integrations | jq '.[0]')
-      local system_integration_id=$(echo $system_integration | jq -r '.id')
-      local update=$(cat $STATE_FILE | jq '.systemSettings.dynamicNodesSystemIntegrationId="'$system_integration_id'"')
-      _update_state "$update"
-    else
-      __process_msg "No system integration configured for dynamic nodes, skipping"
-    fi
-  __process_msg "Successfully updated dynamic node system integartion id"
-}
-
 
 restart_api() {
   __process_msg "Restarting API..."
@@ -953,7 +922,6 @@ main() {
     manage_masterIntegrations
     manage_systemIntegrations
     manage_systemMachineImages
-    update_dynamic_nodes_integration_id
     generate_system_config
     create_system_config
     restart_api
@@ -977,7 +945,6 @@ main() {
     manage_masterIntegrations
     manage_systemIntegrations
     manage_systemMachineImages
-    update_dynamic_nodes_integration_id
     generate_system_config
     create_system_config_local
     restart_api_local

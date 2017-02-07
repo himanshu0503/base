@@ -2616,9 +2616,9 @@ do $$
       alter table "clusterNodes" drop column "isShippableNode";
     end if;
 
-    -- adds column dynamicNodesSystemIntegrationId in systemConfigs table
+    -- drop column dynamicNodesSystemIntegrationId from systemConfigs table
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'dynamicNodesSystemIntegrationId') then
-      alter table "systemConfigs" add column "dynamicNodesSystemIntegrationId" varchar(24);
+      alter table "systemConfigs" drop column "dynamicNodesSystemIntegrationId";
     end if;
 
     -- Adds isShippableInitialized coloumn in systemNodes table
