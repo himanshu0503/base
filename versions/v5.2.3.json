@@ -306,14 +306,8 @@
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
-        "SHIPPABLE_WWW_PORT",
-        "SHIPPABLE_FE_URL",
-        "SHIPPABLE_RDS_URL",
         "SHIPPABLE_ROOT_AMQP_URL",
-        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
-        "SHIPPABLE_AWS_ACCOUNT_ID",
-        "GITHUB_LINK_SYSINT_ID",
-        "BITBUCKET_LINK_SYSINT_ID"
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE"
       ]
     },
     {
