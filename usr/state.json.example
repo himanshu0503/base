@@ -164,6 +164,10 @@
       "name": "braintreeKeys",
       "type": "generic"
     },
+    {
+      "name": "sshKeys",
+      "type": "generic"
+    }
   ],
   "systemIntegrations": [
     {
