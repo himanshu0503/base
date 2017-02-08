@@ -1328,29 +1328,6 @@ do $$
       values (133, '57e8ea9c14d3ef88e56fecb4', 'emailSender', 'string', false, false, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- S3
-    if not exists (select 1 from "masterIntegrations" where "name" = 'S3' and "typeCode" = 5010) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57e8ea9c14d3ef88e56fecb5', 42, 'S3', 'Amazon S3', 'artifact', true, 'system', 5010, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- masterIntegrationFields for S3
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 134) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (134, '57e8ea9c14d3ef88e56fecb5', 'accessKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 135) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (135, '57e8ea9c14d3ef88e56fecb5', 'secretKey', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 136) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (136, '57e8ea9c14d3ef88e56fecb5', 'region', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
     -- Hubspot
       if not exists (select 1 from "masterIntegrations" where "name" = 'hubspot' and "typeCode" = 5011) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -5677,6 +5654,14 @@ do $$
       alter table "systemMachineImages" add column "drydockTag" varchar(50);
       update "systemMachineImages" set "drydockTag" = 'prod';
       alter table "systemMachineImages" alter column "drydockTag" set not null;
+
+    -- Drop S3 artifacts masterIntegration
+    if exists (select 1 from information_schema.columns where table_name = 'masterIntegrationFields') then
+      delete from "masterIntegrationFields" where id in (134, 135, 136);
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'masterIntegrations') then
+      delete from "masterIntegrations" where "typeCode" = 5010 and "name" = 'S3';
     end if;
   end
 $$;
