@@ -173,7 +173,6 @@
     {
       "name": "auth",
       "masterName": "bitbucketserverKeys",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "value": "superSecret",
@@ -196,7 +195,6 @@
     {
       "name": "auth",
       "masterName": "githubenterpriseKeys",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "value": "superSecret",
@@ -219,7 +217,6 @@
     {
       "name": "auth",
       "masterName": "githubKeys",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "clientId",
@@ -242,7 +239,6 @@
     {
       "name": "auth",
       "masterName": "bitbucketKeys",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "clientId",
@@ -265,7 +261,6 @@
     {
       "name": "state",
       "masterName": "gitlabCreds",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "username",
@@ -292,7 +287,6 @@
     {
       "name": "filestore",
       "masterName": "amazonKeys",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "accessKey",
@@ -307,7 +301,20 @@
     {
       "name": "provision",
       "masterName": "amazonKeys",
-      "masterType": "generic",
+      "formJSONValues": [
+       {
+         "label": "accessKey",
+         "value": "xxxx"
+       },
+       {
+         "label": "secretKey",
+         "value": "xxxx"
+       }
+      ]
+    },
+    {
+      "name": "deploy",
+      "masterName": "amazonKeys",
       "formJSONValues": [
        {
          "label": "accessKey",
@@ -322,7 +329,6 @@
     {
       "name": "notification",
       "masterName": "smtpCreds",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "emailAuthUser",
@@ -361,7 +367,6 @@
     {
       "name": "notification",
       "masterName": "mailgunCreds",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "apiKey",
@@ -384,7 +389,6 @@
     {
       "name": "notification",
       "masterName": "gmailCreds",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "username",
@@ -424,13 +428,11 @@
         }
       ],
       "masterName": "braintreeKeys",
-      "masterType": "generic",
       "name": "payment"
     },
     {
       "name": "mktg",
       "masterName": "hubspotToken",
-      "masterType": "generic",
       "formJSONValues": [
         {
           "label": "hubspotApiEndPoint",
