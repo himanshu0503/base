@@ -5654,6 +5654,7 @@ do $$
       alter table "systemMachineImages" add column "drydockTag" varchar(50);
       update "systemMachineImages" set "drydockTag" = 'prod';
       alter table "systemMachineImages" alter column "drydockTag" set not null;
+    end if;
 
     -- Drop S3 artifacts masterIntegration
     if exists (select 1 from information_schema.columns where table_name = 'masterIntegrationFields') then
