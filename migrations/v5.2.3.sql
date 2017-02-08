@@ -425,6 +425,27 @@ do $$
       values (7002, 'system', 'nodeType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    -- Codes for ciYmlIntegration
+    if not exists (select 1 from "systemCodes" where code = 8000) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (8000, 'hub', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 8001) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (8001, 'notifications', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 8002) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (8002, 'deploy', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 8003) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (8003, 'key', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
     -- insert all systemProperties
     if not exists (select 1 from "systemProperties" where "fieldName" = 'sysUserName') then
       insert into "systemProperties" ("fieldName", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -499,6 +520,11 @@ do $$
     if not exists (select 1 from "systemProperties" where "fieldName" = 'webhookSecret') then
       insert into "systemProperties" ("fieldName", "createdBy", "updatedBy", "createdAt", "updatedAt")
       values ('webhookSecret', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a',  '2016-06-01', '2016-06-01');
+    end if;
+
+    -- Add "alias" to masterIntegrations table
+    if not exists (select 1 from information_schema.columns where table_name = 'masterIntegrations' and column_name = 'alias') then
+      alter table "masterIntegrations" add column "alias" varchar(80);
     end if;
 
     -- insert all masterIntegrations
