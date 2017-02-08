@@ -1846,6 +1846,21 @@ do $$
       drop index "sysIntNameU";
     end if;
 
+    -- Remove systemIntegrations.formJSONValues
+    if exists (select 1 from information_schema.columns where table_name = 'systemIntegrations' and column_name = 'formJSONValues') then
+      alter table "systemIntegrations" drop column "formJSONValues";
+    end if;
+
+    -- Remove systemIntegrations.masterType
+    if exists (select 1 from information_schema.columns where table_name = 'systemIntegrations' and column_name = 'masterType') then
+      alter table "systemIntegrations" drop column "masterType";
+    end if;
+
+    -- Remove systemIntegrations.masterDisplayName
+    if exists (select 1 from information_schema.columns where table_name = 'systemIntegrations' and column_name = 'masterDisplayName') then
+      alter table "systemIntegrations" drop column "masterDisplayName";
+    end if;
+
     -- Add isConsistent to resources and set it as false
     if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'isConsistent') then
       alter table "resources" add column "isConsistent" boolean NOT NULL DEFAULT false;

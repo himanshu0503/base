@@ -84,8 +84,6 @@ validate_systemIntegrations() {
       | jq -r '.name')
     local enabled_system_integration_master_name=$(echo $enabled_system_integration \
       | jq -r '.masterName')
-    local enabled_system_integration_master_type=$(echo $enabled_system_integration \
-      | jq -r '.masterType')
     local is_valid_system_integration=false
 
     for j in $(seq 1 $enabled_master_integrations_length); do
@@ -96,8 +94,7 @@ validate_systemIntegrations() {
       local enabled_master_integration_type=$(echo $enabled_master_integration \
         | jq -r '.type')
 
-      if [ "$enabled_system_integration_master_name" == "$enabled_master_integration_name" ] && \
-        [ "$enabled_system_integration_master_type" == "$enabled_master_integration_type" ]; then
+      if [ "$enabled_system_integration_master_name" == "$enabled_master_integration_name" ]; then
         # found associated master integration
         is_valid_system_integration=true
         break
@@ -137,8 +134,6 @@ upsert_systemIntegrations() {
       | jq -r '.name')
     local enabled_system_integration_master_name=$(echo $enabled_system_integration \
       | jq -r '.masterName')
-    local enabled_system_integration_master_type=$(echo $enabled_system_integration \
-      | jq -r '.masterType')
 
     local is_system_integration_available=false
     local system_integration_to_update=""
@@ -151,11 +146,8 @@ upsert_systemIntegrations() {
         | jq -r '.name')
       local available_system_integration_master_name=$(echo $available_system_integration \
         | jq -r '.masterName')
-      local available_system_integration_master_type=$(echo $available_system_integration \
-        | jq -r '.masterType')
 
       if [ $enabled_system_integration_master_name == $available_system_integration_master_name ] && \
-        [ $enabled_system_integration_master_type == $available_system_integration_master_type ] && \
         [ $enabled_system_integration_name == $available_system_integration_name ]; then
         is_system_integration_available=true
         system_integration_to_update=$enabled_system_integration
@@ -208,8 +200,7 @@ upsert_systemIntegrations() {
       local enabled_master_integration=$(echo $ENABLED_MASTER_INTEGRATIONS \
         | jq '.[] |
           select
-            (.name == "'$enabled_system_integration_master_name'"
-            and .type == "'$enabled_system_integration_master_type'")')
+            (.name == "'$enabled_system_integration_master_name'")')
       local enabled_master_integration_id=$(echo $enabled_master_integration \
         | jq -r '.id')
       local enabled_master_integration_display_name=$(echo $enabled_master_integration \
@@ -268,10 +259,8 @@ delete_systemIntegrations() {
       | jq -r '.name')
     local db_system_integration_master_name=$(echo $db_system_integration \
       | jq -r '.masterName')
-    local db_system_integration_master_type=$(echo $db_system_integration \
-      | jq -r '.masterType')
     local system_integration=$(echo $system_integrations \
-      | jq -r -c '[ .[] | select (.masterName == "'$db_system_integration_master_name'" and .masterType == "'$db_system_integration_master_type'" and .name == "'$db_system_integration_name'") ]')
+      | jq -r -c '[ .[] | select (.masterName == "'$db_system_integration_master_name'" and .name == "'$db_system_integration_name'") ]')
     local system_integration_length=$(echo $system_integration \
       | jq -r '. | length')
     if [ $system_integration_length -eq 0 ]; then
