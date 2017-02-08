@@ -4041,6 +4041,14 @@ do $$
       roleCode := 6060
     );
 
+    -- set masterIntegrationCodes routeRoles
+
+    perform set_route_role(
+      routePattern := '/masterIntegrationCodes',
+      httpVerb := 'GET',
+      roleCode := 6040
+    );
+
     -- set passthrough routeRoles
     perform set_route_role(
       routePattern := '/passthrough/discounts/:discountId',
