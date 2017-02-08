@@ -1443,66 +1443,77 @@ do $$
     -- AWS-ROOT
     if exists (select 1 from "masterIntegrations" where "name" = 'AWS' and "typeCode" = 5005 and "id" = '57467326b3cbfc0c004f9110') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '57467326b3cbfc0c004f9110';
+      delete from "providers" where "masterIntegrationId" = '57467326b3cbfc0c004f9110';
       delete from "masterIntegrations" where id = '57467326b3cbfc0c004f9110';
     end if;
 
     -- SMTP
     if exists (select 1 from "masterIntegrations" where "name" = 'SMTP' and "typeCode" = 5003 and "id" = '57cea8056ce9c71800d31ab3') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '57cea8056ce9c71800d31ab3';
+      delete from "providers" where "masterIntegrationId" = '57cea8056ce9c71800d31ab3';
       delete from "masterIntegrations" where id = '57cea8056ce9c71800d31ab3';
     end if;
 
     -- github auth
     if exists (select 1 from "masterIntegrations" where "name" = 'github' and "typeCode" = 5007 and "id" = '577de63321333398d11a35ac') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '577de63321333398d11a35ac';
+      delete from "providers" where "masterIntegrationId" = '577de63321333398d11a35ac';
       delete from "masterIntegrations" where id = '577de63321333398d11a35ac';
     end if;
 
     -- bitbucket auth
     if exists (select 1 from "masterIntegrations" where "name" = 'bitbucket' and "typeCode" = 5007 and "id" = '577de63321333398d11a35ad') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '577de63321333398d11a35ad';
+      delete from "providers" where "masterIntegrationId" = '577de63321333398d11a35ad';
       delete from "masterIntegrations" where id = '577de63321333398d11a35ad';
     end if;
 
     -- bitbucket server auth
     if exists (select 1 from "masterIntegrations" where "name" = 'bitbucketServer' and "typeCode" = 5007 and "id" = '577de63321333398d11a35ae') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '577de63321333398d11a35ae';
+      delete from "providers" where "masterIntegrationId" = '577de63321333398d11a35ae';
       delete from "masterIntegrations" where id = '577de63321333398d11a35ae';
     end if;
 
     -- github enterprise auth
     if exists (select 1 from "masterIntegrations" where "name" = 'ghe' and "typeCode" = 5007 and "id" = '507f1f77bcf86cd799439011') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '507f1f77bcf86cd799439011';
+      delete from "providers" where "masterIntegrationId" = '507f1f77bcf86cd799439011';
       delete from "masterIntegrations" where id = '507f1f77bcf86cd799439011';
     end if;
 
     -- Braintree
     if exists (select 1 from "masterIntegrations" where "name" = 'braintree' and "typeCode" = 5008 and "id" = '57aafd0673ea26cb053fe1ca') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '57aafd0673ea26cb053fe1ca';
+      delete from "providers" where "masterIntegrationId" = '57aafd0673ea26cb053fe1ca';
       delete from "masterIntegrations" where id = '57aafd0673ea26cb053fe1ca';
     end if;
 
     -- Gmail
     if exists (select 1 from "masterIntegrations" where "name" = 'gmail' and "typeCode" = 5003 and "id" = '57e8ea9c14d3ef88e56fecb4') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '57e8ea9c14d3ef88e56fecb4';
+      delete from "providers" where "masterIntegrationId" = '57e8ea9c14d3ef88e56fecb4';
       delete from "masterIntegrations" where id = '57e8ea9c14d3ef88e56fecb4';
     end if;
 
     -- Hubspot
     if exists (select 1 from "masterIntegrations" where "name" = 'hubspot' and "typeCode" = 5011 and "id" = '5811a2e9e73d22829eb0ab3c') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '5811a2e9e73d22829eb0ab3c';
+      delete from "providers" where "masterIntegrationId" = '5811a2e9e73d22829eb0ab3c';
       delete from "masterIntegrations" where id = '5811a2e9e73d22829eb0ab3c';
     end if;
 
     -- Mailgun
     if exists (select 1 from "masterIntegrations" where "name" = 'mailgun' and "typeCode" = 5003 and "id" = '57e8ea91424bff9c871d7321') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '57e8ea91424bff9c871d7321';
+      delete from "providers" where "masterIntegrationId" = '57e8ea91424bff9c871d7321';
       delete from "masterIntegrations" where id = '57e8ea91424bff9c871d7321';
     end if;
 
     -- Git Store
     if exists (select 1 from "masterIntegrations" where "name" = 'Git store' and "typeCode" = 5000 and "id" = '574ee696d49b091400b75f19') then
       delete from "masterIntegrationFields" where "masterIntegrationId" = '574ee696d49b091400b75f19';
+      delete from "providers" where "masterIntegrationId" = '574ee696d49b091400b75f19';
       delete from "masterIntegrations" where id = '574ee696d49b091400b75f19';
     end if;
 
