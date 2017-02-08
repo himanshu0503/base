@@ -4041,10 +4041,10 @@ do $$
       roleCode := 6060
     );
 
-    -- set masterIntegrationMap routeRoles
+    -- set masterIntegrationCodes routeRoles
 
     perform set_route_role(
-      routePattern := '/masterIntegrationMap',
+      routePattern := '/masterIntegrationCodes',
       httpVerb := 'GET',
       roleCode := 6040
     );
