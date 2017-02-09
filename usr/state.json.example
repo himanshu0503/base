@@ -167,6 +167,10 @@
     {
       "name": "sshKeys",
       "type": "generic"
+    },
+    {
+      "name": "emailCreds",
+      "type": "generic"
     }
   ],
   "systemIntegrations": [
