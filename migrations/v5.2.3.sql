@@ -1519,6 +1519,16 @@ do $$
 
     -- END removing redundant master integrations
 
+    -- Drop masterIntegration dependency from providers
+
+    if exists (select 1 from pg_constraint where conname = 'providers_masterIntegrationId_fkey') then
+      alter table "providers" drop constraint "providers_masterIntegrationId_fkey";
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'providers' and column_name = 'masterIntegrationId') then
+      alter table "providers" drop column "masterIntegrationId";
+    end if;
+
     -- Add systemImages
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 1) then
@@ -2399,11 +2409,6 @@ do $$
 
     if not exists (select 1 from pg_constraint where conname = 'runs_subscriptionId_fkey') then
       alter table "runs" add constraint "runs_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
-    end if;
-
-  -- Adds foreign key relationships for providers
-    if not exists (select 1 from pg_constraint where conname = 'providers_masterIntegrationId_fkey') then
-      alter table "providers" add constraint "providers_masterIntegrationId_fkey" foreign key ("masterIntegrationId") references "masterIntegrations"(id) on update restrict on delete restrict;
     end if;
 
   -- Adds foreign key relationships for subscriptions
