@@ -1497,6 +1497,14 @@ do $$
 
     -- END removing redundant master integrations
 
+    -- Insert masterIntegrationTypeCodes
+
+    -- sshKeys masterIntegrationTypeCodes
+    if not exists (select 1 from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01122' and "typeCode" = 8003) then
+      insert into "masterIntegrationTypeCodes" ("id", "masterIntegrationId", "typeCode", "createdAt", "updatedAt")
+      values (1, '5811a2e9e73d22829eb01122', 8003, '2016-06-01', '2016-06-01');
+    end if;
+
     -- Drop masterIntegration dependency from providers
 
     if exists (select 1 from pg_constraint where conname = 'providers_masterIntegrationId_fkey') then
