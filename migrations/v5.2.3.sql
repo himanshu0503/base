@@ -1449,6 +1449,19 @@ do $$
       values (195, '5811a2e9e73d22829eb01123', 'Email address', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    -- hipchatCreds master integration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'hipchatCreds' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "alias", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('5811a2e9e73d22829eb01124', 59, 'hipchatCreds', 'HipChat', 'generic', 'hipchat', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- masterIntegrationFields for hipchatCreds
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 196) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (196, '5811a2e9e73d22829eb01124', 'token', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+
     -- Removing redundant master integrations
 
     -- AWS-ROOT
