@@ -1438,7 +1438,7 @@ do $$
     end if;
 
 
-    -- Removing redundant master integrations 
+    -- Removing redundant master integrations
 
     -- AWS-ROOT
     if exists (select 1 from "masterIntegrations" where "name" = 'AWS' and "typeCode" = 5005 and "id" = '57467326b3cbfc0c004f9110') then
@@ -2582,6 +2582,7 @@ do $$
       delete from "routeRoles" where "routePattern"='/passthrough/jobs/:id/reports' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/accounts/:accountId/sync' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/projects/:projectId/sync' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/masterIntegrationCodes' and "httpVerb"='GET';
     end if;
 
     -- Add "customHostDockerVersion" to systemConfigs table
@@ -3841,10 +3842,10 @@ do $$
       roleCode := 6060
     );
 
-    -- set masterIntegrationCodes routeRoles
+    -- set masterIntegrationTypeCodes routeRoles
 
     perform set_route_role(
-      routePattern := '/masterIntegrationCodes',
+      routePattern := '/masterIntegrationTypeCodes',
       httpVerb := 'GET',
       roleCode := 6040
     );
