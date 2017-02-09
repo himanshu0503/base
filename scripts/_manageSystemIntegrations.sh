@@ -91,8 +91,6 @@ validate_systemIntegrations() {
         | jq '.['"$j-1"']')
       local enabled_master_integration_name=$(echo $enabled_master_integration \
         | jq -r '.name')
-      local enabled_master_integration_type=$(echo $enabled_master_integration \
-        | jq -r '.type')
 
       if [ "$enabled_system_integration_master_name" == "$enabled_master_integration_name" ]; then
         # found associated master integration
@@ -203,15 +201,11 @@ upsert_systemIntegrations() {
             (.name == "'$enabled_system_integration_master_name'")')
       local enabled_master_integration_id=$(echo $enabled_master_integration \
         | jq -r '.id')
-      local enabled_master_integration_display_name=$(echo $enabled_master_integration \
-        | jq -r '.displayName')
       local enabled_master_integration_name=$(echo $enabled_master_integration \
         | jq -r '.name')
 
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterIntegrationId="'$enabled_master_integration_id'"')
-      enabled_system_integration=$(echo $enabled_system_integration \
-        | jq '.masterDisplayName="'$enabled_master_integration_display_name'"')
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterName="'$enabled_master_integration_name'"')
       enabled_system_integration=$(echo $enabled_system_integration \
