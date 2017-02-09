@@ -171,6 +171,10 @@
     {
       "name": "emailCreds",
       "type": "generic"
+    },
+    {
+      "name": "hipchatCreds",
+      "type": "generic"
     }
   ],
   "systemIntegrations": [
