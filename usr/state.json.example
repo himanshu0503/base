@@ -175,6 +175,10 @@
     {
       "name": "hipchatCreds",
       "type": "generic"
+    },
+    {
+      "name": "slackCreds",
+      "type": "generic"
     }
   ],
   "systemIntegrations": [
