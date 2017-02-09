@@ -1440,7 +1440,7 @@ do $$
     -- emailCreds master integration
     if not exists (select 1 from "masterIntegrations" where "name" = 'emailCreds' and "typeCode" = 5012) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "alias", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5811a2e9e73d22829eb01123', 58, 'emailCreds', 'Email', 'generic', 'Email', true, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('5811a2e9e73d22829eb01123', 58, 'emailCreds', 'Email', 'generic', 'Email', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for emailCreds
@@ -1459,6 +1459,18 @@ do $$
     if not exists (select 1 from "masterIntegrationFields" where "id" = 196) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (196, '5811a2e9e73d22829eb01124', 'token', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- slackCreds master integration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'slackCreds' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "alias", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('5811a2e9e73d22829eb01125', 60, 'slackCreds', 'Slack', 'generic', 'Slack', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- masterIntegrationFields for slackCreds
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 197) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (197, '5811a2e9e73d22829eb01125', 'webhookUrl', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
 
