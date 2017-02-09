@@ -476,7 +476,7 @@ check_api_health() {
 }
 
 run_migrations() {
-  __process_msg "Running migrations.sql"
+  __process_marker "Running migrations.sql"
 
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq -r '.ip')
@@ -491,10 +491,12 @@ run_migrations() {
     _copy_script_remote $db_ip $migrations_file_path "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -v ON_ERROR_STOP=1 -f $SCRIPT_DIR_REMOTE/$migrations_file_name"
   fi
+
+  __process_marker "Completed running migrations.sql"
 }
 
 run_migrations_local() {
-  __process_msg "Running migrations.sql"
+  __process_marker "Running migrations.sql"
 
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
   local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
@@ -507,6 +509,8 @@ run_migrations_local() {
     sudo cp -vr $migrations_file $db_mount_dir
     sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -v ON_ERROR_STOP=1 -f /tmp/data/migrations.sql
   fi
+
+  __process_marker "Completed running migrations.sql"
 }
 
 manage_masterIntegrations() {

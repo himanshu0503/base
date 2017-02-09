@@ -44,7 +44,7 @@ source "$SCRIPTS_DIR/_manageState.sh"
 __process_marker() {
   local prompt="$@"
   echo ""
-  echo "##################################################"
+  echo "# $(date +"%T") #######################################"
   echo "# $prompt"
   echo "##################################################"
 }
