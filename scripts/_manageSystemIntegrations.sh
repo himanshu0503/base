@@ -91,8 +91,6 @@ validate_systemIntegrations() {
         | jq '.['"$j-1"']')
       local enabled_master_integration_name=$(echo $enabled_master_integration \
         | jq -r '.name')
-      local enabled_master_integration_type=$(echo $enabled_master_integration \
-        | jq -r '.type')
 
       if [ "$enabled_system_integration_master_name" == "$enabled_master_integration_name" ]; then
         # found associated master integration
@@ -164,15 +162,11 @@ upsert_systemIntegrations() {
         | jq -r '.name')
       local db_system_integration_master_name=$(echo $system_integration_in_db \
         | jq -r '.masterName')
-      local db_system_integration_master_display_name=$(echo $system_integration_in_db \
-        | jq -r '.masterDisplayName')
 
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.id="'$db_system_integration_id'"')
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterName="'$db_system_integration_master_name'"')
-      enabled_system_integration=$(echo $enabled_system_integration \
-        | jq '.masterDisplayName="'$db_system_integration_master_display_name'"')
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.name="'$db_system_integration_name'"')
 
@@ -203,15 +197,11 @@ upsert_systemIntegrations() {
             (.name == "'$enabled_system_integration_master_name'")')
       local enabled_master_integration_id=$(echo $enabled_master_integration \
         | jq -r '.id')
-      local enabled_master_integration_display_name=$(echo $enabled_master_integration \
-        | jq -r '.displayName')
       local enabled_master_integration_name=$(echo $enabled_master_integration \
         | jq -r '.name')
 
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterIntegrationId="'$enabled_master_integration_id'"')
-      enabled_system_integration=$(echo $enabled_system_integration \
-        | jq '.masterDisplayName="'$enabled_master_integration_display_name'"')
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterName="'$enabled_master_integration_name'"')
       enabled_system_integration=$(echo $enabled_system_integration \
@@ -228,10 +218,10 @@ upsert_systemIntegrations() {
         --silent \
         --output /dev/null)
       if [ "$post_call_resp_code" -gt "299" ]; then
-        __process_msg "Error adding integration for $enabled_master_integration_display_name(status code $post_call_resp_code)"
+        __process_msg "Error adding integration for $enabled_system_integration_master_name(status code $post_call_resp_code)"
         exit 1
       else
-        __process_msg "Sucessfully added integration for $enabled_master_integration_display_name"
+        __process_msg "Sucessfully added integration for $enabled_system_integration_master_name"
       fi
 
     fi
