@@ -19,7 +19,10 @@ readonly MIGRATIONS_DIR="$ROOT_DIR/migrations"
 readonly POST_INSTALL_MIGRATIONS_DIR="$MIGRATIONS_DIR/post_install"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly USR_DIR="$ROOT_DIR/usr"
-readonly LOG_FILE="$USR_DIR/logs.txt"
+readonly LOGS_DIR="$USR_DIR/logs"
+readonly TIMESTAMP="$(date +%Y_%m_%d_%H:%M:%S)"
+readonly LOG_FILE="$LOGS_DIR/${TIMESTAMP}_logs.txt"
+readonly LOG_COUNT=6
 readonly REMOTE_SCRIPTS_DIR="$ROOT_DIR/scripts/remote"
 readonly LOCAL_SCRIPTS_DIR="$ROOT_DIR/scripts/local"
 readonly STATE_FILE="$USR_DIR/state.json"
@@ -38,32 +41,11 @@ source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptLocal.sh"
 source "$SCRIPTS_DIR/_manageState.sh"
+source "$SCRIPTS_DIR/_manageState.sh"
+source "$SCRIPTS_DIR/logger.sh"
 
 # Helper methods ##########################################
 ###########################################################
-__process_marker() {
-  local prompt="$@"
-  echo ""
-  echo "# $(date +"%T") #######################################"
-  echo "# $prompt"
-  echo "##################################################"
-}
-
-__process_msg() {
-  local message="$@"
-  echo "|___ $@"
-}
-
-__process_error() {
-  local message="$1"
-  local error="$2"
-  local bold_red_text='\e[91m'
-  local reset_text='\033[0m'
-
-  echo -e "$bold_red_text|___ $message$reset_text"
-  echo -e "     $error"
-}
-
 __check_valid_state_json() {
   {
     json_errors=$( { cat $STATE_FILE | jq  . ; } 2>&1 )
@@ -293,68 +275,74 @@ __set_is_upgrade() {
   fi
 }
 
-if [[ $# -gt 0 ]]; then
-  key="$1"
+main() {
+  __check_logsdir
+  if [[ $# -gt 0 ]]; then
+    key="$1"
 
-  case $key in
-    -s|--status) __show_status
-      shift ;;
-    -v|--version) __show_version
-      shift ;;
-    -f|--file)
-      {
-        shift
-        if [[ ! $# -eq 1 ]]; then
-          __process_msg "Specify the state file to be used for install."
-        else
+    case $key in
+      -s|--status) __show_status
+        shift ;;
+      -v|--version) __show_version
+        shift ;;
+      -f|--file)
+        {
+          shift
+          if [[ ! $# -eq 1 ]]; then
+            __process_msg "Specify the state file to be used for install."
+          else
+            __check_valid_state_json
+            __check_dependencies
+            __set_is_upgrade false
+            install_file $1
+          fi
+        } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
+        ;;
+      -r|--release)
+        {
+          shift
+          if [[ ! $# -eq 1 ]]; then
+            __process_msg "Mention the release version to be installed."
+          else
+            __check_valid_state_json
+            __check_dependencies
+            __set_is_upgrade true
+            release_version=$(cat $STATE_FILE | jq -r '.release')
+            export RELEASE_VERSION=$latest_release
+            install_release $1
+          fi
+        } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
+        ;;
+      -i|--install)
+        {
+          shift
+          __process_marker "Booting shippable installer"
           __check_valid_state_json
           __check_dependencies
           __set_is_upgrade false
-          install_file $1
-        fi
-      } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
-      ;;
-    -r|--release)
-      {
-        shift
-        if [[ ! $# -eq 1 ]]; then
-          __process_msg "Mention the release version to be installed."
-        else
-          __check_valid_state_json
-          __check_dependencies
-          __set_is_upgrade true
-          release_version=$(cat $STATE_FILE | jq -r '.release')
-          export RELEASE_VERSION=$latest_release
-          install_release $1
-        fi
-      } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
-      ;;
-    -i|--install)
-      {
-        shift
-        __process_marker "Booting shippable installer"
-        __check_valid_state_json
-        __check_dependencies
-        __set_is_upgrade false
-        use_latest_release
-        if [[ $# -eq 1 ]]; then
-          install_mode=$1
-        fi
-        if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
-          export INSTALL_MODE="$install_mode"
-          install
-        else
-          __process_msg "Running installer in default 'local' mode"
-          install
-        fi
-      } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
-      ;;
-    -h|--help) __print_help
-      shift ;;
-    *)
-      __print_help
-      shift ;;
-  esac
-else
-  __print_help
-fi
+          use_latest_release
+          if [[ $# -eq 1 ]]; then
+            install_mode=$1
+          fi
+          if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
+            export INSTALL_MODE="$install_mode"
+            install
+          else
+            __process_msg "Running installer in default 'local' mode"
+            install
+          fi
+        } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
+        ;;
+      -h|--help) __print_help
+        shift ;;
+      *)
+        __print_help
+        shift ;;
+    esac
+    __cleanup_logfiles
+  else
+    __print_help
+  fi
+}
+
+main "$@"
