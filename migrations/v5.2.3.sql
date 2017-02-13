@@ -522,11 +522,6 @@ do $$
       values ('webhookSecret', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a',  '2016-06-01', '2016-06-01');
     end if;
 
-    -- Add "alias" to masterIntegrations table
-    if not exists (select 1 from information_schema.columns where table_name = 'masterIntegrations' and column_name = 'alias') then
-      alter table "masterIntegrations" add column "alias" varchar(80);
-    end if;
-
     -- insert all masterIntegrations
 
     -- Docker
@@ -1420,60 +1415,6 @@ do $$
       values (192, '5811a2e9e73d22829eb01121', 'hubspotApiToken', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- sshKeys master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'sshKeys' and "typeCode" = 5012) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "alias", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5811a2e9e73d22829eb01122', 57, 'sshKeys', 'SSH Keys', 'generic', 'ssh-key', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- masterIntegrationFields for sshKeys
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 193) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (193, '5811a2e9e73d22829eb01122', 'publicKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 194) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (194, '5811a2e9e73d22829eb01122', 'privateKey', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- emailCreds master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'emailCreds' and "typeCode" = 5012) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "alias", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5811a2e9e73d22829eb01123', 58, 'emailCreds', 'Email', 'generic', 'Email', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- masterIntegrationFields for emailCreds
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 195) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (195, '5811a2e9e73d22829eb01123', 'Email address', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- hipchatCreds master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'hipchatCreds' and "typeCode" = 5012) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "alias", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5811a2e9e73d22829eb01124', 59, 'hipchatCreds', 'HipChat', 'generic', 'hipchat', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- masterIntegrationFields for hipchatCreds
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 196) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (196, '5811a2e9e73d22829eb01124', 'token', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- slackCreds master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'slackCreds' and "typeCode" = 5012) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "alias", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5811a2e9e73d22829eb01125', 60, 'slackCreds', 'Slack', 'generic', 'Slack', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- masterIntegrationFields for slackCreds
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 197) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (197, '5811a2e9e73d22829eb01125', 'webhookUrl', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-
     -- Removing redundant master integrations
 
     -- AWS-ROOT
@@ -1532,28 +1473,6 @@ do $$
     end if;
 
     -- END removing redundant master integrations
-
-    -- Insert masterIntegrationTypeCodes
-    if exists (select 1 from information_schema.tables where table_name = 'masterIntegrationTypeCodes') then
-
-      -- sshKeys masterIntegrationTypeCodes
-      if not exists (select 1 from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01122' and "typeCode" = 8003) then
-        insert into "masterIntegrationTypeCodes" ("id", "masterIntegrationId", "typeCode", "createdAt", "updatedAt")
-        values (1, '5811a2e9e73d22829eb01122', 8003, '2016-06-01', '2016-06-01');
-      end if;
-
-      -- emailCreds masterIntegrationTypeCodes
-      if not exists (select 1 from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01123' and "typeCode" = 8001) then
-        insert into "masterIntegrationTypeCodes" ("id", "masterIntegrationId", "typeCode", "createdAt", "updatedAt")
-        values (2, '5811a2e9e73d22829eb01123', 8001, '2016-06-01', '2016-06-01');
-      end if;
-
-      -- hipchatCreds masterIntegrationTypeCodes
-      if not exists (select 1 from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01124' and "typeCode" = 8001) then
-        insert into "masterIntegrationTypeCodes" ("id", "masterIntegrationId", "typeCode", "createdAt", "updatedAt")
-        values (3, '5811a2e9e73d22829eb01124', 8001, '2016-06-01', '2016-06-01');
-      end if;
-    end if;
 
     -- Drop masterIntegration dependency from providers
 
