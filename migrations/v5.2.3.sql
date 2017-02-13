@@ -5459,54 +5459,6 @@ do $$
     if exists (select 1 from information_schema.columns where table_name = 'masterIntegrations') then
       delete from "masterIntegrations" where "typeCode" = 5010 and "name" = 'S3';
     end if;
-
-    -- remove the redundant masterIntegrationTypeCodes
-
-    -- sshKeys
-    if exists (select 1 from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01122') then
-      delete from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01122';
-    end if;
-
-    -- emailCreds
-    if exists (select 1 from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01123') then
-      delete from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01123';
-    end if;
-
-    -- hipchatCreds
-    if exists (select 1 from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01124') then
-      delete from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01124';
-    end if;
-
-    -- remove the redundant masterIntegrations
-
-    -- sshKeys
-    if exists (select 1 from "masterIntegrations" where "name" = 'sshKeys' and "typeCode" = 5012 and "id" = '5811a2e9e73d22829eb01122') then
-      delete from "masterIntegrationFields" where "masterIntegrationId" = '5811a2e9e73d22829eb01122';
-      delete from "masterIntegrations" where "id" = '5811a2e9e73d22829eb01122';
-    end if;
-
-    -- emailCreds
-    if exists (select 1 from "masterIntegrations" where "name" = 'emailCreds' and "typeCode" = 5012 and "id" = '5811a2e9e73d22829eb01123') then
-      delete from "masterIntegrationFields" where "masterIntegrationId" = '5811a2e9e73d22829eb01123';
-      delete from "masterIntegrations" where "id" = '5811a2e9e73d22829eb01123';
-    end if;
-
-    -- hipchatCreds
-    if exists (select 1 from "masterIntegrations" where "name" = 'hipchatCreds' and "typeCode" = 5012 and "id" = '5811a2e9e73d22829eb01124') then
-      delete from "masterIntegrationFields" where "masterIntegrationId" = '5811a2e9e73d22829eb01124';
-      delete from "masterIntegrations" where "id" = '5811a2e9e73d22829eb01124';
-    end if;
-
-    -- slackCreds
-    if exists (select 1 from "masterIntegrations" where "name" = 'slackCreds' and "typeCode" = 5012 and "id" = '5811a2e9e73d22829eb01125') then
-      delete from "masterIntegrationFields" where "masterIntegrationId" = '5811a2e9e73d22829eb01125';
-      delete from "masterIntegrations" where "id" = '5811a2e9e73d22829eb01125';
-    end if;
-
-    -- Remove the alias column from the masterIntegrations
-    if exists (select 1 from information_schema.columns where table_name = 'masterIntegrations' and column_name = 'alias') then
-      alter table "masterIntegrations" drop column "alias";
-    end if;
   end
 $$;
 
