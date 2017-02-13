@@ -5540,5 +5540,30 @@ do $$
     if exists (select 1 from information_schema.columns where table_name = 'masterIntegrations') then
       delete from "masterIntegrations" where "typeCode" = 5010 and "name" = 'S3';
     end if;
+
+    -- Drop mailChimpId from accounts
+    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'mailChimpId') then
+      alter table "accounts" drop column "mailChimpId";
+    end if;
+
+    -- Drop welcomeEmailSent from accounts
+    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'welcomeEmailSent') then
+      alter table "accounts" drop column "welcomeEmailSent";
+    end if;
+
+    -- Drop isSuperUser from accounts
+    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isSuperUser') then
+      alter table "accounts" drop column "isSuperUser";
+    end if;
+
+    -- Drop isBetaUser from accounts
+    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isBetaUser') then
+      alter table "accounts" drop column "isBetaUser";
+    end if;
+
+    -- Drop isOpsUser from accounts
+    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isOpsUser') then
+      alter table "accounts" drop column "isOpsUser";
+    end if;
   end
 $$;
