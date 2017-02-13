@@ -1548,6 +1548,11 @@ do $$
         values (2, '5811a2e9e73d22829eb01123', 8001, '2016-06-01', '2016-06-01');
       end if;
 
+      -- hipchatCreds masterIntegrationTypeCodes
+      if not exists (select 1 from "masterIntegrationTypeCodes" where "masterIntegrationId" = '5811a2e9e73d22829eb01124' and "typeCode" = 8001) then
+        insert into "masterIntegrationTypeCodes" ("id", "masterIntegrationId", "typeCode", "createdAt", "updatedAt")
+        values (3, '5811a2e9e73d22829eb01124', 8001, '2016-06-01', '2016-06-01');
+      end if;
     end if;
 
     -- Drop masterIntegration dependency from providers
