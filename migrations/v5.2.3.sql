@@ -5494,7 +5494,7 @@ do $$
     -- masterIntegrationFields for gitlabKeys
     if not exists (select 1 from "masterIntegrationFields" where "id" = 198) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (198, '58a160e8c2845c9d5fb82041', 'clientId', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-02-13', '2017-02-13');
+      values (198, '58a160e8c2845c9d5fb82041', 'clientId', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-02-13', '2017-02-13');
     end if;
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 199) then
@@ -5504,7 +5504,7 @@ do $$
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 200) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (200, '58a160e8c2845c9d5fb82041', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-02-13', '2017-02-13');
+      values (200, '58a160e8c2845c9d5fb82041', 'wwwUrl', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-02-13', '2017-02-13');
     end if;
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 201) then

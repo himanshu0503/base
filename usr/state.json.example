@@ -17,6 +17,10 @@
       "type": "generic"
     },
     {
+      "name": "gitlabKeys",
+      "type": "generic"
+    },
+    {
       "name": "githubenterpriseKeys",
       "type": "generic"
     },
@@ -245,6 +249,28 @@
         {
           "label": "url",
           "value": "https://api.github.com"
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "masterName": "gitlabKeys",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "secretClientId"
+        },
+        {
+          "label": "clientSecret",
+          "value": "xxx"
+        },
+        {
+          "label": "wwwUrl",
+          "value": "http://localhost:50001"
+        },
+        {
+          "label": "url",
+          "value": "https://gitlab.com/api/v3"
         }
       ]
     },
