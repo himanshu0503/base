@@ -231,6 +231,10 @@ generate_system_config() {
   local root_s3_bucket=$(cat $STATE_FILE | jq -r '.systemSettings.rootS3Bucket')
   sed -i "s#{{ROOT_S3_BUCKET}}#$root_s3_bucket#g" $system_configs_sql
 
+  __process_msg "Updating : nodeScriptsLocation"
+  local node_scripts_location=$(cat $STATE_FILE | jq -r '.systemSettings.nodeScriptsLocation')
+  sed -i "s#{{NODE_SCRIPTS_LOCATION}}#$node_scripts_location#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 

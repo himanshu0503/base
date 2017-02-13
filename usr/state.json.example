@@ -558,7 +558,8 @@
     "hubspotListId": 123,
     "hubspotShouldSimulate": "true",
     "shippableAwsAccountId": "123456",
-    "rootS3Bucket": ""
+    "rootS3Bucket": "",
+    "nodeScriptsLocation": "https://github.com/Shippable/node"
   },
   "machines": [],
   "installStatus": {
