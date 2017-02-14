@@ -3852,6 +3852,92 @@ do $$
       roleCode := 6060
     );
 
+    -- set jobStatesMap routeRoles
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap',
+      httpVerb := 'GET',
+      roleCode := 6040
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap/:jobStatesMapId',
+      httpVerb := 'PUT',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap/:jobStatesMapId',
+      httpVerb := 'PUT',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap/:jobStatesMapId',
+      httpVerb := 'PUT',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap/:jobStatesMapId',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap/:jobStatesMapId',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobStatesMap/:jobStatesMapId',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set masterIntegrations routeRoles
 
     perform set_route_role(
