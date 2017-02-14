@@ -446,6 +446,72 @@ do $$
       values (8003, 'key', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    -- Add systemCodes for jobStatesMap
+    if not exists (select 1 from "systemCodes" where code = 201) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (201, 'run', 'jobStatesMapType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 202) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (202, 'build', 'jobStatesMapType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 301) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (301, 'branch', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 302) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (302, 'tag', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 303) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (303, 'release', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 304) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (304, 'pr', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 305) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (305, 'deploy', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 306) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (306, 'manifest', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 307) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (307, 'runCI', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 308) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (308, 'runSh', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 309) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (309, 'ciJob', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 310) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (310, 'jenkinsJob', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 311) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (311, 'rSync', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
     -- insert all systemProperties
     if not exists (select 1 from "systemProperties" where "fieldName" = 'sysUserName') then
       insert into "systemProperties" ("fieldName", "createdBy", "updatedBy", "createdAt", "updatedAt")
