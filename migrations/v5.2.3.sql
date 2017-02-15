@@ -425,27 +425,6 @@ do $$
       values (7002, 'system', 'nodeType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- Codes for ciYmlIntegration
-    if not exists (select 1 from "systemCodes" where code = 8000) then
-      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (8000, 'hub', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemCodes" where code = 8001) then
-      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (8001, 'notifications', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemCodes" where code = 8002) then
-      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (8002, 'deploy', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemCodes" where code = 8003) then
-      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (8003, 'key', 'ciYmlIntegration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
     -- Add systemCodes for jobStatesMap
     if not exists (select 1 from "systemCodes" where code = 201) then
       insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
