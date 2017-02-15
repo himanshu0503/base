@@ -559,7 +559,7 @@
     "hubspotShouldSimulate": "true",
     "shippableAwsAccountId": "123456",
     "rootS3Bucket": "",
-    "nodeScriptsLocation": "https://github.com/Shippable/node"
+    "nodeScriptsLocation": "https://api.github.com/repos/Shippable/node/tarball"
   },
   "machines": [],
   "installStatus": {
