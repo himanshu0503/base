@@ -29,47 +29,54 @@ generate_serviceuser_token() {
 }
 
 copy_node_scripts() {
+  __process_msg "Copying node scripts"
+  local server_enabled=$(cat $STATE_FILE \
+    | jq -r '.systemSettings.serverEnabled')
   local node_scripts_location=$(cat $STATE_FILE \
     | jq -r '.systemSettings.nodeScriptsLocation')
+  local node_scripts_remote_location=$(cat $STATE_FILE \
+    | jq -r '.systemSettings.nodeScriptsRemoteLocation')
 
-  if [ "$node_scripts_location" != "" ] && [ "$node_scripts_location" != "null" ]; then
-    local server_enabled=$(cat $STATE_FILE \
-      | jq -r '.systemSettings.serverEnabled')
-
-    if [ $server_enabled == false ]; then
-      __process_msg "Server enabled is set to false, not updating systemSettings.nodeScriptsLocation"
-    else
-      __process_msg "Server enabled is set to true, downloading scripts and updating statefile"
-      local node_scripts_remote_location=$(cat $STATE_FILE \
-        | jq -r '.systemSettings.nodeScriptsRemoteLocation')
-      local node_scripts_archive="node.tar.gz"
-      local node_scripts_download_location="$USR_DIR/$node_scripts_archive"
-
-      local download_command="curl -LkSs \
-        '$node_scripts_remote_location' \
-        -o $node_scripts_download_location"
-
-      eval $download_command
-
-      __process_msg "Copying node scripts to DB host"
-      local db_host=$(cat $STATE_FILE \
-        | jq '.machines[] | select (.group=="core" and .name=="db")')
-      local db_ip=$(echo $db_host | jq -r '.ip')
-
-      _copy_script_remote $db_ip "$node_scripts_download_location" "$SCRIPT_DIR_REMOTE"
-
-      __process_msg "Scripts copied to DB host, updating systemSettings.nodeScriptsLocation in state file"
-      node_scripts_location="$SSH_USER@$db_ip:$SCRIPT_DIR_REMOTE/$node_scripts_archive"
-      node_scripts_location=$(cat $STATE_FILE \
-        | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_location'"')
-      _update_state "$node_scripts_location"
-      __process_msg "State file updated with systemSettings.nodeScriptsLocation"
-    fi
-
-  else
-    __process_error "systemSettings.nodeScriptsLocation not set. Please update the value
-      and run installer again"
+  if [ "$node_scripts_remote_location" == "" ]; then
+    __process_error "Missing value in systemSettings.nodeScriptsRemoteLocation"
     exit 1
+  fi
+
+  if [ $server_enabled == false ]; then
+    __process_msg "Server enabled is set to false"
+    if [ "$node_scripts_location" != "" ] && [ "$node_scripts_location" != "null" ]; then
+      __process_msg "systemSettings.nodeScriptsRemoteLocation already set, skipping"
+    else
+      __process_msg "Copying scripts location from systemSettings.nodeScriptsRemoteLocation"
+      node_scripts_location=$(cat $STATE_FILE \
+        | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_remote_location'"')
+      _update_state "$node_scripts_location"
+      __process_msg "Updated systemSettings.nodeScriptsLocation"
+    fi
+  else
+    __process_msg "Server enabled is set to true, downloading scripts and updating statefile"
+    local node_scripts_archive="node.tar.gz"
+    local node_scripts_download_location="$USR_DIR/$node_scripts_archive"
+
+    local download_command="curl -LkSs \
+      '$node_scripts_remote_location' \
+      -o $node_scripts_download_location"
+
+    eval $download_command
+
+    __process_msg "Copying node scripts to DB host"
+    local db_host=$(cat $STATE_FILE \
+      | jq '.machines[] | select (.group=="core" and .name=="db")')
+    local db_ip=$(echo $db_host | jq -r '.ip')
+
+    _copy_script_remote $db_ip "$node_scripts_download_location" "$SCRIPT_DIR_REMOTE"
+
+    __process_msg "Scripts copied to DB host, updating systemSettings.nodeScriptsLocation in state file"
+    node_scripts_location="$SSH_USER@$db_ip:$SCRIPT_DIR_REMOTE/$node_scripts_archive"
+    node_scripts_location=$(cat $STATE_FILE \
+      | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_location'"')
+    _update_state "$node_scripts_location"
+    __process_msg "State file updated with systemSettings.nodeScriptsLocation"
   fi
 }
 
