@@ -56,7 +56,7 @@ copy_node_scripts() {
         | jq '.machines[] | select (.group=="core" and .name=="db")')
       local db_ip=$(echo $db_host | jq -r '.ip')
 
-      _copy_script_remote $db_host "$node_scripts_download_location" "$SCRIPT_DIR_REMOTE"
+      _copy_script_remote $db_ip "$node_scripts_download_location" "$SCRIPT_DIR_REMOTE"
 
       __process_msg "Scripts copied to DB host, updating systemSettings.nodeScriptsLocation in state file"
       node_scripts_location="$SSH_USER@$dbHost:$SCRIPT_DIR_REMOTE/$node_scripts_archive"
