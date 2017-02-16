@@ -39,7 +39,7 @@ copy_node_scripts() {
     if [ $server_enabled == false ]; then
       __process_msg "Server enabled is set to false, not updating systemSettings.nodeScriptsLocation"
     else
-      __process_msg "Server enabled is set to true, downloaing scripts and updating statefile"
+      __process_msg "Server enabled is set to true, downloading scripts and updating statefile"
       local node_scripts_remote_location=$(cat $STATE_FILE \
         | jq -r '.systemSettings.nodeScriptsRemoteLocation')
       local node_scripts_archive="node.tar.gz"
