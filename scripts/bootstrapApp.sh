@@ -59,7 +59,7 @@ copy_node_scripts() {
       _copy_script_remote $db_ip "$node_scripts_download_location" "$SCRIPT_DIR_REMOTE"
 
       __process_msg "Scripts copied to DB host, updating systemSettings.nodeScriptsLocation in state file"
-      node_scripts_location="$SSH_USER@$dbHost:$SCRIPT_DIR_REMOTE/$node_scripts_archive"
+      node_scripts_location="$SSH_USER@$db_ip:$SCRIPT_DIR_REMOTE/$node_scripts_archive"
       node_scripts_location=$(cat $STATE_FILE \
         | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_location'"')
       _update_state "$node_scripts_location"
