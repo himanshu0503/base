@@ -2,6 +2,8 @@
 
 __validate_args() {
   __process_marker "Validating arguments"
+
+################## set SHIPPABLE_VERSION ########################
   if [ -z "$SHIPPABLE_VERSION" ]; then
 	  __process_error "SHIPPABLE_VERSION not set, exiting"
 	  exit 1
@@ -9,6 +11,7 @@ __validate_args() {
     __process_msg "Shippable version: $SHIPPABLE_VERSION"
 	fi
 
+################## set IS_UPGRADE #############################
   if [ -z "$IS_UPGRADE" ]; then
     __process_error "IS_UPGRADE not set, exiting"
     exit 1
@@ -16,11 +19,13 @@ __validate_args() {
     __process_msg "Running an upgrade: $IS_UPGRADE"
   fi
 
+################## set  INSTALL_MODE ##########################
+  local state_install_mode=$(cat $STATE_FILE \
+    | jq -r '.installMode')
+
   if [ $IS_UPGRADE == true ]; then
     # if doing an upgrade, use installMode from state file
     __process_msg "Setting installMode to one in state file"
-    local state_install_mode=$(cat $STATE_FILE \
-      | jq -r '.installMode')
     if [ $state_install_mode == "" ];then
       __process_msg "No 'installMode' value defined in statefile, exiting"
       exit 1
@@ -37,11 +42,18 @@ __validate_args() {
       __process_error "INSTALL_MODE not set, exiting"
       exit 1
     else
-      __process_msg "Install mode: $INSTALL_MODE"
+      if [ $INSTALL_MODE != $state_install_mode ];then
+        __process_error "INSTALL_MODE in arguments different from state file,
+        either change the arguments or start with fresh state file."
+        exit 1
+      else
+        __process_msg "Install mode: $INSTALL_MODE"
+      fi
     fi
   fi
 
 
+################## check migrations  #############################
   local migrations_path=$MIGRATIONS_DIR/$SHIPPABLE_VERSION.sql
   if [ ! -f "$migrations_path" ]; then
     __process_error "Migrations file $migrations_path does not exist, exiting"
@@ -50,6 +62,7 @@ __validate_args() {
     __process_msg "Migrations file: $migrations_path"
   fi
 
+################## check version #################################
   local versions_path=$VERSIONS_DIR/$SHIPPABLE_VERSION.json
   if [ ! -f "$versions_path" ]; then
     __process_error "Versions file $versions_path does not exist, exiting"
