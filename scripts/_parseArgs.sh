@@ -1,14 +1,5 @@
 #!/bin/bash -e
 
-__show_status() {
-  echo "All services operational"
-	#TODO:
-	# - print running release version
-	# - print services list
-	# - print machines list
-	exit 0
-}
-
 __validate_args() {
 	__process_marker "Validating arguments"
 	if [ -z "$SHIPPABLE_VERSION" ]; then
@@ -23,6 +14,13 @@ __validate_args() {
 		exit 1
 	else
 		__process_msg "Running an upgrade: $IS_UPGRADE"
+	fi
+
+	if [ -z "$INSTALL_MODE" ]; then
+		__process_error "INSTALL_MODE not set, exiting"
+		exit 1
+	else
+		__process_msg "Install mode: $INSTALL_MODE"
 	fi
 
 
@@ -55,7 +53,7 @@ __parse_args() {
 					shift
 					;;
 				-l|--local)
-					SHIPPABLE_INSTALL_TYPE="local"
+					INSTALL_MODE="local"
 					;;
 				-u|--upgrade)
 					IS_UPGRADE=true

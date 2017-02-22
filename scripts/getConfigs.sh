@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 ###########################################################
-validate_version() {
+validate_machines() {
   __process_msg "validating version"
   if [ "$INSTALL_MODE" == "production" ]; then
     if [ ! -f "$USR_DIR/machines.json" ]; then
@@ -11,13 +11,10 @@ validate_version() {
       __process_msg "Found machines.json"
     fi
   fi
-
-  #TODO check versions directory, error if empty
-  #TODO check migrations directory, error if empty
 }
 
-generate_state() {
-  __process_msg "Generating state file"
+initialize_state() {
+  __process_msg "Initializing state file"
   __process_msg "Install mode: $INSTALL_MODE"
   if [ ! -f "$USR_DIR/state.json" ]; then
     if [ -f "$USR_DIR/state.json.backup" ]; then
@@ -43,6 +40,7 @@ generate_state() {
       update=$(echo $update | jq '.' | tee $STATE_FILE)
     fi
   else
+			# if a state file exists, use it
     __process_msg "using existing state.json"
   fi
 }
@@ -63,53 +61,63 @@ validate_install_mode() {
 }
 
 bootstrap_state() {
-  local release_version=$(cat $STATE_FILE | jq -r '.release')
-  if [ -z "$release_version" ]; then
-    __process_msg "bootstrapping state.json for latest release"
+	__process_msg "Bootsrapping state file"
+  local release_version=$(cat $STATE_FILE \
+		| jq -r '.release')
+	local bootstrap_state=false
+	if [ $IS_UPGRADE == true ];then
+		## Running an upgrade, empty release version is error
+  	if [ -z "$release_version" ]; then
+			__process_error "Missing release version for upgrade, existing"
+			exit 1
+		else
+			__process_msg "Release version present for an upgrade, skipping bootstrap"
+		fi
+	else
+		## Running a fresh install, empty release version is ok
+		if [ -z "$release_version" ]; then
+			__process_msg "bootstrapping state.json for latest release"
+			bootstrap_state=true
+		else
+			__process_msg "using existing state.json for version: $RELEASE_VERSION"
+		fi
+	fi
 
-    ##TODO parse this from versions file
-    __process_msg "updating release version"
-    release_version="$RELEASE_VERSION"
-    local release=$(cat $STATE_FILE | jq '.release="'"$release_version"'"')
-    update=$(echo $release | jq '.' | tee $STATE_FILE)
+	if [ $bootstrap_state == true ]; then
+		__process_msg "updating release version"
+		release_version="$SHIPPABLE_VERSION"
+		local release=$(cat $STATE_FILE | jq '.release="'"$release_version"'"')
+		_update_state "$release"
 
-    __process_msg "injecting empty machines array"
-    local machines=$(cat $STATE_FILE | \
-      jq '.machines=[]')
-    update=$(echo $machines | jq '.' | tee $STATE_FILE)
+		__process_msg "injecting empty machines array"
+		local machines=$(cat $STATE_FILE | \
+			jq '.machines=[]')
+		_update_state "$machines"
 
-    __process_msg "injecting empty master integrations"
-    local master_integrations=$(cat $STATE_FILE | \
-      jq '.masterIntegrations=[]')
-    update=$(echo $master_integrations | jq '.' | tee $STATE_FILE)
+		__process_msg "injecting empty master integrations"
+		local master_integrations=$(cat $STATE_FILE | \
+			jq '.masterIntegrations=[]')
+		_update_state "$master_integrations"
 
-    __process_msg "injecting empty system integrations"
-    local system_integrations=$(cat $STATE_FILE | \
-      jq '.systemIntegrations=[]')
-    update=$(echo $system_integrations | jq '.' | tee $STATE_FILE)
+		__process_msg "injecting empty system integrations"
+		local system_integrations=$(cat $STATE_FILE | \
+			jq '.systemIntegrations=[]')
+		_update_state "$system_integrations"
 
-    __process_msg "injecting empty services array"
-    local services=$(cat $STATE_FILE | \
-      jq '.services=[]')
-    update=$(echo $services | jq '.' | tee $STATE_FILE)
+		__process_msg "injecting empty services array"
+		local services=$(cat $STATE_FILE | \
+			jq '.services=[]')
+		_update_state "$services"
 
-    __process_msg "state.json bootstrapped with default values"
-  else
-    local deploy_tag=$(cat $STATE_FILE \
-      | jq '.deployTag="'$DEPLOY_TAG'"')
-    update=$(echo $deploy_tag | jq '.' | tee $STATE_FILE)
-
-    release_version=$(cat $STATE_FILE \
-      | jq '.release="'$RELEASE_VERSION'"')
-    update=$(echo $release_version | jq '.' | tee $STATE_FILE)
-    __process_msg "using existing state.json for version $RELEASE_VERSION"
-  fi
+		__process_msg "state.json bootstrapped with default values"
+	fi
 }
 
 validate_state() {
   __process_msg "validating state.json"
   # parse from jq
-  local release_version=$(cat $STATE_FILE | jq -r '.release')
+  local release_version=$(cat $STATE_FILE \
+		| jq -r '.release')
   if [ -z "$release_version" ]; then
     __process_msg "Invalid statefile, no release version specified"
     __process_msg "Please fix the statefile or delete it and try again"
@@ -129,8 +137,8 @@ validate_state() {
 
 main() {
   __process_marker "Configuring installer"
-  validate_version
-  generate_state
+  validate_machines
+	initialize_state
   validate_install_mode
   bootstrap_state
   validate_state

@@ -20,13 +20,13 @@ get_available_systemMachineImages() {
 update_exec_runsh_images() {
   __process_msg "Updating exec and runsh image tags in system machine images"
 
-  local deploy_tag=$(cat $STATE_FILE | jq -r '.deployTag')
+  local release=$(cat $STATE_FILE | jq -r '.release')
   local system_machine_images=$(cat $STATE_FILE | jq -r '.systemMachineImages')
   local system_machine_images_length=$(echo $system_machine_images | jq -r '. | length')
 
   # TODO: Add field runShRepo in state file and use it from there
   local runSh_image_repo="shipimg/genexec"
-  local runSh_image="$runSh_image_repo:$deploy_tag"
+  local runSh_image="$runSh_image_repo:$release"
   echo "Updating runShImage to $runSh_image in state file"
 
   local updated_system_machine_images=$(cat $STATE_FILE | jq '[ .systemMachineImages | .[] | .runShImage="'$runSh_image'" ]')

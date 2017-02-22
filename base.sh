@@ -31,15 +31,14 @@ readonly SSH_PUBLIC_KEY=$USR_DIR/machinekey.pub
 readonly LOCAL_BRIDGE_IP=172.17.42.1
 readonly API_TIMEOUT=600
 export LC_ALL=C
-export RELEASE_VERSION=""
-export DEPLOY_TAG=""
 export UPDATED_APT_PACKAGES=false
 
 # Installation default values #############################
 ###########################################################
-export INSTALL_MODE="local"
-export SHIPPABLE_INSTALL_TYPE="production"
+export INSTALL_MODE="production"
 export SHIPPABLE_VERSION="master"
+export RELEASE_VERSION=""
+export DEPLOY_TAG=""
 export IS_UPGRADE=false
 ###########################################################
 
@@ -178,6 +177,17 @@ main_new() {
   __check_logsdir
 	__parse_args "$@"
 	__validate_args
+  export RELEASE_VERSION=$SHIPPABLE_VERSION
+  readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$SHIPPABLE_VERSION"
+  source "$SCRIPTS_DIR/getConfigs.sh"
+
+  source "$SCRIPTS_DIR/bootstrapMachines.sh"
+  source "$SCRIPTS_DIR/installCore.sh"
+  source "$SCRIPTS_DIR/bootstrapApp.sh"
+  source "$SCRIPTS_DIR/provisionServices.sh"
+  source "$SCRIPTS_DIR/cleanup.sh"
+
+  __process_msg "Installation successfully completed !!!"
 }
 
 main() {
