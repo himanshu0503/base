@@ -108,8 +108,6 @@ __print_help() {
     $0 --upgrade --version v5.2.1   //Update the installation to 'v5.2.1' version
   OPTIONS:
     -s | --status     Print status of current installation
-    -l | --local      Run a localhost installation
-    -v | --version    Install a particular version
     -h | --help       Print this message
   "
 	exit 0
