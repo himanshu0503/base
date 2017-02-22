@@ -10,8 +10,6 @@
 
 # Global variables ########################################
 ###########################################################
-readonly INSTALLER_VERSION=4.0.0
-export INSTALL_MODE="local"
 readonly IFS=$'\n\t'
 readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly VERSIONS_DIR="$ROOT_DIR/versions"
@@ -37,50 +35,22 @@ export RELEASE_VERSION=""
 export DEPLOY_TAG=""
 export UPDATED_APT_PACKAGES=false
 
+# Installation default values #############################
+###########################################################
+export INSTALL_MODE="local"
+export SHIPPABLE_INSTALL_TYPE="production"
+export SHIPPABLE_VERSION="master"
+export IS_UPGRADE=false
+###########################################################
+
+source "$SCRIPTS_DIR/logger.sh"
+source "$SCRIPTS_DIR/_helpers.sh"
+source "$SCRIPTS_DIR/_parseArgs.sh"
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptLocal.sh"
 source "$SCRIPTS_DIR/_manageState.sh"
 source "$SCRIPTS_DIR/_manageState.sh"
-source "$SCRIPTS_DIR/logger.sh"
-
-# Helper methods ##########################################
-###########################################################
-__check_valid_state_json() {
-  {
-    json_errors=$( { cat $STATE_FILE | jq  . ; } 2>&1 )
-  } || {
-    message="state.json is invalid JSON, please fix the following "
-    message+="error(s) before continuing:"
-    __process_error $message $json_errors
-    exit 1
-  }
-}
-
-__check_dependencies() {
-  __process_marker "Installing dependencies"
-
-  {
-    type jq &> /dev/null && __process_msg "'jq' already installed, skipping"
-  } || {
-    __process_msg "Installing 'jq'"
-    apt-get install -y jq
-  }
-
-  {
-    type rsync &> /dev/null && __process_msg "'rsync' already installed, skipping"
-  } || {
-    __process_msg "Installing 'rsync'"
-    apt-get install -y rsync
-  }
-
-  {
-    type ssh &> /dev/null && __process_msg "'ssh' already installed, skipping"
-  } || {
-    __process_msg "Installing 'ssh'"
-    apt-get install -y ssh-client
-  }
-}
 
 use_latest_release() {
   __process_msg "Using latest release"
@@ -197,59 +167,17 @@ install_release() {
   fi
 }
 
-install_file() {
-  local state_file=$1
-  if [ -f $state_file ]; then
-    type jq
-    local copy=$(cp $state_file $STATE_FILE 2> /dev/null)
-    __process_marker "Booting shippable installer"
-    local install_mode=$(cat $STATE_FILE | jq -r '.installMode')
-    if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
-      export INSTALL_MODE="$install_mode"
-    else
-      __process_msg "Running installer in default 'local' mode"
-    fi
-    install
-  else
-    __process_msg "$state_file not present."
-  fi
-}
-
-__print_help_install() {
-  echo "
-  usage: ./base.sh --install [local | production]
-  This command installs shippable on either localhost or production environment.
-  production environment is chosen by default
-  "
-}
-
-__print_help() {
-  echo "
-  usage: $0 options
-  This script installs Shippable enterprise
-  OPTIONS:
-    -s | --status     Print status of current installation
-    -i | --install    Start a new Shippable installation
-    -r | --release    Install a particular version
-    -f | --file       Use existing state file
-    -v | --version    Print version of this script
-    -h | --help       Print this message
-  "
-}
-
-__show_status() {
-  echo "All services operational"
-}
-
-__show_version() {
-  echo "Installer version $INSTALLER_VERSION"
-}
-
 __set_is_upgrade() {
   if [ -f $STATE_FILE ]; then
     local update=$(cat $STATE_FILE | jq ".isUpgrade=$1")
     _update_state "$update"
   fi
+}
+
+main_new() {
+  __check_logsdir
+	__parse_args "$@"
+	__validate_args
 }
 
 main() {
@@ -262,19 +190,6 @@ main() {
         shift ;;
       -v|--version) __show_version
         shift ;;
-      -f|--file)
-        {
-          shift
-          if [[ ! $# -eq 1 ]]; then
-            __process_msg "Specify the state file to be used for install."
-          else
-            __check_valid_state_json
-            __check_dependencies
-            __set_is_upgrade false
-            install_file $1
-          fi
-        } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
-        ;;
       -r|--release)
         {
           shift
@@ -322,4 +237,4 @@ main() {
   fi
 }
 
-main "$@"
+main_new "$@"
