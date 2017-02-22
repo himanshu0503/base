@@ -175,8 +175,8 @@ __set_is_upgrade() {
 
 main_new() {
   __check_logsdir
-	__parse_args "$@"
-	__validate_args
+  __parse_args "$@"
+  __validate_args
   export RELEASE_VERSION=$SHIPPABLE_VERSION
   readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$SHIPPABLE_VERSION"
   source "$SCRIPTS_DIR/getConfigs.sh"

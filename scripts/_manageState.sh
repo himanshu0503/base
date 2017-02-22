@@ -23,7 +23,7 @@ _update_state() {
 
 _update_release() {
 	local release="$1"
-	local update=$(cat $STATE_FILE \
-		| jq '.release="'$release'"')
-	_update_state "$update"
+  local update=$(cat $STATE_FILE \
+    | jq '.release="'$release'"')
+  _update_state "$update"
 }
