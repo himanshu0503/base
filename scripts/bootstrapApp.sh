@@ -508,16 +508,16 @@ provision_api_local() {
   # case it was overwritten. Like in case of :latest.
   local pull_api_cmd="sudo docker pull $image"
   __process_msg "Pulling $image..."
-  local pull_result=$(eval $pull_api_cmd)
+  eval "$pull_api_cmd"
 
   local boot_api_cmd="sudo docker run -d \
     $port_mapping \
     $env_variables \
     --net host \
-    --name api
+    --name api \
     $image"
 
-  local result=$(eval $boot_api_cmd)
+  eval "$boot_api_cmd"
 
   __process_msg "Successfully provisioned api"
 }

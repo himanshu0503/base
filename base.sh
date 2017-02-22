@@ -179,43 +179,20 @@ install() {
 install_release() {
   # parse release
   local deploy_tag="$1"
-  if [[ $deploy_tag =~ ^v([0-9]).([0-9])([0-9])*.([0-9])([0-9])*.*$ ]]; then
-    __process_msg "Valid release version, parsing"
-    local major_version="${BASH_REMATCH[1]}"
-    major_version=$(python -c "print int($major_version)")
+  local release_file_path="$VERSIONS_DIR/$deploy_tag".json
+  if [ -f $release_file_path ]; then
+    __process_msg "Release file found: $release_file_path"
+    local install_mode=$(cat $STATE_FILE \
+      | jq -r '.installMode')
+    export INSTALL_MODE="$install_mode"
 
-    local minor_version="${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
-    minor_version=$(python -c "print int($minor_version)")
+    __process_msg "Running installer for release $deploy_tag"
 
-    local patch_version="${BASH_REMATCH[4]}${BASH_REMATCH[5]}"
-    patch_version=$(python -c "print int($patch_version)")
-
-    local release=$(printf \
-      "v%d.%d.%d" \
-      "$major_version" \
-      "$minor_version" \
-      "$patch_version")
-
-    __process_msg "Parsed release number: $release"
-
-    local release_file_path="$VERSIONS_DIR/$release".json
-    if [ -f $release_file_path ]; then
-      __process_msg "Release file found: $release_file_path"
-      local install_mode=$(cat $STATE_FILE \
-        | jq -r '.installMode')
-      export INSTALL_MODE="$install_mode"
-
-      __process_msg "Running installer for release $deploy_tag"
-
-      export RELEASE_VERSION=$release
-      export DEPLOY_TAG=$deploy_tag
-      install
-    else
-      __process_msg "No release file found at : $release_file_path, exiting"
-      exit 1
-    fi
+    export RELEASE_VERSION=$deploy_tag
+    export DEPLOY_TAG=$deploy_tag
+    install
   else
-    __process_msg "Invalid release provided, exiting"
+    __process_msg "No release file found at : $release_file_path, exiting"
     exit 1
   fi
 }
