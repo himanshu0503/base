@@ -16,11 +16,29 @@ __validate_args() {
     __process_msg "Running an upgrade: $IS_UPGRADE"
   fi
 
-  if [ -z "$INSTALL_MODE" ]; then
-    __process_error "INSTALL_MODE not set, exiting"
-    exit 1
+  if [ $IS_UPGRADE == true ]; then
+    # if doing an upgrade, use installMode from state file
+    __process_msg "Setting installMode to one in state file"
+    local state_install_mode=$(cat $STATE_FILE \
+      | jq -r '.installMode')
+    if [ $state_install_mode == "" ];then
+      __process_msg "No 'installMode' value defined in statefile, exiting"
+      exit 1
+    else
+      INSTALL_MODE=$state_install_mode
+      local release=$(cat $STATE_FILE \
+        | jq '.release="'"$SHIPPABLE_VERSION"'"')
+      _update_state "$release"
+      __process_msg "Install mode: $INSTALL_MODE"
+    fi
   else
-    __process_msg "Install mode: $INSTALL_MODE"
+    # fresh install, installMode required
+    if [ -z "$INSTALL_MODE" ]; then
+      __process_error "INSTALL_MODE not set, exiting"
+      exit 1
+    else
+      __process_msg "Install mode: $INSTALL_MODE"
+    fi
   fi
 
 
@@ -79,18 +97,15 @@ __parse_args() {
   fi
 }
 
-__print_help_install() {
-  echo "
-  usage: ./base.sh --install [local | production]
-  This command installs shippable on either localhost or production environment.
-  production environment is chosen by default
-  "
-}
-
 __print_help() {
   echo "
   usage: $0 options
   This script installs Shippable enterprise
+  examples:
+    $0 --local                      //Install on localhost with 'master' version
+    $0 --local --version v5.2.1     //Install on localhost with 'v5.2.1' version
+    $0 --version v5.2.1             //Install on cluster with 'v5.2.1' version
+    $0 --upgrade --version v5.2.1   //Update the installation to 'v5.2.1' version
   OPTIONS:
     -s | --status     Print status of current installation
     -l | --local      Run a localhost installation

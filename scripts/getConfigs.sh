@@ -45,21 +45,6 @@ initialize_state() {
   fi
 }
 
-validate_install_mode() {
-  __process_msg "validating install mode"
-  local state_install_mode=$(cat $STATE_FILE \
-    | jq -r '.installMode')
-
-  if [ "$INSTALL_MODE" == "$state_install_mode" ]; then
-    __process_msg "Install mode verified, proceeding"
-  else
-    __process_msg "Installer and state.json installMode values different"
-    __process_msg "Either run installer in same mode as state.json or "\
-      "remove state.json and try again"
-    exit 1
-  fi
-}
-
 bootstrap_state() {
   __process_msg "Bootsrapping state file"
   local release_version=$(cat $STATE_FILE \
@@ -139,7 +124,6 @@ main() {
   __process_marker "Configuring installer"
   validate_machines
   initialize_state
-  validate_install_mode
   bootstrap_state
   validate_state
 }
