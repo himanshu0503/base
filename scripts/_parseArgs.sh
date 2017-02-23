@@ -26,6 +26,8 @@ __validate_args() {
   __process_marker "Validating arguments"
 
   ################## set IS_UPGRADE #############################
+  # Always set IS_UPGRADE from cmd line args
+
   if [ "$IS_UPGRADE" == "" ]; then
     __process_error "IS_UPGRADE not set, exiting"
     exit 1
@@ -34,32 +36,32 @@ __validate_args() {
   fi
 
   ################## set SHIPPABLE_VERSION ########################
+  # for upgrade, there MUST be a previous release version
   local state_release_version=$(cat $STATE_FILE \
     | jq -r '.release')
 
   if [ $IS_UPGRADE == true ];then
     ## Running an upgrade, empty release version means error
     if [ "$state_release_version" == "" ]; then
-      __process_error "No 'release' value defined in statefile, existing"
+      __process_error "No 'release' value defined in statefile, exiting.
+      Run installer from scratch to update release version."
       exit 1
     else
-      SHIPPABLE_VERSION=$release_version
       __process_msg "Release version present for an upgrade, skipping bootstrap"
-      __process_msg "Shippable version: $SHIPPABLE_VERSION"
     fi
   else
-    ## Running a fresh install, empty release version is ok
+    ## Running a fresh install, empty release version means bootstrap statefile
     if [ "$state_release_version" == "" ]; then
       __process_msg "bootstrapping state.json for latest release"
       __bootstrap_state
-      local release=$(cat $STATE_FILE \
-        | jq '.release="'"$SHIPPABLE_VERSION"'"')
-      _update_state "$release"
-      __process_msg "Shippable release version: $SHIPPABLE_VERSION"
     else
-      __process_msg "using existing state.json for version: $SHIPPABLE_VERSION"
+      __process_msg "Release version present for an install, skipping bootstrap"
     fi
   fi
+
+  local release=$(cat $STATE_FILE \
+    | jq '.release="'"$SHIPPABLE_VERSION"'"')
+  _update_state "$release"
 
   __process_msg "Shippable release version: $SHIPPABLE_VERSION"
 
