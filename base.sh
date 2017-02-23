@@ -53,6 +53,7 @@ source "$SCRIPTS_DIR/_manageState.sh"
 
 main() {
   __check_logsdir
+  __check_dependencies
   __parse_args "$@"
   __initialize_state
   __validate_args
