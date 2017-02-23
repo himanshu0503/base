@@ -1,48 +1,93 @@
 #!/bin/bash -e
 
+__bootstrap_state() {
+  __process_msg "injecting empty machines array"
+  local machines=$(cat $STATE_FILE | \
+    jq '.machines=[]')
+  _update_state "$machines"
+
+  __process_msg "injecting empty master integrations"
+  local master_integrations=$(cat $STATE_FILE | \
+    jq '.masterIntegrations=[]')
+  _update_state "$master_integrations"
+
+  __process_msg "injecting empty system integrations"
+  local system_integrations=$(cat $STATE_FILE | \
+    jq '.systemIntegrations=[]')
+  _update_state "$system_integrations"
+
+  __process_msg "injecting empty services array"
+  local services=$(cat $STATE_FILE | \
+    jq '.services=[]')
+  _update_state "$services"
+}
+
 __validate_args() {
   __process_marker "Validating arguments"
 
-################## set SHIPPABLE_VERSION ########################
-  if [ -z "$SHIPPABLE_VERSION" ]; then
-	  __process_error "SHIPPABLE_VERSION not set, exiting"
-	  exit 1
-	else
-    __process_msg "Shippable version: $SHIPPABLE_VERSION"
-	fi
-
-################## set IS_UPGRADE #############################
-  if [ -z "$IS_UPGRADE" ]; then
+  ################## set IS_UPGRADE #############################
+  if [ "$IS_UPGRADE" == "" ]; then
     __process_error "IS_UPGRADE not set, exiting"
     exit 1
   else
     __process_msg "Running an upgrade: $IS_UPGRADE"
   fi
 
-################## set  INSTALL_MODE ##########################
+  ################## set SHIPPABLE_VERSION ########################
+  local state_release_version=$(cat $STATE_FILE \
+    | jq -r '.release')
+
+  if [ $IS_UPGRADE == true ];then
+    ## Running an upgrade, empty release version means error
+    if [ "$state_release_version" == "" ]; then
+      __process_error "No 'release' value defined in statefile, existing"
+      exit 1
+    else
+      SHIPPABLE_VERSION=$release_version
+      __process_msg "Release version present for an upgrade, skipping bootstrap"
+      __process_msg "Shippable version: $SHIPPABLE_VERSION"
+    fi
+  else
+    ## Running a fresh install, empty release version is ok
+    if [ "$state_release_version" == "" ]; then
+      __process_msg "bootstrapping state.json for latest release"
+      __bootstrap_state
+      local release=$(cat $STATE_FILE \
+        | jq '.release="'"$SHIPPABLE_VERSION"'"')
+      _update_state "$release"
+      __process_msg "Shippable release version: $SHIPPABLE_VERSION"
+    else
+      __process_msg "using existing state.json for version: $SHIPPABLE_VERSION"
+    fi
+  fi
+
+  __process_msg "Shippable release version: $SHIPPABLE_VERSION"
+
+  ################## set  INSTALL_MODE ##########################
   local state_install_mode=$(cat $STATE_FILE \
     | jq -r '.installMode')
 
   if [ $IS_UPGRADE == true ]; then
     # if doing an upgrade, use installMode from state file
-    __process_msg "Setting installMode to one in state file"
-    if [ $state_install_mode == "" ];then
+    __process_msg "Setting installMode from state file"
+    if [ "$state_install_mode" == "" ];then
       __process_msg "No 'installMode' value defined in statefile, exiting"
       exit 1
     else
       INSTALL_MODE=$state_install_mode
-      local release=$(cat $STATE_FILE \
-        | jq '.release="'"$SHIPPABLE_VERSION"'"')
-      _update_state "$release"
+      __process_msg "Install mode present for an upgrade"
       __process_msg "Install mode: $INSTALL_MODE"
     fi
   else
-    # fresh install, installMode required
-    if [ -z "$INSTALL_MODE" ]; then
+    if [ "$state_install_mode" == "" ];then
       __process_error "INSTALL_MODE not set, exiting"
+      local install_mode=$(cat $STATE_FILE \
+        | jq '.installMode="'"$INSTALL_MODE"'"')
+      _update_state "$install_mode"
+      __process_msg "Install mode: $INSTALL_MODE"
       exit 1
     else
-      if [ $INSTALL_MODE != $state_install_mode ];then
+      if [ "$INSTALL_MODE" != "$state_install_mode" ];then
         __process_error "INSTALL_MODE in arguments different from state file,
         either change the arguments or start with fresh state file."
         exit 1
