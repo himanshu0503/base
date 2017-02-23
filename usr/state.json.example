@@ -1,7 +1,6 @@
 {
   "release": "",
-  "deployTag": "",
-  "installMode": "local",
+  "installMode": "",
   "isUpgrade": false,
   "masterIntegrations": [
     {

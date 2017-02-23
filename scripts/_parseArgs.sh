@@ -1,5 +1,31 @@
 #!/bin/bash -e
 
+__initialize_state() {
+  __process_msg "Initializing state file"
+  if [ ! -f "$USR_DIR/state.json" ]; then
+    if [ -f "$USR_DIR/state.json.backup" ]; then
+      __process_msg "A state.json.backup file exists, do you want to use the backup? (yes/no)"
+      read response
+      if [[ "$response" == "yes" ]]; then
+        cp -vr $USR_DIR/state.json.backup $USR_DIR/state.json
+        rm $USR_DIR/state.json.backup || true
+      else
+        __process_msg "Dicarding backup, creating a new state.json from state.json.example"
+        rm $USR_DIR/state.json.backup || true
+        cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
+      fi
+    else
+      __process_msg "No state.json exists, creating a new state.json from state.json.example."
+      cp -vr $USR_DIR/state.json.example $STATE_FILE
+      rm $USR_DIR/state.json.backup || true
+      update=$(echo $update | jq '.' | tee $STATE_FILE)
+    fi
+  else
+    # if a state file exists, use it
+    __process_msg "using existing state.json"
+  fi
+}
+
 __bootstrap_state() {
   __process_msg "injecting empty machines array"
   local machines=$(cat $STATE_FILE | \
@@ -33,6 +59,9 @@ __validate_args() {
     exit 1
   else
     __process_msg "Running an upgrade: $IS_UPGRADE"
+    local update=$(cat $STATE_FILE \
+      | jq '.isUpgrade="'$IS_UPGRADE'"')
+    _update_state "$update"
   fi
 
   ################## set SHIPPABLE_VERSION ########################
@@ -60,7 +89,7 @@ __validate_args() {
   fi
 
   local release=$(cat $STATE_FILE \
-    | jq '.release="'"$SHIPPABLE_VERSION"'"')
+    | jq '.release="'$SHIPPABLE_VERSION'"')
   _update_state "$release"
 
   __process_msg "Shippable release version: $SHIPPABLE_VERSION"
@@ -81,19 +110,20 @@ __validate_args() {
       __process_msg "Install mode: $INSTALL_MODE"
     fi
   else
+    # Running a fresh install, check against state file if exists
     if [ "$state_install_mode" == "" ];then
-      __process_error "INSTALL_MODE not set, exiting"
+      __process_msg "INSTALL_MODE not set, setting to default value"
       local install_mode=$(cat $STATE_FILE \
-        | jq '.installMode="'"$INSTALL_MODE"'"')
+        | jq '.installMode="'$INSTALL_MODE'"')
       _update_state "$install_mode"
       __process_msg "Install mode: $INSTALL_MODE"
-      exit 1
     else
       if [ "$INSTALL_MODE" != "$state_install_mode" ];then
         __process_error "INSTALL_MODE in arguments different from state file,
         either change the arguments or start with fresh state file."
         exit 1
       else
+        # No need to update state installMode, its the same as INSTALL_MODE
         __process_msg "Install mode: $INSTALL_MODE"
       fi
     fi
@@ -127,14 +157,14 @@ __parse_args() {
 
       case $key in
         -v|--version)
-          SHIPPABLE_VERSION="$2"
+          export SHIPPABLE_VERSION="$2"
           shift
           ;;
         -l|--local)
-          INSTALL_MODE="local"
+          export INSTALL_MODE="local"
           ;;
         -u|--upgrade)
-          IS_UPGRADE=true
+          export IS_UPGRADE=true
           ;;
         -s|--status)
           __show_status
