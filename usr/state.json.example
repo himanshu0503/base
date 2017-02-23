@@ -167,22 +167,6 @@
     {
       "name": "braintreeKeys",
       "type": "generic"
-    },
-    {
-      "name": "sshKeys",
-      "type": "generic"
-    },
-    {
-      "name": "emailCreds",
-      "type": "generic"
-    },
-    {
-      "name": "hipchatCreds",
-      "type": "generic"
-    },
-    {
-      "name": "slackCreds",
-      "type": "generic"
     }
   ],
   "systemIntegrations": [
