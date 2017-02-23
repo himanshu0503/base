@@ -150,55 +150,151 @@ __validate_args() {
 
 }
 
-__parse_args() {
+__parse_args_upgrade() {
+  export IS_UPGRADE=true
+  local state_install_mode=$(cat $STATE_FILE \
+    | jq -r '.installMode')
+  local upgrade_version=""
   if [[ $# -gt 0 ]]; then
     while [[ $# -gt 0 ]]; do
       key="$1"
 
       case $key in
         -v|--version)
-          export SHIPPABLE_VERSION="$2"
+          upgrade_version=$2
           shift
           ;;
-        -l|--local)
-          export INSTALL_MODE="local"
-          ;;
-        -u|--upgrade)
-          export IS_UPGRADE=true
-          ;;
-        -s|--status)
-          __show_status
-          ;;
-        -v|--version)
-          __show_version
-          ;;
-        -h|--help)
-          __print_help
+        -h|help)
+          __print_help_upgrade
           ;;
         *)
           echo "Invalid option: $key"
-          __print_help
+          __print_help_upgrade
           ;;
       esac
       shift
     done
   else
-    __print_help
+    __process_msg "No arguments provided for 'upgrade' using defaults"
   fi
+
+  if [ "$upgrade_version" == "" ]; then
+    __process_error "No version specified for upgrade, exiting"
+    exit 1
+  else
+    export SHIPPABLE_VERSION=$upgrade_version
+  fi
+
+  if [ "$state_install_mode" == "" ]; then
+    __process_error "No install mode specified in state file, exiting"
+    exit 1
+  else
+    __process_msg "Setting install mode from state file"
+    export INSTALL_MODE=$install_mode
+  fi
+}
+
+__parse_args_install() {
+  export IS_UPGRADE=false
+
+  if [[ $# -gt 0 ]]; then
+    while [[ $# -gt 0 ]]; do
+      key="$1"
+
+      case $key in
+        -l|--local)
+          export INSTALL_MODE="local"
+          ;;
+        -v|--version)
+          export SHIPPABLE_VERSION=$2
+          shift
+          ;;
+        -h|help)
+          __print_help_install
+          ;;
+        *)
+          echo "Invalid option: $key"
+          __print_help_install
+          ;;
+      esac
+      shift
+    done
+  else
+    __process_msg "No arguments provided for 'install' using defaults"
+  fi
+}
+
+__print_help_install() {
+  echo "
+  usage: $0 install [flags]
+  This script installs Shippable enterprise
+  examples:
+    $0 install --local                      //Install on localhost with 'master' version
+    $0 install --local --version v5.2.1     //Install on localhost with 'v5.2.1' version
+    $0 install --version v5.2.1             //Install on cluster with 'v5.2.1' version
+  Flags:
+    --local                         Install default ('master') version on localhost
+    --version <version>             Install a particular version
+  "
+	exit 0
+}
+
+__print_help_upgrade() {
+  echo "
+  usage: $0 upgrade [flags]
+  This script installs Shippable enterprise
+  examples:
+    $0 upgrade --version v5.2.1             //Install on cluster with 'v5.2.1' version
+  Flags:
+    --version <version>             Install a particular version
+  "
+	exit 0
 }
 
 __print_help() {
   echo "
-  usage: $0 options
-  This script installs Shippable enterprise
-  examples:
-    $0 --local                      //Install on localhost with 'master' version
-    $0 --local --version v5.2.1     //Install on localhost with 'v5.2.1' version
-    $0 --version v5.2.1             //Install on cluster with 'v5.2.1' version
-    $0 --upgrade --version v5.2.1   //Update the installation to 'v5.2.1' version
-  OPTIONS:
-    -s | --status     Print status of current installation
-    -h | --help       Print this message
+  Usage:
+    $0 <command> [flags]
+
+  Examples:
+    $0 install --help
+    $0 install --local
+    $0 upgrade --version v5.2.3
+
+  Commmands:
+    install         Run shippable installation
+    upgrade         Run sippable upgrade
+    status          Print status of current installation
+    help            Print this message
   "
 	exit 0
+}
+
+__parse_args() {
+  if [[ $# -gt 0 ]]; then
+    key="$1"
+
+    case $key in
+      install)
+        shift
+        __parse_args_install "$@"
+        ;;
+      upgrade)
+        shift
+        __parse_args_upgrade "$@"
+        ;;
+      status)
+        __show_status
+        ;;
+      help)
+        __print_help
+        ;;
+      *)
+        echo "Invalid option: $key"
+        __print_help
+        ;;
+    esac
+  else
+    __print_help
+  fi
 }
