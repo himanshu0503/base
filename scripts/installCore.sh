@@ -48,7 +48,7 @@ configure_swarm_workers() {
 
 install_docker_local() {
   __process_msg "Checking Docker on localhost"
-  
+
   local swarm_master_host=$(cat $STATE_FILE |
     jq '.machines[] | select (.name=="localhost")')
   local master_docker_installed=$(echo $swarm_master_host |
@@ -310,18 +310,22 @@ install_vault() {
 }
 
 initialize_vault() {
-  local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $vault_host | jq '.ip')
+  local vault_host=$(cat $STATE_FILE \
+    | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $vault_host \
+    | jq '.ip')
 
   SKIP_STEP=false
   _check_component_status "vaultInitialized"
   if [ "$SKIP_STEP" = false ]; then
     local vault_url=$host
 
-    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+    local db_host=$(cat $STATE_FILE \
+      | jq '.machines[] | select (.group=="core" and .name=="db")')
     local db_ip=$(echo $db_host | jq '.ip')
     local db_port=5432
-    local db_username=$(cat $STATE_FILE | jq '.systemSettings.dbUsername')
+    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+    local db_password=$(cat $STATE_FILE | jq -r '.systemSettings.dbPassword')
     local db_address=$db_ip:$db_port
 
     local db_name="shipdb"

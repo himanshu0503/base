@@ -10,7 +10,8 @@ get_available_masterIntegrations() {
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local master_integrations_get_endpoint="$api_url/masterIntegrations"
 
-  local response=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+  local response=$(curl -H "Content-Type: application/json"\
+    -H "Authorization: apiToken $api_token" \
     -X GET $master_integrations_get_endpoint \
     --silent)
   response=$(echo $response | jq '.')
