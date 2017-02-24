@@ -17,7 +17,7 @@ check_docker_local() {
 docker_install() {
   echo "Installing Docker..."
   sudo apt-get install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
-  sudo apt-get install -y docker-engine=$DOCKER_VERSION
+  sudo apt-get install -y -o Dpkg::Options::="--force-confnew" docker-engine=$DOCKER_VERSION
 }
 
 check_docker_opts() {
