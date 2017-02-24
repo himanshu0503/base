@@ -18,34 +18,11 @@ __initialize_state() {
       __process_msg "No state.json exists, creating a new state.json from state.json.example."
       cp -vr $USR_DIR/state.json.example $STATE_FILE
       rm $USR_DIR/state.json.backup || true
-      update=$(echo $update | jq '.' | tee $STATE_FILE)
     fi
   else
     # if a state file exists, use it
     __process_msg "using existing state.json"
   fi
-}
-
-__bootstrap_state() {
-  __process_msg "injecting empty machines array"
-  local machines=$(cat $STATE_FILE | \
-    jq '.machines=[]')
-  _update_state "$machines"
-
-  __process_msg "injecting empty master integrations"
-  local master_integrations=$(cat $STATE_FILE | \
-    jq '.masterIntegrations=[]')
-  _update_state "$master_integrations"
-
-  __process_msg "injecting empty system integrations"
-  local system_integrations=$(cat $STATE_FILE | \
-    jq '.systemIntegrations=[]')
-  _update_state "$system_integrations"
-
-  __process_msg "injecting empty services array"
-  local services=$(cat $STATE_FILE | \
-    jq '.services=[]')
-  _update_state "$services"
 }
 
 __validate_args() {
@@ -77,14 +54,6 @@ __validate_args() {
       exit 1
     else
       __process_msg "Release version present for an upgrade, skipping bootstrap"
-    fi
-  else
-    ## Running a fresh install, empty release version means bootstrap statefile
-    if [ "$state_release_version" == "" ]; then
-      __process_msg "bootstrapping state.json for latest release"
-      __bootstrap_state
-    else
-      __process_msg "Release version present for an install, skipping bootstrap"
     fi
   fi
 
@@ -151,6 +120,11 @@ __validate_args() {
 }
 
 __parse_args_upgrade() {
+  if [ ! -f $STATE_FILE ]; then
+    __process_error "State file does not exist, run installation before upgrade."
+    exit 1
+  fi
+
   export IS_UPGRADE=true
   local state_install_mode=$(cat $STATE_FILE \
     | jq -r '.installMode')
