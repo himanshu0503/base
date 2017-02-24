@@ -25,6 +25,8 @@ readonly REMOTE_SCRIPTS_DIR="$ROOT_DIR/scripts/remote"
 readonly LOCAL_SCRIPTS_DIR="$ROOT_DIR/scripts/local"
 readonly STATE_FILE="$USR_DIR/state.json"
 readonly STATE_FILE_BACKUP="$USR_DIR/state.json.backup"
+readonly STATE_FILE_ARCHIVE_DIR="$USR_DIR/states"
+readonly MAX_DEFAULT_STATE_COUNT=6
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$USR_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$USR_DIR/machinekey.pub
@@ -68,6 +70,7 @@ main() {
   } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
 
   __cleanup_logfiles
+  __archive_state_file
   __process_msg "Installation successfully completed !!!"
 }
 

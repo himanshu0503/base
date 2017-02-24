@@ -1,6 +1,7 @@
 usr/system_configs.sql
 usr/logs.txt
 usr/logs/*
+usr/states
 usr/machinekey*
 usr/machines.json
 usr/state.json
