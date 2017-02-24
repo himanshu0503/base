@@ -8,7 +8,7 @@ __show_status() {
 	# - print running release version
 	# - print services list
 	# - print machines list
-	exit 0
+  exit 0
 }
 
 __check_valid_state_json() {

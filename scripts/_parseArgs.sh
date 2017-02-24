@@ -10,7 +10,7 @@ __initialize_state() {
         cp -vr $USR_DIR/state.json.backup $USR_DIR/state.json
         rm $USR_DIR/state.json.backup || true
       else
-        __process_msg "Dicarding backup, creating a new state.json from state.json.example"
+        __process_msg "Discarding backup, creating a new state.json from state.json.example"
         rm $USR_DIR/state.json.backup || true
         cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
       fi
@@ -236,7 +236,7 @@ __print_help_install() {
     --local                         Install default ('master') version on localhost
     --version <version>             Install a particular version
   "
-	exit 0
+  exit 0
 }
 
 __print_help_upgrade() {
@@ -248,7 +248,7 @@ __print_help_upgrade() {
   Flags:
     --version <version>             Install a particular version
   "
-	exit 0
+  exit 0
 }
 
 __print_help() {
@@ -267,7 +267,7 @@ __print_help() {
     status          Print status of current installation
     help            Print this message
   "
-	exit 0
+  exit 0
 }
 
 __parse_args() {
