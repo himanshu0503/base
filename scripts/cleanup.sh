@@ -3,8 +3,8 @@
 cleanup_stale_images() {
   __process_msg "Cleaning up stale images"
 
-  local deploy_version=$(cat $STATE_FILE \
-    | jq -r '.deployTag')
+  local release=$(cat $STATE_FILE \
+    | jq -r '.release')
 
   local running_services=$(cat $STATE_FILE \
     | jq '.services')
@@ -36,7 +36,7 @@ cleanup_stale_images() {
         | awk '{print $1}')
 
       __process_msg "Cleaning up tags for: $running_service_image"
-      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/cleanup.sh $running_service_image $deploy_tag"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/cleanup.sh $running_service_image $release"
     done
   done
 }

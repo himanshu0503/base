@@ -4,6 +4,7 @@ export ENABLED_MASTER_INTEGRATIONS=""
 export AVAILABLE_SYSTEM_INTEGRATIONS=""
 export ENABLED_SYSTEM_INTEGRATIONS=""
 export DB_SYSTEM_INTEGRATIONS=""
+export HTTP_RESPONSE_FILE="$LOGS_DIR/http_response"
 
 get_enabled_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
@@ -179,7 +180,7 @@ upsert_systemIntegrations() {
         $integrations_put_endpoint \
         --write-out "%{http_code}\n" \
         --silent \
-        --output /dev/null)
+        --output $HTTP_RESPONSE_FILE)
       if [ "$post_call_resp_code" -gt "299" ]; then
         echo "Error adding integration for $enabled_system_integration_master_name(status code $post_call_resp_code)"
       else
@@ -216,7 +217,7 @@ upsert_systemIntegrations() {
         $integrations_post_endpoint \
         --write-out "%{http_code}\n" \
         --silent \
-        --output /dev/null)
+        --output $HTTP_RESPONSE_FILE)
       if [ "$post_call_resp_code" -gt "299" ]; then
         __process_msg "Error adding integration for $enabled_system_integration_master_name(status code $post_call_resp_code)"
         exit 1
@@ -264,7 +265,7 @@ delete_systemIntegrations() {
         $integrations_delete_endpoint \
         --write-out "%{http_code}\n" \
         --silent \
-        --output /dev/null)
+        --output $HTTP_RESPONSE_FILE)
       if [ "$delete_call_resp_code" -gt "299" ]; then
         echo "Error deleting integration for $db_system_integration_master_name(status code $delete_call_resp_code)"
       else
@@ -282,5 +283,6 @@ main() {
   upsert_systemIntegrations
   delete_systemIntegrations
 }
+
 
 main

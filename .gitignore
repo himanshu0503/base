@@ -19,3 +19,5 @@ data/state.json.backup
 scripts/remote/system_configs_data.sql
 *.swp
 *.swo
+*.tfstate
+*.tfstate.backup

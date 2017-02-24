@@ -325,7 +325,7 @@ generate_api_config() {
 
   local system_images_registry=$(cat $STATE_FILE | jq -r '.systemSettings.systemImagesRegistry')
   local api_service_repository=$(echo $api_service | jq -r '.repository')
-  local api_service_tag=$(cat $STATE_FILE | jq -r '.deployTag')
+  local api_service_tag=$(cat $STATE_FILE | jq -r '.release')
   local api_service_image="$system_images_registry/$api_service_repository:$api_service_tag"
   __process_msg "Successfully read from state.json: api.image ($api_service_image)"
 
@@ -701,7 +701,7 @@ __save_service_config() {
     select (.name==$service) | .repository')
   #local service_tag=$service"."$RELEASE_VERSION
   local service_tag=$(cat $STATE_FILE \
-      | jq -r '.deployTag')
+      | jq -r '.release')
   local service_image="$system_images_registry/$service_repository:$service_tag"
   __process_msg "Image version generated for $service : $service_image"
   local image_update=$(cat $STATE_FILE | jq --arg service "$service" '

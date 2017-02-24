@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 export AVAILABLE_MASTER_INTEGRATIONS=""
+export HTTP_RESPONSE_FILE="$LOGS_DIR/http_response"
 
 get_available_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
@@ -10,7 +11,8 @@ get_available_masterIntegrations() {
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local master_integrations_get_endpoint="$api_url/masterIntegrations"
 
-  local response=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+  local response=$(curl -H "Content-Type: application/json"\
+    -H "Authorization: apiToken $api_token" \
     -X GET $master_integrations_get_endpoint \
     --silent)
   response=$(echo $response | jq '.')
@@ -138,7 +140,7 @@ enable_masterIntegrations() {
           $master_integration_put_endpoint \
           --write-out "%{http_code}\n" \
           --silent \
-          --output /dev/null)
+          --output $HTTP_RESPONSE_FILE)
         if [ "$put_call_resp_code" -gt "299" ]; then
           __process_msg "Error enabling master integration $available_master_integration_name(status code $put_call_resp_code)"
           exit 1
@@ -214,7 +216,7 @@ disable_masterIntegrations() {
         $master_integration_put_endpoint \
         --silent \
         --write-out "%{http_code}\n" \
-        --output /dev/null)
+        --output $HTTP_RESPONSE_FILE)
       if [ "$put_call_resp_code" -gt "299" ]; then
         __process_msg "Error disabling integration $available_master_integration_name(status code $put_call_resp_code)"
         exit 1
