@@ -468,7 +468,7 @@ generate_api_config() {
 }
 
 provision_api() {
-  __process_msg "Provisioning api on swarm cluster"
+  __process_msg "Provisioning API..."
   local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
 
@@ -486,15 +486,11 @@ provision_api() {
   local rm_api_cmd="docker service rm api || true"
 
   _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
-  __process_msg "waiting 20 seconds for api to shut down "
-  sleep 20
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
-
-  __process_msg "Successfully provisioned api"
 }
 
 provision_api_local() {
-  __process_msg "Provisioning api on local machine"
+  __process_msg "Provisioning API..."
 
   local port_mapping=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .port')
   local env_variables=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .env')
@@ -518,8 +514,6 @@ provision_api_local() {
     $image"
 
   eval "$boot_api_cmd"
-
-  __process_msg "Successfully provisioned api"
 }
 
 check_api_health() {
@@ -580,53 +574,8 @@ manage_systemMachineImages() {
   source "$SCRIPTS_DIR/_manageSystemMachineImages.sh"
 }
 
-restart_api() {
-  __process_msg "Restarting API..."
-  local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
-
-  local port_mapping=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .port')
-  local env_variables=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .env')
-  local name=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .name')
-  local opts=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .opts')
-  local image=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .image')
-
-  local boot_api_cmd="docker service create \
-    $port_mapping \
-    $env_variables \
-    $opts $image"
-
-  local rm_api_cmd="docker service rm api || true"
-
-  _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
-
-  __process_msg "Waiting 30s before API restart..."
-  sleep 30
-
-  _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
-}
-
-restart_api_local() {
-  __process_msg "Restarting API..."
-  local port_mapping=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .port')
-  local env_variables=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .env')
-  local name=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .name')
-  local opts=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .opts')
-  local image=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .image')
-
-  sudo docker rm -f api || true
-  local boot_api_cmd="sudo docker run -d \
-      $port_mapping \
-      $env_variables \
-      --net host \
-      --name api
-      $image"
-
-  local result=$(eval $boot_api_cmd)
-}
-
 update_service_list() {
-  __process_msg "configuring services according to master integrations"
+  __process_msg "Configuring services according to master integrations"
   source "$SCRIPTS_DIR/_manageServices.sh"
 }
 
@@ -973,15 +922,13 @@ main() {
     check_api_health
     run_migrations
     if [ $is_upgrade = false ]; then
-      restart_api
+      provision_api
       check_api_health
     fi
     manage_masterIntegrations
     manage_systemIntegrations
     manage_systemMachineImages
-    generate_system_config
-    create_system_config
-    restart_api
+    provision_api
   else
     update_service_list
     save_service_config
@@ -996,15 +943,13 @@ main() {
     check_api_health
     run_migrations_local
     if [ $is_upgrade = false ]; then
-      restart_api_local
+      provision_api_local
       check_api_health
     fi
     manage_masterIntegrations
     manage_systemIntegrations
     manage_systemMachineImages
-    generate_system_config
-    create_system_config_local
-    restart_api_local
+    provision_api_local
   fi
 
   check_api_health
