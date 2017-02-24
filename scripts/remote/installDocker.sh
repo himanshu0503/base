@@ -2,6 +2,7 @@
 
 export INSTALL_MODE="$1"
 export DOCKER_RESTART=false
+export DEBIAN_FRONTEND=noninteractive
 readonly DOCKER_VERSION=1.13.1-0~ubuntu-trusty
 
 check_docker_local() {
