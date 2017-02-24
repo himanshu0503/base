@@ -31,7 +31,7 @@ check_docker_opts() {
     echo "Shippable DOCKER_OPTS already present in /etc/default/docker"
   fi
 
-  echo "Disabling Docker tcp listener..."
+  echo "Disabling Docker TCP listener..."
   sudo sh -c "sed -e s/\"-H tcp:\/\/0.0.0.0:4243\"//g -i /etc/default/docker"
 }
 

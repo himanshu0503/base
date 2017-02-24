@@ -274,8 +274,7 @@ __save_service_config() {
 
 __run_service() {
   service=$1
-  delay=$2
-  restart=$3
+  restart=$2
 
   __process_msg "Provisioning $service on swarm cluster"
   local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
@@ -314,11 +313,6 @@ __run_service() {
 
     if [ "$restart" == true ]; then
       _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
-    fi
-
-    if [ ! -z "$delay" ]; then
-      __process_msg "Waiting "$delay"s before "$1" restart..."
-      sleep $delay
     fi
 
     _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
@@ -362,10 +356,9 @@ __run_service() {
 }
 
 provision_www() {
-  local sleep_time=30
   local restart=true
   __save_service_config www " --publish 50001:50001/tcp" "--mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
-  __run_service "www" $sleep_time $restart
+  __run_service "www" $restart
 }
 
 provision_state_less_services() {

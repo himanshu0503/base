@@ -36,10 +36,10 @@ __cleanup_logfiles() {
   # ls -t | tail -n +"$maxlogfilescount" | xargs rm -- lists al the files sorted
   # by timestamp tails all the files except last 5 files and runs rm on them
   # one by one
-  pushd "$LOGS_DIR"
+  pushd "$LOGS_DIR" > /dev/null
   local filecount=$(ls | wc -l)
   if [ "$filecount" -gt "$maxlogfilescount" ]; then
     ls -t | tail -n +"$maxlogfilescount" | xargs rm --
   fi
-  popd
+  popd > /dev/null
 }
