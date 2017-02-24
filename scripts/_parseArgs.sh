@@ -234,11 +234,11 @@ __print_help_install() {
   usage: $0 install [flags]
   This script installs Shippable enterprise
   examples:
+    $0 install --version v5.2.1             //Install on cluster with 'v5.2.1' version
     $0 install --local                      //Install on localhost with 'master' version
     $0 install --local --version v5.2.1     //Install on localhost with 'v5.2.1' version
-    $0 install --version v5.2.1             //Install on cluster with 'v5.2.1' version
   Flags:
-    --local                         Install default ('master') version on localhost
+    --local                         Install on localhost
     --version <version>             Install a particular version
   "
   exit 0
@@ -267,8 +267,8 @@ __print_help() {
     $0 upgrade --version v5.2.3
 
   Commmands:
-    install         Run shippable installation
-    upgrade         Run sippable upgrade
+    install         Run Shippable installation
+    upgrade         Run Shippable upgrade
     status          Print status of current installation
     help            Print this message
   "
