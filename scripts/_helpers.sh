@@ -4,7 +4,7 @@
 
 __show_status() {
   echo "All services operational"
-	#TODO:
+  #TODO:
 	# - print running release version
 	# - print services list
 	# - print machines list
