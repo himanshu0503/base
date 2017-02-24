@@ -2,22 +2,22 @@
 
 __initialize_state() {
   __process_msg "Initializing state file"
-  if [ ! -f "$USR_DIR/state.json" ]; then
-    if [ -f "$USR_DIR/state.json.backup" ]; then
+  if [ ! -f "$STATE_FILE" ]; then
+    if [ -f "$STATE_FILE_BACKUP" ]; then
       __process_msg "A state.json.backup file exists, do you want to use the backup? (yes/no)"
       read response
       if [[ "$response" == "yes" ]]; then
-        cp -vr $USR_DIR/state.json.backup $USR_DIR/state.json
-        rm $USR_DIR/state.json.backup || true
+        cp -vr $STATE_FILE_BACKUP $STATE_FILE
+        rm $STATE_FILE_BACKUP || true
       else
         __process_msg "Discarding backup, creating a new state.json from state.json.example"
-        rm $USR_DIR/state.json.backup || true
-        cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
+        rm $STATE_FILE_BACKUP || true
+        cp -vr $USR_DIR/state.json.example $STATE_FILE
       fi
     else
       __process_msg "No state.json exists, creating a new state.json from state.json.example."
       cp -vr $USR_DIR/state.json.example $STATE_FILE
-      rm $USR_DIR/state.json.backup || true
+      rm $STATE_FILE_BACKUP || true
     fi
   else
     # if a state file exists, use it
