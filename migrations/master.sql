@@ -5668,7 +5668,7 @@ do $$
     end if;
 
     -- Add "defaultAccountViewId" to accounts
-    if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'defaultAccountViewId') then
+    if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'defaultViewId') then
       alter table "accounts" add column "defaultViewId" INTEGER;
     end if;
 
