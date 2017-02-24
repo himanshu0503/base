@@ -25,6 +25,28 @@ __initialize_state() {
   fi
 }
 
+__bootstrap_state() {
+  __process_msg "injecting empty machines array"
+  local machines=$(cat $STATE_FILE | \
+    jq '.machines=[]')
+  _update_state "$machines"
+
+  __process_msg "injecting empty master integrations"
+  local master_integrations=$(cat $STATE_FILE | \
+    jq '.masterIntegrations=[]')
+  _update_state "$master_integrations"
+
+  __process_msg "injecting empty system integrations"
+  local system_integrations=$(cat $STATE_FILE | \
+    jq '.systemIntegrations=[]')
+  _update_state "$system_integrations"
+
+  __process_msg "injecting empty services array"
+  local services=$(cat $STATE_FILE | \
+    jq '.services=[]')
+  _update_state "$services"
+}
+
 __validate_args() {
   __process_marker "Validating arguments"
 
@@ -54,6 +76,15 @@ __validate_args() {
       exit 1
     else
       __process_msg "Release version present for an upgrade, skipping bootstrap"
+    fi
+  else
+    ## Running a fresh install, empty release version means bootstrap statefile
+    if [ "$state_release_version" == ""  ]; then
+      __process_msg "bootstrapping state.json for latest release"
+      # because we dont want to copy all integrations from example file
+      __bootstrap_state
+    else
+      __process_msg "Release version present for an install, skipping bootstrap"
     fi
   fi
 
