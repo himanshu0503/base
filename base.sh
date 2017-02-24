@@ -38,7 +38,6 @@ export UPDATED_APT_PACKAGES=false
 export INSTALL_MODE="production"
 export SHIPPABLE_VERSION="master"
 export RELEASE_VERSION=""
-export DEPLOY_TAG=""
 export IS_UPGRADE=false
 ###########################################################
 

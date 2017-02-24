@@ -23,24 +23,22 @@ __check_valid_state_json() {
 }
 
 __check_dependencies() {
-  __process_marker "Installing dependencies"
-
   {
-    type jq &> /dev/null && __process_msg "'jq' already installed, skipping"
+    type jq &> /dev/null && true
   } || {
     __process_msg "Installing 'jq'"
     apt-get install -y jq
   }
 
   {
-    type rsync &> /dev/null && __process_msg "'rsync' already installed, skipping"
+    type rsync &> /dev/null && true
   } || {
     __process_msg "Installing 'rsync'"
     apt-get install -y rsync
   }
 
   {
-    type ssh &> /dev/null && __process_msg "'ssh' already installed, skipping"
+    type ssh &> /dev/null && true
   } || {
     __process_msg "Installing 'ssh'"
     apt-get install -y ssh-client
