@@ -50,17 +50,17 @@ __archive_state_file() {
 
   mkdir -p $STATE_FILE_ARCHIVE_DIR
 
-  local archive_state_path="$STATE_FILE_ARCHIVE_DIR/$TIMESTAMP.state.json"
-  cp -vr $STATE_FILE $archive_state_path
-
-  local file_count=$(ls -l $STATE_FILE_ARCHIVE_DIR | wc -l)
-
+  pushd $STATE_FILE_ARCHIVE_DIR > /dev/null
+  local file_count=$(ls | wc -l)
   if [ "$file_count" -gt "$MAX_DEFAULT_STATE_COUNT" ]; then
-    ls -t $STATE_FILE_ARCHIVE_DIR \
+    ls -t \
       | tail -n +"$MAX_DEFAULT_STATE_COUNT" \
       | xargs rm --
   fi
+  popd > /dev/null
+
+  local archive_state_path="$STATE_FILE_ARCHIVE_DIR/$TIMESTAMP.state.json"
+  cp $STATE_FILE $archive_state_path
 
   __process_msg "Successfully archived state.json"
-
 }
