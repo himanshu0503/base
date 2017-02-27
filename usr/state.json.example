@@ -544,7 +544,10 @@
     "shippableAwsAccountId": "123456",
     "rootS3Bucket": "",
     "nodeScriptsRemoteLocation": "https://api.github.com/repos/Shippable/node/tarball",
-    "nodeScriptsLocation": ""
+    "nodeScriptsLocation": "",
+    "enforcePrivateJobQuota": false,
+    "technicalSupportAvailable": false,
+    "customNodesAdminOnly": false
   },
   "machines": [],
   "installStatus": {

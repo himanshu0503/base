@@ -287,6 +287,18 @@ generate_system_config() {
   local node_scripts_location=$(cat $STATE_FILE | jq -r '.systemSettings.nodeScriptsLocation')
   sed -i "s#{{NODE_SCRIPTS_LOCATION}}#$node_scripts_location#g" $system_configs_sql
 
+  __process_msg "Updating : enforcePrivateJobQuota"
+  local enforce_private_job_quota=$(cat $STATE_FILE | jq -r '.systemSettings.enforcePrivateJobQuota')
+  sed -i "s#{{ENFORCE_PRIVATE_JOB_QUOTA}}#$enforce_private_job_quota#g" $system_configs_sql
+
+  __process_msg "Updating : technicalSupportAvailable"
+  local technical_support_available=$(cat $STATE_FILE | jq -r '.systemSettings.technicalSupportAvailable')
+  sed -i "s#{{TECHNICAL_SUPPORT_AVAILABLE}}#$technical_support_available#g" $system_configs_sql
+
+  __process_msg "Updating : customNodesAdminOnly"
+  local custom_nodes_admin_only=$(cat $STATE_FILE | jq -r '.systemSettings.customNodesAdminOnly')
+  sed -i "s#{{CUSTOM_NODES_ADMIN_ONLY}}#$custom_nodes_admin_only#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 

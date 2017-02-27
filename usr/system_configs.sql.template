@@ -133,6 +133,18 @@ do $$
       alter table "systemConfigs" add column "nodeScriptsLocation" varchar(255);
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'enforcePrivateJobQuota') then
+      alter table "systemConfigs" add column "enforcePrivateJobQuota" BOOLEAN default false not null;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'technicalSupportAvailable') then
+      alter table "systemConfigs" add column "technicalSupportAvailable" BOOLEAN default false not null;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'customNodesAdminOnly') then
+      alter table "systemConfigs" add column "customNodesAdminOnly" BOOLEAN default false not null;
+    end if;
+
     -- Alter any defaults here:
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'serverEnabled') then
       alter table "systemConfigs" alter column "serverEnabled" set default false;
@@ -223,7 +235,10 @@ do $$
             "hubspotListId"={{HUBSPOT_LIST_ID}},
             "hubspotShouldSimulate"={{HUBSPOT_SHOULD_SIMULATE}},
             "rootS3Bucket"='{{ROOT_S3_BUCKET}}',
-            "nodeScriptsLocation"='{{NODE_SCRIPTS_LOCATION}}'
+            "nodeScriptsLocation"='{{NODE_SCRIPTS_LOCATION}}',
+            "enforcePrivateJobQuota"={{ENFORCE_PRIVATE_JOB_QUOTA}},
+            "technicalSupportAvailable"={{TECHNICAL_SUPPORT_AVAILABLE}},
+            "customNodesAdminOnly"={{CUSTOM_NODES_ADMIN_ONLY}}
         where id=1;
     end if;
 
@@ -279,7 +294,10 @@ do $$
             "hubspotListId",
             "hubspotShouldSimulate",
             "rootS3Bucket",
-            "nodeScriptsLocation"
+            "nodeScriptsLocation",
+            "enforcePrivateJobQuota",
+            "technicalSupportAvailable",
+            "customNodesAdminOnly"
           )
         values
           (
@@ -325,7 +343,10 @@ do $$
             {{HUBSPOT_LIST_ID}},
             {{HUBSPOT_SHOULD_SIMULATE}},
             '{{ROOT_S3_BUCKET}}',
-            '{{NODE_SCRIPTS_LOCATION}}'
+            '{{NODE_SCRIPTS_LOCATION}}',
+            {{ENFORCE_PRIVATE_JOB_QUOTA}},
+            {{TECHNICAL_SUPPORT_AVAILABLE}},
+            {{CUSTOM_NODES_ADMIN_ONLY}}
           );
     end if;
   end
