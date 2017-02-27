@@ -5333,6 +5333,24 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+      routePattern := '/viewObjects',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/viewObjects',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/viewObjects/:viewObjectId',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
   end
 $$;
 
