@@ -43,13 +43,12 @@ export RELEASE_VERSION=""
 export IS_UPGRADE=false
 ###########################################################
 
-source "$SCRIPTS_DIR/logger.sh"
+source "$SCRIPTS_DIR/_logger.sh"
 source "$SCRIPTS_DIR/_helpers.sh"
 source "$SCRIPTS_DIR/_parseArgs.sh"
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptLocal.sh"
-source "$SCRIPTS_DIR/_manageState.sh"
 source "$SCRIPTS_DIR/_manageState.sh"
 
 main() {
