@@ -52,8 +52,8 @@ __archive_state_file() {
 
   pushd $STATE_FILE_ARCHIVE_DIR > /dev/null
   local file_count=$(ls | wc -l)
-  if [ "$file_count" -gt "$MAX_DEFAULT_STATE_COUNT" ]; then
-    ls -t \
+  if [ "$file_count" -ge "$MAX_DEFAULT_STATE_COUNT" ]; then
+    ls -r \
       | tail -n +"$MAX_DEFAULT_STATE_COUNT" \
       | xargs rm --
   fi
