@@ -5606,6 +5606,13 @@ do $$
       alter table "systemMachineImages" alter column "drydockTag" set not null;
     end if;
 
+    -- Add drydockFamily column to systemMachineImages
+    if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'drydockFamily') then
+      alter table "systemMachineImages" add column "drydockFamily" varchar(255);
+      update "systemMachineImages" set "drydockFamily"='u14';
+      alter table "systemMachineImages" alter column "drydockFamily" set not null;
+    end if;
+
     -- Drop S3 artifacts masterIntegration
     if exists (select 1 from information_schema.columns where table_name = 'masterIntegrationFields') then
       delete from "masterIntegrationFields" where id in (134, 135, 136);
