@@ -478,7 +478,8 @@
       "keyName": "shippable-beta",
       "securityGroup": "sg-123456",
       "subnetId": "subnet-123456",
-      "drydockTag": "prod"
+      "drydockTag": "prod",
+      "drydockFamily": "u14"
     }
   ],
   "services": [],
