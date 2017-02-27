@@ -491,6 +491,17 @@ do $$
       values (311, 'rSync', 'jobStatesMapContextType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    -- Codes for views and viewObjects
+    if not exists (select 1 from "systemCodes" where code = 400) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (400, 'project', 'viewObjectType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 500) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (500, 'accountDashboard', 'viewType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
     -- insert all systemProperties
     if not exists (select 1 from "systemProperties" where "fieldName" = 'sysUserName') then
       insert into "systemProperties" ("fieldName", "createdBy", "updatedBy", "createdAt", "updatedAt")
