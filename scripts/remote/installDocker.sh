@@ -16,6 +16,11 @@ check_docker_local() {
 
 docker_install() {
   echo "Installing Docker..."
+  # Clean up any existing installation
+  sudo apt-get purge -y docker-engine
+  rm -rf /var/lib/docker || true
+  rm -rf /etc/default/docker || true
+
   sudo apt-get install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
   sudo apt-get install -y -o Dpkg::Options::="--force-confnew" docker-engine=$DOCKER_VERSION
 }
