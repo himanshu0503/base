@@ -543,7 +543,7 @@
     "hubspotShouldSimulate": "true",
     "shippableAwsAccountId": "123456",
     "rootS3Bucket": "",
-    "nodeScriptsRemoteLocation": "https://api.github.com/repos/Shippable/node/tarball",
+    "nodeScriptsRemoteLocation": "https://github.com/Shippable/node/archive/RELEASE_VERSION.tar.gz",
     "nodeScriptsLocation": "",
     "enforcePrivateJobQuota": false,
     "technicalSupportAvailable": false,

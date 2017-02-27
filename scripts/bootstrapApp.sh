@@ -30,8 +30,8 @@ generate_serviceuser_token() {
 
 copy_node_scripts() {
   __process_msg "Copying node scripts"
-  local server_enabled=$(cat $STATE_FILE \
-    | jq -r '.systemSettings.serverEnabled')
+  local install_mode=$(cat $STATE_FILE \
+    | jq -r '.installMode')
   local node_scripts_location=$(cat $STATE_FILE \
     | jq -r '.systemSettings.nodeScriptsLocation')
   local node_scripts_remote_location=$(cat $STATE_FILE \
@@ -42,19 +42,11 @@ copy_node_scripts() {
     exit 1
   fi
 
-  if [ $server_enabled == false ]; then
-    __process_msg "Server enabled is set to false"
-    if [ "$node_scripts_location" != "" ] && [ "$node_scripts_location" != "null" ]; then
-      __process_msg "systemSettings.nodeScriptsRemoteLocation already set, skipping"
-    else
-      __process_msg "Copying scripts location from systemSettings.nodeScriptsRemoteLocation"
-      node_scripts_location=$(cat $STATE_FILE \
-        | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_remote_location'"')
-      _update_state "$node_scripts_location"
-      __process_msg "Updated systemSettings.nodeScriptsLocation"
-    fi
-  else
-    __process_msg "Server enabled is set to true, downloading scripts and updating statefile"
+  __process_msg "Processing node scripts for release: $RELEASE_VERSION"
+  node_scripts_remote_location="${node_scripts_remote_location/RELEASE_VERSION/$RELEASE_VERSION}"
+
+  if [ "$install_mode" != "local" ]; then
+    __process_msg "Downloading scripts and updating statefile"
     local node_scripts_archive="node.tar.gz"
     local node_scripts_download_location="$USR_DIR/$node_scripts_archive"
 
@@ -63,7 +55,6 @@ copy_node_scripts() {
       -o $node_scripts_download_location"
 
     eval $download_command
-
     __process_msg "Copying node scripts to DB host"
     local db_host=$(cat $STATE_FILE \
       | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -76,8 +67,13 @@ copy_node_scripts() {
     node_scripts_location=$(cat $STATE_FILE \
       | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_location'"')
     _update_state "$node_scripts_location"
-    __process_msg "State file updated with systemSettings.nodeScriptsLocation"
+  else
+    __process_msg "Updating scripts location for localhost"
+    node_scripts_location=$(cat $STATE_FILE \
+      | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_remote_location'"')
+    _update_state "$node_scripts_location"
   fi
+  __process_msg "State file updated with systemSettings.nodeScriptsLocation"
 }
 
 generate_root_bucket_name() {
@@ -944,6 +940,7 @@ main() {
     provision_api
   else
     update_service_list
+    copy_node_scripts
     save_service_config
     update_system_node_keys
     generate_system_config
