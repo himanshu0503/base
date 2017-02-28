@@ -1839,87 +1839,47 @@ do $$
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 60) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41d9aaf36cfa4e8fb598f', 60, 'drydock/u16nodpls', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41da3af36cfa4e8fb5990', 60, 'drydock/u16nodall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 61) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41da3af36cfa4e8fb5990', 61, 'drydock/u16nodall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41dbcaf36cfa4e8fb5992', 61, 'drydock/u16pytall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 62) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41db2af36cfa4e8fb5991', 62, 'drydock/u16pytpls', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41de0af36cfa4e8fb5994', 62, 'drydock/u16javall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 63) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41dbcaf36cfa4e8fb5992', 63, 'drydock/u16pytall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41df3af36cfa4e8fb5996', 63, 'drydock/u16scaall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 64) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41dd6af36cfa4e8fb5993', 64, 'drydock/u16javpls', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41e0daf36cfa4e8fb5998', 64, 'drydock/u16ruball', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 65) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41de0af36cfa4e8fb5994', 65, 'drydock/u16javall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41e28c4317ba97eb1aadd', 65, 'drydock/u16phpall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 66) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41deaaf36cfa4e8fb5995', 66, 'drydock/u16scapls', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41e458e318bc0fe5b0124', 66, 'drydock/u16golall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 67) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41df3af36cfa4e8fb5996', 67, 'drydock/u16scaall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41e6a8e318bc0fe5b0126', 67, 'drydock/u16cloall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 68) then
       insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41dfeaf36cfa4e8fb5997', 68, 'drydock/u16rubpls', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemImages" where "systemImageId" = 69) then
-      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41e0daf36cfa4e8fb5998', 69, 'drydock/u16ruball', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemImages" where "systemImageId" = 70) then
-      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41e1baf36cfa4e8fb5999', 70, 'drydock/u16phppls', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemImages" where "systemImageId" = 71) then
-      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41e28c4317ba97eb1aadd', 71, 'drydock/u16phpall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemImages" where "systemImageId" = 72) then
-      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41e32c4317ba97eb1aade', 72, 'drydock/u16golpls', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemImages" where "systemImageId" = 73) then
-      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41e458e318bc0fe5b0124', 73, 'drydock/u16golall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemImages" where "systemImageId" = 74) then
-      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41e508e318bc0fe5b0125', 74, 'drydock/u16clopls', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemImages" where "systemImageId" = 75) then
-      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41e6a8e318bc0fe5b0126', 75, 'drydock/u16cloall', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "systemImages" where "systemImageId" = 76) then
-      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58b41e7b8e318bc0fe5b0127', 76, 'drydock/u16cpp', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+      values ('58b41e7b8e318bc0fe5b0127', 68, 'drydock/u16cpp', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
     -- Add sourceName to resources and migrate name to sourceName
