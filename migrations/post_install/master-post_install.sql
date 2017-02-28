@@ -49,8 +49,18 @@ SELECT "id",pid,"createdAt","statusCode","contextTypeCode","contextValue","lastS
 FROM cte
 WHERE rn = 1;
 
+-- insert if not present
 INSERT INTO "jobStatesMap" ("projectId", "subscriptionId", "jobTypeCode", "contextTypeCode", "contextValue", "lastSuccessfulJobId", "lastUnstableJobId", "lastTimedoutJobId", "lastFailedJobId", "lastJobId", "createdBy", "updatedBy", "updatedAt", "createdAt")
 SELECT T1.pid, T1."subscriptionId", 201, T1."contextTypeCode", T1."contextValue", T1."lastSuccessfulJobId", T1."lastUnstableJobId", T1."lastTimedoutJobId", T1."lastFailedJobId", T1.id, T1."createdBy", T1."updatedBy", T1."updatedAt", T1."createdAt" FROM temptjsm T1 left join "jobStatesMap" T2 on T1.pid = T2."projectId" and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" where T2."projectId" IS NULL and T2."contextTypeCode" is null and T2."contextValue" is null;
+
+-- update if present
+update "jobStatesMap" T1 set "lastSuccessfulJobId" = T2."lastSuccessfulJobId" from temptjsm T2 where T1."projectId" = T2.pid and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" and T1."lastSuccessfulJobId" is null and T2."lastSuccessfulJobId" is not null;
+
+update "jobStatesMap" T1 set "lastUnstableJobId" = T2."lastUnstableJobId" from temptjsm T2 where T1."projectId" = T2.pid and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" and T1."lastUnstableJobId" is null and T2."lastUnstableJobId" is not null;
+
+update "jobStatesMap" T1 set "lastTimedoutJobId" = T2."lastTimedoutJobId" from temptjsm T2 where T1."projectId" = T2.pid and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" and T1."lastTimedoutJobId" is null and T2."lastTimedoutJobId" is not null;
+
+update "jobStatesMap" T1 set "lastFailedJobId" = T2."lastFailedJobId" from temptjsm T2 where T1."projectId" = T2.pid and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" and T1."lastFailedJobId" is null and T2."lastFailedJobId" is not null;
 
 drop table tjsm;
 drop table temptjsm;
@@ -109,8 +119,14 @@ SELECT "id",pid,"createdAt","statusCode","contextTypeCode","contextValue","lastS
 FROM cte
 WHERE rn = 1;
 
+-- insert if not present
 INSERT INTO "jobStatesMap" ("projectId", "subscriptionId", "jobTypeCode", "contextTypeCode", "contextValue", "lastSuccessfulJobId", "lastFailedJobId", "lastJobId", "createdBy", "updatedBy", "updatedAt", "createdAt")
 SELECT T1.pid, T1."subscriptionId", 202, T1."contextTypeCode", T1."contextValue", T1."lastSuccessfulJobId", T1."lastFailedJobId", T1.id, T1."createdBy", T1."updatedBy", T1."updatedAt", T1."createdAt" FROM temptjsm T1 left join "jobStatesMap" T2 on T1.pid = T2."projectId" and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" where T2."projectId" IS NULL and T2."contextTypeCode" is null and T2."contextValue" is null;
+
+-- update if present
+update "jobStatesMap" T1 set "lastSuccessfulJobId" = T2."lastSuccessfulJobId" from temptjsm T2 where T1."projectId" = T2.pid and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" and T1."lastSuccessfulJobId" is null and T2."lastSuccessfulJobId" is not null;
+
+update "jobStatesMap" T1 set "lastFailedJobId" = T2."lastFailedJobId" from temptjsm T2 where T1."projectId" = T2.pid and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" and T1."lastFailedJobId" is null and T2."lastFailedJobId" is not null;
 
 drop table tjsm;
 drop table rtjsm;
