@@ -494,7 +494,6 @@ provision_api() {
   local rm_api_cmd="docker service rm api || true"
 
   _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
-  sleep 15
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
 }
 
