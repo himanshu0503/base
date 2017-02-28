@@ -1,5 +1,1 @@
-do $$
-  begin
-    update "subscriptions" set "systemMachineImageId" = (select "id" from "systemMachineImages" where "isDefault"=true) where "systemMachineImageId" is null;
-  end
-$$;
+update "subscriptions" set "systemMachineImageId" = "systemMachineImages"."id" from "systemMachineImages" where "systemMachineImages"."isDefault" = true and "subscriptions"."systemMachineImageId" is null;
