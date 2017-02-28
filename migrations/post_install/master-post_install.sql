@@ -14,7 +14,7 @@ SELECT "id", "projectId" as pid,"branchName" as bn,"runNumber","createdAt","stat
 FROM cte
 WHERE rn = 1;
 
--- add required columns
+-- add required columns to temp table tjsm
 alter table tjsm add column "contextTypeCode" int, add column "contextValue" varchar(255), add column "lastSuccessfulJobId" varchar(24), add column "lastFailedJobId" varchar(24), add column "lastUnstableJobId" varchar(24), add column "lastTimedoutJobId" varchar(24);
 
 -- update null fields
@@ -76,8 +76,10 @@ create temp table rtjsm as WITH cte AS
 SELECT "id","projectId" as rpid,"createdAt", "createdBy", "updatedBy","name" as "contextValue","typeCode" as "contextTypeCode"
 FROM cte;
 
+-- add required columns to temp table tjsm
 alter table tjsm add column "contextValue" varchar(255), add column "contextTypeCode" int, add column "lastSuccessfulJobId" varchar(24), add column "lastFailedJobId" varchar(24), add column "createdBy" varchar(24), add column "updatedBy" varchar(24);
 
+-- update contextTypeCode, contextValue
 update rtjsm set "contextTypeCode" = 305 where "contextTypeCode" = 2010;
 update rtjsm set "contextTypeCode" = 306 where "contextTypeCode" = 2000;
 update rtjsm set "contextTypeCode" = 307 where "contextTypeCode" = 2005;
@@ -91,12 +93,15 @@ update tjsm T1 set "contextTypeCode" = T2."contextTypeCode" from rtjsm T2 where 
 update tjsm T1 set "createdBy" = T2."createdBy" from rtjsm T2 where T1.rid = T2.id;
 update tjsm T1 set "updatedBy" = T2."updatedBy" from rtjsm T2 where T1.rid = T2.id;
 
+-- ignoring records which are not part of (2010,2000,2005,2007,2012,2011,2009) typeCodes
 delete from tjsm where "contextValue" is null;
 
+-- update lastSuccessfulJobId, lastFailedJobId
 update tjsm T1 set "lastSuccessfulJobId" = T2.id from tjsm T2 where T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" and T1.pid = T2.pid and T2."statusCode" = 4002 and T1.rid = T2.rid;
 
 update tjsm T1 set "lastFailedJobId" = T2.id from tjsm T2 where T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" and T1.pid = T2.pid and T2."statusCode" = 4003 and T1.rid = T2.rid;
 
+-- creating a temp table temptjsm which have only latest records
 create temp table temptjsm as WITH cte AS
 (
    SELECT id,pid,"createdAt","contextTypeCode","contextValue","statusCode","subscriptionId", "createdBy", "updatedBy", "updatedAt","lastSuccessfulJobId","lastFailedJobId", ROW_NUMBER() OVER (PARTITION BY "pid","contextTypeCode","contextValue" ORDER BY "createdAt" desc)
