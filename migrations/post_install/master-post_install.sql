@@ -49,10 +49,8 @@ SELECT "id",pid,"createdAt","statusCode","contextTypeCode","contextValue","lastS
 FROM cte
 WHERE rn = 1;
 
-truncate "jobStatesMap";
-
 INSERT INTO "jobStatesMap" ("projectId", "subscriptionId", "jobTypeCode", "contextTypeCode", "contextValue", "lastSuccessfulJobId", "lastUnstableJobId", "lastTimedoutJobId", "lastFailedJobId", "lastJobId", "createdBy", "updatedBy", "updatedAt", "createdAt")
-SELECT pid,"subscriptionId", 201, "contextTypeCode", "contextValue", "lastSuccessfulJobId", "lastUnstableJobId", "lastTimedoutJobId", "lastFailedJobId", id, "createdBy", "updatedBy", "updatedAt", "createdAt" FROM temptjsm;
+SELECT T1.pid, T1."subscriptionId", 201, T1."contextTypeCode", T1."contextValue", T1."lastSuccessfulJobId", T1."lastUnstableJobId", T1."lastTimedoutJobId", T1."lastFailedJobId", T1.id, T1."createdBy", T1."updatedBy", T1."updatedAt", T1."createdAt" FROM temptjsm T1 left join "jobStatesMap" T2 on T1.pid = T2."projectId" and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" where T2."projectId" IS NULL and T2."contextTypeCode" is null and T2."contextValue" is null;
 
 drop table tjsm;
 drop table temptjsm;
@@ -112,7 +110,7 @@ FROM cte
 WHERE rn = 1;
 
 INSERT INTO "jobStatesMap" ("projectId", "subscriptionId", "jobTypeCode", "contextTypeCode", "contextValue", "lastSuccessfulJobId", "lastFailedJobId", "lastJobId", "createdBy", "updatedBy", "updatedAt", "createdAt")
-SELECT pid,"subscriptionId", 202, "contextTypeCode", "contextValue", "lastSuccessfulJobId", "lastFailedJobId", id, "createdBy", "updatedBy", "updatedAt", "createdAt" FROM temptjsm;
+SELECT T1.pid, T1."subscriptionId", 202, T1."contextTypeCode", T1."contextValue", T1."lastSuccessfulJobId", T1."lastFailedJobId", T1.id, T1."createdBy", T1."updatedBy", T1."updatedAt", T1."createdAt" FROM temptjsm T1 left join "jobStatesMap" T2 on T1.pid = T2."projectId" and T1."contextTypeCode" = T2."contextTypeCode" and T1."contextValue" = T2."contextValue" where T2."projectId" IS NULL and T2."contextTypeCode" is null and T2."contextValue" is null;
 
 drop table tjsm;
 drop table rtjsm;
