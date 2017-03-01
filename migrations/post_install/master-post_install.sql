@@ -28,10 +28,10 @@ do $$
       update tjsm T set "releaseName" = T."gitTagName" where "isRelease" = true and "releaseName" is null;
 
       -- update contextTypeCode, contextValue
-      update tjsm set "contextTypeCode" = 301, "contextValue" = tjsm."gitTagName" where "isGitTag" = true;
-      update tjsm set "contextTypeCode" = 302, "contextValue" = tjsm."releaseName" where "isRelease" = true;
-      update tjsm set "contextTypeCode" = 303, "contextValue" = tjsm.bn where "isPullRequest" = true;
-      update tjsm set "contextTypeCode" = 304, "contextValue" = tjsm.bn where "isPullRequest" = false and "isGitTag" = false and "isRelease" = false;
+      update tjsm set "contextTypeCode" = 302, "contextValue" = tjsm."gitTagName" where "isGitTag" = true;
+      update tjsm set "contextTypeCode" = 303, "contextValue" = tjsm."releaseName" where "isRelease" = true;
+      update tjsm set "contextTypeCode" = 304, "contextValue" = tjsm.bn where "isPullRequest" = true;
+      update tjsm set "contextTypeCode" = 301, "contextValue" = tjsm.bn where "isPullRequest" = false and "isGitTag" = false and "isRelease" = false;
       update tjsm set "updatedBy" = tjsm."createdBy" where "updatedBy" is null;
 
       -- update lastSuccessfulJobId, lastUnstableJobId, lastTimedoutJobId, lastFailedJobId
