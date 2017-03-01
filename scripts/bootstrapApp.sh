@@ -45,7 +45,7 @@ copy_node_scripts() {
   __process_msg "Processing node scripts for release: $RELEASE_VERSION"
   node_scripts_remote_location="${node_scripts_remote_location/RELEASE_VERSION/$RELEASE_VERSION}"
 
-  if [ "$install_mode" != "local" ]; then
+  if [ "$RELEASE_VERSION" != "master" ]; then
     __process_msg "Downloading scripts and updating statefile"
     local node_scripts_archive="node.tar.gz"
     local node_scripts_download_location="$USR_DIR/$node_scripts_archive"
