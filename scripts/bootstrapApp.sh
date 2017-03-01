@@ -295,6 +295,10 @@ generate_system_config() {
   local custom_nodes_admin_only=$(cat $STATE_FILE | jq -r '.systemSettings.customNodesAdminOnly')
   sed -i "s#{{CUSTOM_NODES_ADMIN_ONLY}}#$custom_nodes_admin_only#g" $system_configs_sql
 
+  __process_msg "Updating : mktgPort"
+  local mktg_port=$(cat $STATE_FILE | jq -r '.systemSettings.mktgPort')
+  sed -i "s#{{MKTG_PORT}}#$mktg_port#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 

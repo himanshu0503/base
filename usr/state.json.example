@@ -547,7 +547,8 @@
     "nodeScriptsLocation": "",
     "enforcePrivateJobQuota": false,
     "technicalSupportAvailable": false,
-    "customNodesAdminOnly": false
+    "customNodesAdminOnly": false,
+    "mktgPort": 50002
   },
   "machines": [],
   "installStatus": {
