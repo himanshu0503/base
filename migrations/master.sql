@@ -1882,6 +1882,16 @@ do $$
       values ('58b41e7b8e318bc0fe5b0127', 68, 'drydock/u16cpp', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
     end if;
 
+    if not exists (select 1 from "systemImages" where "systemImageId" = 69) then
+      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('58b41e7b8e318bc0fe5b0128', 69, 'drydock/u16all', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemImages" where "systemImageId" = 70) then
+      insert into "systemImages" ("id", "systemImageId", "name", "isActive","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('58b41e7b8e318bc0fe5b0129', 70, 'drydock/u14all', true, '540e7735399939140041d885', '540e7735399939140041d885', '2016-06-01', '2016-06-01');
+    end if;
+
     -- Add sourceName to resources and migrate name to sourceName
     if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'sourceName') then
       alter table "resources" add column "sourceName" varchar(255);
