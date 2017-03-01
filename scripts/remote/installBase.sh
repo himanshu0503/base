@@ -9,7 +9,7 @@ update_sources_docker() {
   docker_deb="deb https://apt.dockerproject.org/repo ubuntu-`lsb_release -cs` main"
   docker=$(cat /etc/apt/sources.list.d/docker.list 2>/dev/null | grep "$docker_deb") || true
   if [ -z "$docker" ]; then
-    echo $docker_deb | tee -a /etc/apt/sources.list.d/docker.list
+    echo $docker_deb | sudo tee -a /etc/apt/sources.list.d/docker.list
   fi
 }
 
