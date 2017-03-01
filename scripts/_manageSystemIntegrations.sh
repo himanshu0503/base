@@ -50,7 +50,7 @@ get_enabled_systemIntegrations() {
   response=$(echo $response | jq '.')
 
   DB_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
-  AVAILABLE_SYSTEM_INTEGRATIONS=$(echo $response | jq '[ .[] | select (.isEnabled == true) ]')
+  AVAILABLE_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
   local available_integrations_length=$(echo $AVAILABLE_SYSTEM_INTEGRATIONS | jq -r '. | length')
   __process_msg "Successfully fetched enabled system integrations from db: $available_integrations_length"
 
@@ -170,6 +170,8 @@ upsert_systemIntegrations() {
         | jq '.masterName="'$db_system_integration_master_name'"')
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.name="'$db_system_integration_name'"')
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.isEnabled=true')
 
       local integrations_put_endpoint="$api_url/systemIntegrations/$db_system_integration_id"
       local post_call_resp_code=$(curl \
