@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 export ENABLED_MASTER_INTEGRATIONS=""
-export AVAILABLE_SYSTEM_INTEGRATIONS=""
 export ENABLED_SYSTEM_INTEGRATIONS=""
 export DB_SYSTEM_INTEGRATIONS=""
 export HTTP_RESPONSE_FILE="$LOGS_DIR/http_response"
@@ -50,9 +49,8 @@ get_enabled_systemIntegrations() {
   response=$(echo $response | jq '.')
 
   DB_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
-  AVAILABLE_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
-  local available_integrations_length=$(echo $AVAILABLE_SYSTEM_INTEGRATIONS | jq -r '. | length')
-  __process_msg "Successfully fetched enabled system integrations from db: $available_integrations_length"
+  local db_system_integrations_length=$(echo $DB_SYSTEM_INTEGRATIONS | jq -r '. | length')
+  __process_msg "Successfully fetched available system integrations from db: $db_system_integrations_length"
 
 }
 
@@ -118,9 +116,9 @@ upsert_systemIntegrations() {
   local enabled_system_integrations_length=$(echo $enabled_system_integrations \
     | jq -r '. | length')
 
-  local available_system_integrations=$(echo $AVAILABLE_SYSTEM_INTEGRATIONS \
+  local db_system_integrations=$(echo $DB_SYSTEM_INTEGRATIONS \
     | jq '.')
-  local available_system_integrations_length=$(echo $available_system_integrations \
+  local db_system_integrations_length=$(echo $db_system_integrations \
     | jq -r '. | length')
 
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
@@ -138,19 +136,19 @@ upsert_systemIntegrations() {
     local system_integration_to_update=""
     local system_integration_in_db=""
 
-    for j in $(seq 1 $available_system_integrations_length); do
-      local available_system_integration=$(echo $available_system_integrations \
+    for j in $(seq 1 $db_system_integrations_length); do
+      local db_system_integration=$(echo $db_system_integrations \
         | jq '.['"$j-1"']')
-      local available_system_integration_name=$(echo $available_system_integration \
+      local db_system_integration_name=$(echo $db_system_integration \
         | jq -r '.name')
-      local available_system_integration_master_name=$(echo $available_system_integration \
+      local db_system_integration_master_name=$(echo $db_system_integration \
         | jq -r '.masterName')
 
-      if [ $enabled_system_integration_master_name == $available_system_integration_master_name ] && \
-        [ $enabled_system_integration_name == $available_system_integration_name ]; then
+      if [ $enabled_system_integration_master_name == $db_system_integration_master_name ] && \
+        [ $enabled_system_integration_name == $db_system_integration_name ]; then
         is_system_integration_available=true
         system_integration_to_update=$enabled_system_integration
-        system_integration_in_db=$available_system_integration
+        system_integration_in_db=$db_system_integration
       fi
     done
 
