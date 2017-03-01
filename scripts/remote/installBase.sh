@@ -3,10 +3,10 @@
 export INSTALL_MODE="$1"
 
 update_sources_docker() {
-  sudo apt-get install -y apt-transport-https ca-certificates
-  sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+  sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+  curl -fsSL https://apt.dockerproject.org/gpg | sudo apt-key add -
 
-  docker_deb="deb https://apt.dockerproject.org/repo ubuntu-trusty main"
+  docker_deb="deb https://apt.dockerproject.org/repo ubuntu-`lsb_release -cs` main"
   docker=$(cat /etc/apt/sources.list.d/docker.list 2>/dev/null | grep "$docker_deb") || true
   if [ -z "$docker" ]; then
     echo $docker_deb | tee -a /etc/apt/sources.list.d/docker.list
