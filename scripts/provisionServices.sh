@@ -33,65 +33,18 @@ __map_env_vars() {
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')/vortex
   elif [ "$1" == "SHIPPABLE_API_URL" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  elif [ "$1" == "SHIPPABLE_WWW_PORT" ]; then
-    env_value=50001
-  elif [ "$1" == "SHIPPABLE_WWW_URL" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.wwwUrl')
-  elif [ "$1" == "SHIPPABLE_FE_URL" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.wwwUrl')
-  elif [ "$1" == "LOG_LEVEL" ]; then
-    env_value=info
-  elif [ "$1" == "SHIPPABLE_RDS_URL" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.redisUrl')
   elif [ "$1" == "SHIPPABLE_ROOT_AMQP_URL" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrlRoot')
   elif [ "$1" == "SHIPPABLE_AMQP_DEFAULT_EXCHANGE" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.amqpDefaultExchange')
-  elif [ "$1" == "RUN_MODE" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
-  # TODO: Populate this
-  elif [ "$1" == "DOCKER_VERSION" ]; then
-    env_value=1.9.1
-  elif [ "$1" == "DEFAULT_CRON_LOOP_HOURS" ]; then
-    env_value=2
-  elif [ "$1" == "API_RETRY_INTERVAL" ]; then
-    env_value=3
   elif [ "$1" == "PROVIDERS" ]; then
     env_value=ec2
-  elif [ "$1" == "SHIPPABLE_EXEC_IMAGE" ]; then
-    local step_exec_image=$(cat $STATE_FILE | jq -r '.systemSettings.stepExecImage')
-    env_value=$step_exec_image
-  elif [ "$1" == "EXEC_IMAGE" ]; then
-    local step_exec_image=$(cat $STATE_FILE | jq -r '.systemSettings.stepExecImage')
-    env_value=$step_exec_image
-  elif [ "$1" == "SETUP_RUN_SH" ]; then
-    env_value=true
-  elif [ "$1" == "SHIPPABLE_AWS_ACCOUNT_ID" ]; then
-    local shippable_aws_account_id=$(cat $STATE_FILE | jq -r '.systemSettings.shippableAwsAccountId')
-    env_value=$shippable_aws_account_id
-  elif [ "$1" == "GITHUB_LINK_SYSINT_ID" ]; then
-    env_value=null
-  # TODO: Populate this
-  elif [ "$1" == "BITBUCKET_LINK_SYSINT_ID" ]; then
-    env_value=null
-  elif [ "$1" == "BITBUCKET_CLIENT_ID" ]; then
-    env_value=null
-  elif [ "$1" == "BITBUCKET_CLIENT_SECRET" ]; then
-    env_value=null
   elif [ "$1" == "COMPONENT" ]; then
     env_value=$2
   elif [ "$1" == "JOB_TYPE" ]; then
     env_value=$3
-  elif [ "$1" == "TRUCK" ]; then
-    env_value=true
   elif [ "$1" == "IRC_BOT_NICK" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.ircBotNick')
-  elif [ "$1" == "SHIP_TIME_LIMIT" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotShipTimeLimit')
-  elif [ "$1" == "HUBSPOT_LIST_ID" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotListId')
-  elif [ "$1" == "SHOULD_SIMULATE" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotShouldSimulate')
   else
     echo "No handler for env : $1, exiting"
     exit 1
