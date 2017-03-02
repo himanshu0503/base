@@ -543,12 +543,11 @@
     "hubspotShouldSimulate": "true",
     "shippableAwsAccountId": "123456",
     "rootS3Bucket": "",
-    "nodeScriptsRemoteLocation": "https://github.com/Shippable/node/archive/RELEASE_VERSION.tar.gz",
-    "nodeScriptsLocation": "",
     "enforcePrivateJobQuota": false,
     "technicalSupportAvailable": false,
     "customNodesAdminOnly": false,
-    "mktgPort": 50002
+    "mktgPort": 50002,
+    "nodeScriptsLocation": "/home/shippable/scripts/node"
   },
   "machines": [],
   "installStatus": {
