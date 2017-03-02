@@ -2046,6 +2046,20 @@ do $$
       values ('562dbda348095b0d00ce6a43', 'https://bitbucket.org', 'bitbucket', '2016-02-29T00:00:00.000Z', '2016-02-29T00:00:00.000Z');
     end if;
 
+    -- Add urlSlug column to providers
+    if not exists (select 1 from information_schema.columns where table_name = 'providers' and column_name = 'urlSlug') then
+      alter table "providers" add column "urlSlug" varchar(255);
+    end if;
+
+    -- Add urlSlug for github and bitbucket
+    update "providers" set "urlSlug" = 'github' where "url" = 'https://api.github.com';
+    update "providers" set "urlSlug" = 'bitbucket' where "url" = 'https://bitbucket.org';
+
+    -- Add unique constraint on urlSlug column in providers
+    if not exists (select 1 from pg_constraint where conname = 'provUrlSlugU') then
+      alter table "providers" add constraint "provUrlSlugU" UNIQUE ("urlSlug");
+    end if;
+
     -- Make "sourceId" nullable in projects table
     if exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'sourceId') then
       alter table "projects" alter column "sourceId" drop not null;
