@@ -206,7 +206,8 @@
       "name": "braintreeKeys",
       "type": "generic",
       "services": [
-        "braintree"
+        "braintree",
+        "mktg"
       ]
     },
     {
@@ -574,6 +575,14 @@
         "SHIPPABLE_API_URL",
         "SHIPPABLE_API_TOKEN",
         "COMPONENT"
+      ]
+    },
+    {
+      "name": "mktg",
+      "repository": "mktg",
+      "envs": [
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN"
       ]
     }
   ],
