@@ -28,54 +28,6 @@ generate_serviceuser_token() {
   fi
 }
 
-copy_node_scripts() {
-  __process_msg "Copying node scripts"
-  local install_mode=$(cat $STATE_FILE \
-    | jq -r '.installMode')
-  local node_scripts_location=$(cat $STATE_FILE \
-    | jq -r '.systemSettings.nodeScriptsLocation')
-  local node_scripts_remote_location=$(cat $STATE_FILE \
-    | jq -r '.systemSettings.nodeScriptsRemoteLocation')
-
-  if [ "$node_scripts_remote_location" == "" ]; then
-    __process_error "Missing value in systemSettings.nodeScriptsRemoteLocation"
-    exit 1
-  fi
-
-  __process_msg "Processing node scripts for release: $RELEASE_VERSION"
-  node_scripts_remote_location="${node_scripts_remote_location/RELEASE_VERSION/$RELEASE_VERSION}"
-
-  if [ "$RELEASE_VERSION" != "master" ]; then
-    __process_msg "Downloading scripts and updating statefile"
-    local node_scripts_archive="node.tar.gz"
-    local node_scripts_download_location="$USR_DIR/$node_scripts_archive"
-
-    local download_command="curl -LkSs \
-      '$node_scripts_remote_location' \
-      -o $node_scripts_download_location"
-
-    eval $download_command
-    __process_msg "Copying node scripts to DB host"
-    local db_host=$(cat $STATE_FILE \
-      | jq '.machines[] | select (.group=="core" and .name=="db")')
-    local db_ip=$(echo $db_host | jq -r '.ip')
-
-    _copy_script_remote $db_ip "$node_scripts_download_location" "$SCRIPT_DIR_REMOTE"
-
-    __process_msg "Scripts copied to DB host, updating systemSettings.nodeScriptsLocation in state file"
-    node_scripts_location="$SSH_USER@$db_ip:$SCRIPT_DIR_REMOTE/$node_scripts_archive"
-    node_scripts_location=$(cat $STATE_FILE \
-      | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_location'"')
-    _update_state "$node_scripts_location"
-  else
-    __process_msg "Updating scripts location for localhost"
-    node_scripts_location=$(cat $STATE_FILE \
-      | jq '.systemSettings.nodeScriptsLocation="'$node_scripts_remote_location'"')
-    _update_state "$node_scripts_location"
-  fi
-  __process_msg "State file updated with systemSettings.nodeScriptsLocation"
-}
-
 generate_root_bucket_name() {
   __process_msg "Generating root bucket name"
   local root_bucket_name=$(cat $STATE_FILE | jq -r '.systemSettings.rootS3Bucket')
@@ -372,11 +324,11 @@ generate_api_config() {
       local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.dbDialect')
       api_env_values="$api_env_values -e $env_var=$db_dialect"
     elif [ "$env_var" == "SHIPPABLE_API_URL" ]; then
-      local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-      api_env_values="$api_env_values -e $env_var=$db_dialect"
+      local shippable_api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+      api_env_values="$api_env_values -e $env_var=$shippable_api_url"
     elif [ "$env_var" == "RUN_MODE" ]; then
-      local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
-      api_env_values="$api_env_values -e $env_var=$db_dialect"
+      local run_mode=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
+      api_env_values="$api_env_values -e $env_var=$run_mode"
     else
       echo "No handler for API env : $env_var, exiting"
       exit 1
@@ -915,7 +867,6 @@ main() {
   local is_upgrade=$(cat $STATE_FILE | jq -r '.isUpgrade')
   if [ "$INSTALL_MODE" == "production" ]; then
     update_service_list
-    copy_node_scripts
     save_service_config
     pull_images
     update_system_node_keys
@@ -939,7 +890,6 @@ main() {
     provision_api
   else
     update_service_list
-    copy_node_scripts
     save_service_config
     update_system_node_keys
     generate_system_config
