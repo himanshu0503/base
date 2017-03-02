@@ -315,11 +315,14 @@ provision_www() {
 }
 
 provision_mktg() {
-  local restart=true
-  local replicas=$(cat $STATE_FILE | jq --arg service "mktg" -r '.services[] | select (.name=="mktg") | .replicas')
-  local port=$(cat $STATE_FILE | jq -r '.systemSettings.mktgPort')
-  __save_service_config mktg " --publish $port:$port/tcp" "--replicas $replicas --name mktg --network ingress --with-registry-auth --endpoint-mode vip"
-  __run_service "mktg" $restart
+  local mktg=$(cat $STATE_FILE | jq --arg service "mktg" -r '.services[] | select (.name=="mktg")')
+  if [ ! -z "$mktg" ]; then
+    local restart=true
+    local replicas=$(cat $STATE_FILE | jq --arg service "mktg" -r '.services[] | select (.name=="mktg") | .replicas')
+    local port=$(cat $STATE_FILE | jq -r '.systemSettings.mktgPort')
+    __save_service_config mktg " --publish $port:$port/tcp" "--replicas $replicas --name mktg --network ingress --with-registry-auth --endpoint-mode vip"
+    __run_service "mktg" $restart
+  fi
 }
 
 provision_state_less_services() {
