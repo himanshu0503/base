@@ -57,6 +57,7 @@ save_systemMachineImages(){
         --write-out "%{http_code}\n" --output /dev/null)
       if [ "$post_call_resp_code" -gt "299" ]; then
         echo "Error inserting system machine image(status code $post_call_resp_code)"
+        exit 1
       else
         echo "Sucessfully inserted system machine image: $system_machine_image_name"
       fi
@@ -67,6 +68,7 @@ save_systemMachineImages(){
       --write-out "%{http_code}\n" --silent --output /dev/null)
       if [ "$put_call_resp_code" -gt "299" ]; then
         echo "Error updating system machine image: $system_machine_image_name (status code $put_call_resp_code)"
+        exit 1
       else
         __process_msg "Sucessfully updated system machine image: $system_machine_image_name"
       fi

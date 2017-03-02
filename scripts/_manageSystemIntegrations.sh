@@ -51,7 +51,6 @@ get_enabled_systemIntegrations() {
   DB_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
   local db_system_integrations_length=$(echo $DB_SYSTEM_INTEGRATIONS | jq -r '. | length')
   __process_msg "Successfully fetched available system integrations from db: $db_system_integrations_length"
-
 }
 
 validate_systemIntegrations() {
@@ -183,10 +182,10 @@ upsert_systemIntegrations() {
         --output $HTTP_RESPONSE_FILE)
       if [ "$post_call_resp_code" -gt "299" ]; then
         echo "Error adding integration for $enabled_system_integration_master_name(status code $post_call_resp_code)"
+        exit 1
       else
         echo "Sucessfully added integration for $enabled_system_integration_master_name"
       fi
-
     else
       # find the master integration for this system integration
       # post a new system integration
@@ -268,6 +267,7 @@ delete_systemIntegrations() {
         --output $HTTP_RESPONSE_FILE)
       if [ "$delete_call_resp_code" -gt "299" ]; then
         echo "Error deleting integration for $db_system_integration_master_name(status code $delete_call_resp_code)"
+        exit 1
       else
         echo "Sucessfully deleted integration for $db_system_integration_master_name"
       fi
@@ -283,6 +283,5 @@ main() {
   upsert_systemIntegrations
   delete_systemIntegrations
 }
-
 
 main
