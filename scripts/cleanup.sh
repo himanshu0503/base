@@ -20,6 +20,7 @@ cleanup_stale_images() {
       | jq '.['"$i-1"']')
     local host=$(echo $machine \
       | jq -r '.ip')
+    local cleaned_up_service_images="[]"
 
     __process_msg "Cleaning up stale images on: $host"
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/cleanup.sh" "$SCRIPT_DIR_REMOTE"
@@ -35,8 +36,12 @@ cleanup_stale_images() {
         | tr ":" " " \
         | awk '{print $1}')
 
-      __process_msg "Cleaning up tags for: $running_service_image"
-      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/cleanup.sh $running_service_image $release"
+      local is_service_image_cleaned=$(echo $cleaned_up_service_images | jq -r '.[] | select (.=="'$running_service_image'")')
+      if [ -z "$is_service_image_cleaned" ]; then
+        cleaned_up_service_images=$(echo $cleaned_up_service_images | jq '. + ["'$running_service_image'"]')
+        __process_msg "Cleaning up tags for: $running_service_image"
+        _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/cleanup.sh $running_service_image $release"
+      fi
     done
   done
 }
