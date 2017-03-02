@@ -356,14 +356,23 @@ __run_service() {
 
 provision_www() {
   local restart=true
-  __save_service_config www " --publish 50001:50001/tcp" "--mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
+  local port=$(cat $STATE_FILE | jq -r '.systemSettings.wwwPort')
+  __save_service_config www " --publish $port:$port/tcp" "--mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
   __run_service "www" $restart
+}
+
+provision_mktg() {
+  local restart=true
+  local replicas=$(cat $STATE_FILE | jq --arg service "mktg" -r '.services[] | select (.name=="mktg") | .replicas')
+  local port=$(cat $STATE_FILE | jq -r '.systemSettings.mktgPort')
+  __save_service_config mktg " --publish $port:$port/tcp" "--replicas $replicas --name mktg --network ingress --with-registry-auth --endpoint-mode vip"
+  __run_service "mktg" $restart
 }
 
 provision_state_less_services() {
   local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
   local services_count=$(echo $services | jq '. | length')
-  local provisioned_services="[\"www\",\"api\"]"
+  local provisioned_services="[\"www\",\"api\",\"mktg\"]"
 
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
@@ -422,6 +431,7 @@ main() {
   __process_marker "Provisioning services"
   load_services
   provision_www
+  provision_mktg
   provision_state_less_services
   if [ "$INSTALL_MODE" == "production" ]; then
     remove_services_prod
