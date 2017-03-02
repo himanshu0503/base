@@ -568,22 +568,18 @@ run_migrations_local() {
 }
 
 manage_masterIntegrations() {
-  __process_msg "Configuring master integrations"
   source "$SCRIPTS_DIR/_manageMasterIntegrations.sh"
 }
 
 manage_systemIntegrations() {
-  __process_msg "Configuring system integrations"
   source "$SCRIPTS_DIR/_manageSystemIntegrations.sh"
 }
 
 manage_systemMachineImages() {
-  __process_msg "Configuring system machine images"
   source "$SCRIPTS_DIR/_manageSystemMachineImages.sh"
 }
 
 update_service_list() {
-  __process_msg "Configuring services according to master integrations"
   source "$SCRIPTS_DIR/_manageServices.sh"
 }
 

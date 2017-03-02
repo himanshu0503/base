@@ -94,7 +94,7 @@ validate_masterIntegrations(){
 }
 
 enable_masterIntegrations() {
-  __process_msg "enabling master integrations in db"
+  __process_msg "Enabling master integrations..."
   local enabled_master_integrations=$(cat $STATE_FILE | jq '.masterIntegrations')
   local enabled_master_integrations_length=$(echo $enabled_master_integrations \
     | jq -r '. | length')
@@ -123,31 +123,35 @@ enable_masterIntegrations() {
         | jq -r '.name')
       local available_master_integration_type=$(echo $available_master_integration \
         | jq -r '.type')
-
+      local available_master_integration_isEnabled=$(echo $available_master_integration \
+        | jq -r '.isEnabled')
 
       if [ "$enabled_master_integration_name" == "$available_master_integration_name"  ] && \
         [ "$enabled_master_integration_type" == "$available_master_integration_type" ]; then
 
-        local updated_master_integration=$(echo $available_master_integration \
-          | jq '.isEnabled=true')
-
-        local master_integration_put_endpoint="$api_url/masterIntegrations/$available_master_integration_id"
-        local put_call_resp_code=$(curl \
-          -H "Content-Type: application/json" \
-          -H "Authorization: apiToken $api_token" \
-          -X PUT \
-          -d "$updated_master_integration" \
-          $master_integration_put_endpoint \
-          --write-out "%{http_code}\n" \
-          --silent \
-          --output $HTTP_RESPONSE_FILE)
-        if [ "$put_call_resp_code" -gt "299" ]; then
-          __process_msg "Error enabling master integration $available_master_integration_name(status code $put_call_resp_code)"
-          exit 1
+        if [ "$available_master_integration_isEnabled" == "true" ]; then
+          __process_msg "Integration $available_master_integration_name already enabled, skipping"
         else
-          __process_msg "Sucessfully enabled master integration $available_master_integration_name"
-        fi
+          local updated_master_integration=$(echo $available_master_integration \
+            | jq '.isEnabled=true')
 
+          local master_integration_put_endpoint="$api_url/masterIntegrations/$available_master_integration_id"
+          local put_call_resp_code=$(curl \
+            -H "Content-Type: application/json" \
+            -H "Authorization: apiToken $api_token" \
+            -X PUT \
+            -d "$updated_master_integration" \
+            $master_integration_put_endpoint \
+            --write-out "%{http_code}\n" \
+            --silent \
+            --output $HTTP_RESPONSE_FILE)
+          if [ "$put_call_resp_code" -gt "299" ]; then
+            __process_msg "Error enabling master integration $available_master_integration_name(status code $put_call_resp_code)"
+            exit 1
+          else
+            __process_msg "Sucessfully enabled master integration $available_master_integration_name"
+          fi
+        fi
         break
       fi
     done
@@ -158,7 +162,7 @@ disable_masterIntegrations() {
   # for all integrations in db enabled list,
   # if the integration is not in state enabled list,
   # PUT on db with enabled=false
-  __process_msg "disabling redundant master integrations"
+  __process_msg "Disabling master integrations..."
   local db_enabled_master_integrations=$(echo $AVAILABLE_MASTER_INTEGRATIONS \
     | jq '[ .[] | select (.isEnabled==true) ]')
   local db_enabled_master_integrations_length=$(echo $db_enabled_master_integrations \
@@ -202,12 +206,11 @@ disable_masterIntegrations() {
     done
 
     if [ "$is_valid_db_master_integration" == false ]; then
-      __process_msg "Invalid master integration, $db_enabled_master_integration_name"
+      __process_msg "Disabling master integration $db_enabled_master_integration_name"
       local updated_master_integration=$(echo $db_enabled_master_integration \
         | jq '.isEnabled=false')
 
       local master_integration_put_endpoint="$api_url/masterIntegrations/$db_enabled_master_integration_id"
-      echo $master_integration_put_endpoint
       local put_call_resp_code=$(curl \
         -H "Content-Type: application/json" \
         -H "Authorization: apiToken $api_token" \
@@ -224,7 +227,6 @@ disable_masterIntegrations() {
         __process_msg "Sucessfully disabled master integration $db_enabled_master_integration_name"
       fi
     fi
-
   done
 }
 
