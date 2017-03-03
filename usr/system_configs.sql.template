@@ -149,6 +149,10 @@ do $$
       alter table "systemConfigs" add column "mktgPort" INTEGER default 50002;
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'mktgUrl') then
+      alter table "systemConfigs" add column "mktgUrl" varchar(255);
+    end if;
+
     -- Alter any defaults here:
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'serverEnabled') then
       alter table "systemConfigs" alter column "serverEnabled" set default false;
@@ -243,7 +247,8 @@ do $$
             "enforcePrivateJobQuota"={{ENFORCE_PRIVATE_JOB_QUOTA}},
             "technicalSupportAvailable"={{TECHNICAL_SUPPORT_AVAILABLE}},
             "customNodesAdminOnly"={{CUSTOM_NODES_ADMIN_ONLY}},
-            "mktgPort"={{MKTG_PORT}}
+            "mktgPort"={{MKTG_PORT}},
+            "mktgUrl"='{{MKTG_URL}}'
         where id=1;
     end if;
 
@@ -303,7 +308,8 @@ do $$
             "enforcePrivateJobQuota",
             "technicalSupportAvailable",
             "customNodesAdminOnly",
-            "mktgPort"
+            "mktgPort",
+            "mktgUrl"
           )
         values
           (
@@ -353,7 +359,8 @@ do $$
             {{ENFORCE_PRIVATE_JOB_QUOTA}},
             {{TECHNICAL_SUPPORT_AVAILABLE}},
             {{CUSTOM_NODES_ADMIN_ONLY}},
-            {{MKTG_PORT}}
+            {{MKTG_PORT}},
+            '{{MKTG_URL}}'
           );
     end if;
   end

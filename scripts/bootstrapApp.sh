@@ -251,6 +251,10 @@ generate_system_config() {
   local mktg_port=$(cat $STATE_FILE | jq -r '.systemSettings.mktgPort')
   sed -i "s#{{MKTG_PORT}}#$mktg_port#g" $system_configs_sql
 
+  __process_msg "Updating : mktgUrl"
+  local mktg_url=$(cat $STATE_FILE | jq -r '.systemSettings.mktgUrl')
+  sed -i "s#{{MKTG_URL}}#$mktg_url#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 
