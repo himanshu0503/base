@@ -580,6 +580,7 @@
     {
       "name": "mktg",
       "repository": "mktg",
+      "isGlobal": true,
       "envs": [
         "SHIPPABLE_API_URL",
         "SHIPPABLE_API_TOKEN"
