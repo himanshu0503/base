@@ -13,7 +13,6 @@
     "sync",
     "timeTrigger",
     "versionTrigger",
-    "ini",
     "nexec",
     "logup"
   ],
@@ -364,17 +363,6 @@
     },
     {
       "name": "hubspotSync",
-      "repository": "micro",
-      "envs": [
-        "SHIPPABLE_API_TOKEN",
-        "SHIPPABLE_API_URL",
-        "SHIPPABLE_ROOT_AMQP_URL",
-        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
-        "COMPONENT"
-      ]
-    },
-    {
-      "name": "ini",
       "repository": "micro",
       "envs": [
         "SHIPPABLE_API_TOKEN",

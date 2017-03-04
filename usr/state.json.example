@@ -522,7 +522,7 @@
     "dbUrl": "172.17.42.1:5432",
     "dbUsername": "apiuser",
     "rootQueueList":
-      "www.sockets|core.iscan|iscan.isync|iscan.esync|isync.autod|core.barge|barge.acs|barge.ddc|barge.dcl|barge.ecs|barge.gke|barge.triton|core.charon|versions.trigger|core.nf|nf.email|nf.hipchat|nf.irc|nf.slack|nf.webhook|core.braintree|core.certgen|core.hubspotSync|core.marshaller|marshaller.ec2|core.sync|job.request|job.trigger|micro.ini|cluster.init|steps.deploy|steps.manifest|steps.provision|steps.rSync|steps.release|core.logup|www.signals",
+      "www.sockets|core.charon|versions.trigger|core.nf|nf.email|nf.hipchat|nf.irc|nf.slack|nf.webhook|core.braintree|core.certgen|core.hubspotSync|core.marshaller|marshaller.ec2|core.sync|job.request|job.trigger|cluster.init|steps.deploy|steps.manifest|steps.provision|steps.rSync|steps.release|core.logup|www.signals",
     "dbPort": "5432",
     "httpProxy": "",
     "buildTimeoutMS": 3600000,
