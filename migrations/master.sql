@@ -2003,13 +2003,6 @@ do $$
       alter table "buildJobs" alter column "isSerial" SET DEFAULT true;
     end if;
 
-    -- Add execImage column to systemMachineImages
-    if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'execImage') then
-      alter table "systemMachineImages" add column "execImage" varchar(80);
-      update "systemMachineImages" set "execImage"='shipimg/mexec:master.3859' where "execImage" is null;
-      alter table "systemMachineImages" alter column "execImage" set not null;
-    end if;
-
     -- Add runShImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'runShImage') then
       alter table "systemMachineImages" add column "runShImage" varchar(80);
@@ -2213,11 +2206,6 @@ do $$
        insert into "accountTokens" ("id", "name", "accountId", "apiToken", "isInternal", "createdBy", "updatedBy", "createdAt", "updatedAt")
        values ('540e55445e5bad6f98764522', 'serviceUser', '540e55445e5bad6f98764522', (select "serviceUserToken" from "systemConfigs" where id=1), true, '540e55445e5bad6f98764522', '540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
      end if;
-
-  -- Update mailChimpId columns in accounts table to use 80 characters
-    if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'mailChimpId' and character_maximum_length = 24) then
-      alter table "accounts" alter column "mailChimpId" type varchar(80);
-    end if;
 
   -- Remove paidSubCount from dailyAggs
     if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'paidSubCount') then
@@ -2578,7 +2566,7 @@ do $$
       create unique index "subsAccSubsIdAccIdRoleCodeU" on "subscriptionAccounts" using btree("accountId", "subscriptionId", "roleCode");
     end if;
 
-    -- drop coloumn isShippableNode from clusterNodes table
+    -- drop column isShippableNode from clusterNodes table
     if exists (select 1 from information_schema.columns where table_name = 'clusterNodes' and column_name = 'isShippableNode') then
       alter table "clusterNodes" drop column "isShippableNode";
     end if;
@@ -2736,21 +2724,6 @@ do $$
     -- drop NOT NULL from subnetId in systemMachineImages table
     if exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'subnetId') then
       alter table "systemMachineImages" alter column "subnetId" DROP NOT NULL;
-    end if;
-
-    -- Add isSuperUser column to accounts
-    if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isSuperUser') then
-      alter table "accounts" add column "isSuperUser" boolean NOT NULL DEFAULT false;
-    end if;
-
-    -- Add isBetaUser column to accounts
-    if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isBetaUser') then
-      alter table "accounts" add column "isBetaUser" boolean NOT NULL DEFAULT false;
-    end if;
-
-    -- Add isOpsUser column to accounts
-    if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isOpsUser') then
-      alter table "accounts" add column "isOpsUser" boolean NOT NULL DEFAULT false;
     end if;
 
     -- Adds addOnMinionCount and addOnMinionCountOverridden columns to subscriptions
