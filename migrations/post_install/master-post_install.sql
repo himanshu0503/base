@@ -99,6 +99,7 @@ do $$
       update rtjsm set "contextTypeCode" = 309 where "contextTypeCode" = 2012;
       update rtjsm set "contextTypeCode" = 310 where "contextTypeCode" = 2011;
       update rtjsm set "contextTypeCode" = 311 where "contextTypeCode" = 2009;
+      update rtjsm set "contextTypeCode" = 312 where "contextTypeCode" = 2014;
 
       update tjsm T1 set "contextValue" = T2."contextValue" from rtjsm T2 where T1.rid = T2.id;
       update tjsm T1 set "contextTypeCode" = T2."contextTypeCode" from rtjsm T2 where T1.rid = T2.id;
