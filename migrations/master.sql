@@ -5723,5 +5723,10 @@ do $$
       alter table "accounts" add column "defaultViewId" INTEGER;
     end if;
 
+    -- Add subProviderIdOrgNameI Index on subscriptions
+    if not exists (select 1 from pg_indexes where tablename = 'subscriptions' and indexname = 'subProviderIdOrgNameI') then
+      create index concurrently "subProviderIdOrgNameI" on "subscriptions" using btree("providerId", "orgName");
+    end if;
+
   end
 $$;
