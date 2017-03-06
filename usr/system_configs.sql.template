@@ -254,9 +254,9 @@ do $$
 
     -- Update token in accounts if serviceUser is already created
     if exists (select 1 from information_schema.columns where table_name = 'accountTokens') then
-        if exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
-          update "accountTokens" set "apiToken"='{{SERVICE_USER_TOKEN}}' where "name" = 'serviceUser' and "isInternal" = true;
-        end if;
+      if exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
+        update "accountTokens" set "apiToken"='{{SERVICE_USER_TOKEN}}' where "name" = 'serviceUser' and "isInternal" = true;
+      end if;
     end if;
 
     if not exists (select 1 from "systemConfigs" where "id" = 1) then
