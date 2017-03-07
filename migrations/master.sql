@@ -2020,13 +2020,6 @@ do $$
       alter table "systemMachineImages" alter column "runShImage" set not null;
     end if;
 
-    -- Add execImage column to systemConfigs
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'execImage') then
-      alter table "systemConfigs" add column "execImage" varchar(255);
-      update "systemConfigs" set "execImage"='shipimg/mexec:master.3859' where "execImage" is null;
-      alter table "systemConfigs" alter column "execImage" set not null;
-    end if;
-
     -- Add versionName to versions
     if not exists (select 1 from information_schema.columns where table_name = 'versions' and column_name = 'versionName') then
       alter table "versions" add column "versionName" varchar(255);
@@ -2211,11 +2204,11 @@ do $$
       end if;
     end if;
 
-  -- Adds serviceUser token in accountTokens table for local
-     if not exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
-       insert into "accountTokens" ("id", "name", "accountId", "apiToken", "isInternal", "createdBy", "updatedBy", "createdAt", "updatedAt")
-       values ('540e55445e5bad6f98764522', 'serviceUser', '540e55445e5bad6f98764522', (select "serviceUserToken" from "systemConfigs" where id=1), true, '540e55445e5bad6f98764522', '540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
-     end if;
+  -- Adds serviceUser token in accountTokens table
+   if not exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
+     insert into "accountTokens" ("id", "name", "accountId", "apiToken", "isInternal", "createdBy", "updatedBy", "createdAt", "updatedAt")
+     values ('540e55445e5bad6f98764522', 'serviceUser', '540e55445e5bad6f98764522', (select "serviceUserToken" from "systemConfigs" where id=1), true, '540e55445e5bad6f98764522', '540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
+   end if;
 
   -- Remove paidSubCount from dailyAggs
     if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'paidSubCount') then
@@ -2256,21 +2249,6 @@ do $$
   -- Set projectId column of buildJobs table set to not null
     if exists (select 1 from information_schema.columns where table_name = 'buildJobs' and column_name = 'projectId') then
       alter table "buildJobs" alter column "projectId" set not null;
-    end if;
-
-  -- Remove systemConfigs.braintreeEnabled
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'braintreeEnabled') then
-      alter table "systemConfigs" drop column "braintreeEnabled";
-    end if;
-
-    -- Add systemConfigs.serverEnabled
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'serverEnabled') then
-      alter table "systemConfigs" add column "serverEnabled" boolean NOT NULL DEFAULT true;
-    end if;
-
-    -- Add systemConfigs.autoSelectBuilderToken
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'autoSelectBuilderToken') then
-      alter table "systemConfigs" add column "autoSelectBuilderToken" boolean DEFAULT false;
     end if;
 
     -- Add projects.ownerAccountId
@@ -2581,64 +2559,14 @@ do $$
       alter table "clusterNodes" drop column "isShippableNode";
     end if;
 
-    -- drop column dynamicNodesSystemIntegrationId from systemConfigs table
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'dynamicNodesSystemIntegrationId') then
-      alter table "systemConfigs" drop column "dynamicNodesSystemIntegrationId";
-    end if;
-
     -- Adds isShippableInitialized coloumn in systemNodes table
     if not exists (select 1 from information_schema.columns where table_name = 'systemNodes' and column_name = 'isShippableInitialized') then
       alter table "systemNodes" add column "isShippableInitialized" BOOLEAN;
     end if;
 
-    -- Adds systemNodePrivateKey column in systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePrivateKey') then
-      alter table "systemConfigs" add column "systemNodePrivateKey" TEXT ;
-    end if;
-
-    -- Adds systemNodePublicKey column in systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePublicKey') then
-      alter table "systemConfigs" add column "systemNodePublicKey" varchar(1020) ;
-    end if;
-
     -- Drop systemIntegrationId from systemMachineImages
     if exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'systemIntegrationId') then
       alter table "systemMachineImages" drop column "systemIntegrationId";
-    end if;
-
-    -- Drop cachingEnabled from systemConfigs
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'cachingEnabled') then
-      alter table "systemConfigs" drop column "cachingEnabled";
-    end if;
-
-    -- Drop hubspotEnabled from systemConfigs
-    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotEnabled') then
-      alter table "systemConfigs" drop column "hubspotEnabled";
-    end if;
-
-    -- Adds allowSystemNodes column in systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowSystemNodes') then
-      alter table "systemConfigs" add column "allowSystemNodes" BOOLEAN default false;
-    end if;
-
-    -- Adds allowDynamicNodes column in systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowDynamicNodes') then
-      alter table "systemConfigs" add column "allowDynamicNodes" BOOLEAN default false;
-    end if;
-
-    -- Adds allowCustomNodes column in systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowCustomNodes') then
-      alter table "systemConfigs" add column "allowCustomNodes" BOOLEAN default false;
-    end if;
-
-    -- Adds consoleMaxLifespan column in systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'consoleMaxLifespan') then
-      alter table "systemConfigs" add column "consoleMaxLifespan" INTEGER default 0;
-    end if;
-
-    -- Adds consoleCleanupHour column in systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'consoleCleanupHour') then
-      alter table "systemConfigs" add column "consoleCleanupHour" INTEGER default 0;
     end if;
 
     -- Drop projectPermissions
@@ -2706,11 +2634,6 @@ do $$
       delete from "routeRoles" where "routePattern"='/accounts/:accountId/sync' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/projects/:projectId/sync' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/masterIntegrationCodes' and "httpVerb"='GET';
-    end if;
-
-    -- Add "customHostDockerVersion" to systemConfigs table
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'customHostDockerVersion') then
-      alter table "systemConfigs" add column "customHostDockerVersion" varchar(24);
     end if;
 
     -- Add "isConsoleArchived" field to buildJobs table
