@@ -1481,15 +1481,13 @@ do $$
       values (192, '5811a2e9e73d22829eb01121', 'hubspotApiToken', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-
-    -- segementListener master integration
+    -- segmentKeys master integration
     if not exists (select 1 from "masterIntegrations" where "name" = 'segmentKeys' and "typeCode" = 5012) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
       values ('fdd32b9061681edb52c5', 57, 'segmentKeys', 'Segment Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-03-07', '2017-03-07');
     end if;
 
-    -- masterIntegrationFields for Segment
-
+    -- masterIntegrationFields for segmentKeys
     if not exists (select 1 from "masterIntegrationFields" where "id" = 193) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (193, 'fdd32b9061681edb52c5', 'segmentApiToken', 'string', true, true, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-03-07', '2017-03-07');

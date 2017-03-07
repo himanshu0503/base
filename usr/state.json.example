@@ -170,7 +170,7 @@
     {
       "type": "generic",
       "name": "segmentKeys"
-    },
+    }
   ],
   "systemIntegrations": [
     {
@@ -196,14 +196,14 @@
       ]
     },
     {
+      "name": "segment",
+      "masterName": "segmentKeys",
       "formJSONValues": [
         {
           "value": "xxxxx",
           "label": "segmentApiToken"
         }
-      ],
-      "masterName": "segmentKeys",
-      "name": "segment"
+      ]
     },
     {
       "name": "auth",
@@ -507,7 +507,6 @@
     "vortexUrl": "http://172.17.42.1:50000/vortex",
     "truck": true,
     "hubspotTimeLimit": 10,
-    "hubspotListId": 100,
     "hubspotShouldSimulate": true,
     "systemImagesRegistry": "374168611083.dkr.ecr.us-east-1.amazonaws.com",
     "serviceUserToken": "",
