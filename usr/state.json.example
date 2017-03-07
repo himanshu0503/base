@@ -166,6 +166,10 @@
     {
       "name": "braintreeKeys",
       "type": "generic"
+    },
+    {
+      "type": "generic",
+      "name": "segmentKeys"
     }
   ],
   "systemIntegrations": [
@@ -188,6 +192,16 @@
         {
           "value": "https://mybbs.com",
           "label": "wwwUrl"
+        }
+      ]
+    },
+    {
+      "name": "segment",
+      "masterName": "segmentKeys",
+      "formJSONValues": [
+        {
+          "value": "xxxxx",
+          "label": "segmentApiToken"
         }
       ]
     },
@@ -493,7 +507,6 @@
     "vortexUrl": "http://172.17.42.1:50000/vortex",
     "truck": true,
     "hubspotTimeLimit": 10,
-    "hubspotListId": 100,
     "hubspotShouldSimulate": true,
     "systemImagesRegistry": "374168611083.dkr.ecr.us-east-1.amazonaws.com",
     "serviceUserToken": "",
