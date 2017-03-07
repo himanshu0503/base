@@ -237,6 +237,13 @@
       ]
     },
     {
+      "name": "segmentKeys",
+      "type": "generic",
+      "services" : [
+        "segmentListener"
+      ]
+    },
+    {
       "name": "VAULT",
       "type": "secretsBackend",
       "services": []
@@ -572,6 +579,16 @@
       "envs": [
         "SHIPPABLE_API_URL",
         "SHIPPABLE_API_TOKEN"
+      ]
+    },
+    {
+      "name": "segmentListener",
+      "repository": "micro",
+      "envs": [
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN",
+        "COMPONENT"
       ]
     }
   ],

@@ -166,7 +166,11 @@
     {
       "name": "braintreeKeys",
       "type": "generic"
-    }
+    },
+    {
+      "type": "generic",
+      "name": "segmentKeys"
+    },
   ],
   "systemIntegrations": [
     {
@@ -190,6 +194,16 @@
           "label": "wwwUrl"
         }
       ]
+    },
+    {
+      "formJSONValues": [
+        {
+          "value": "xxxxx",
+          "label": "segmentApiToken"
+        }
+      ],
+      "masterName": "segmentKeys",
+      "name": "segment"
     },
     {
       "name": "auth",
