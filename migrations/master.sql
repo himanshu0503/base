@@ -4269,15 +4269,9 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/providers/urlSlug/:urlSlug',
+      routePattern := '/providers',
       httpVerb := 'GET',
       roleCode := 6040
-    );
-
-    perform set_route_role(
-      routePattern := '/providers/urlSlug/:urlSlug',
-      httpVerb := 'GET',
-      roleCode := 6060
     );
 
     -- set resources routeRoles
