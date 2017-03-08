@@ -140,3 +140,6 @@ do $$
     end if;
   end
 $$;
+
+-- Migrations to populate `endedAt` property in builds table
+update builds set "endedAt" = "buildJobs"."endedAt" from "buildJobs" where builds.id = "buildJobs"."buildId" and builds."endedAt" is null;
