@@ -2237,6 +2237,11 @@ do $$
       alter table "builds" add column "externalBuildUrl" varchar(510);
     end if;
 
+  -- Add endedAt in builds
+    if not exists (select 1 from information_schema.columns where table_name = 'builds' and column_name = 'endedAt') then
+      alter table "builds" add column "endedAt" timestamp with time zone;
+    end if;
+
   -- Add projectId in builds
     if not exists (select 1 from information_schema.columns where table_name = 'builds' and column_name = 'projectId') then
       alter table "builds" add column "projectId" varchar(24);
