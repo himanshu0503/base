@@ -255,6 +255,10 @@ generate_system_config() {
   local mktg_url=$(cat $STATE_FILE | jq -r '.systemSettings.mktgUrl')
   sed -i "s#{{MKTG_URL}}#$mktg_url#g" $system_configs_sql
 
+  __process_msg "Updating : segmentMktgKey"
+  local segment_mktg_key=$(cat $STATE_FILE | jq -r '.systemSettings.segmentMktgKey')
+  sed -i "s#{{SEGMENT_MKTG_KEY}}#$segment_mktg_key#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 
