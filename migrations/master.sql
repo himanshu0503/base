@@ -2044,14 +2044,14 @@ do $$
 
     -- Add github in providers
     if not exists (select 1 from "providers" where "url" = 'https://api.github.com') then
-      insert into "providers" ("id", "url", "name", "createdAt", "updatedAt")
-      values ('562dbd9710c5980d003b0451', 'https://api.github.com', 'github', '2016-02-29T00:00:00.000Z', '2016-02-29T00:00:00.000Z');
+      insert into "providers" ("id", "url", "name", "urlSlug", "createdAt", "updatedAt")
+      values ('562dbd9710c5980d003b0451', 'https://api.github.com', 'github', 'github', '2016-02-29T00:00:00.000Z', '2016-02-29T00:00:00.000Z');
     end if;
 
     -- Add bitbucket in providers
     if not exists (select 1 from "providers" where "url" = 'https://bitbucket.org') then
-      insert into "providers" ("id", "url", "name", "createdAt", "updatedAt")
-      values ('562dbda348095b0d00ce6a43', 'https://bitbucket.org', 'bitbucket', '2016-02-29T00:00:00.000Z', '2016-02-29T00:00:00.000Z');
+      insert into "providers" ("id", "url", "name", "urlSlug", "createdAt", "updatedAt")
+      values ('562dbda348095b0d00ce6a43', 'https://bitbucket.org', 'bitbucket', 'bitbucket', '2016-02-29T00:00:00.000Z', '2016-02-29T00:00:00.000Z');
     end if;
 
     -- Add urlSlug column to providers
@@ -2059,13 +2059,10 @@ do $$
       alter table "providers" add column "urlSlug" varchar(255);
     end if;
 
-    -- Add urlSlug for github and bitbucket
-    update "providers" set "urlSlug" = 'github' where "url" = 'https://api.github.com';
-    update "providers" set "urlSlug" = 'bitbucket' where "url" = 'https://bitbucket.org';
-
-    -- Add unique constraint on urlSlug column in providers
-    if not exists (select 1 from pg_constraint where conname = 'provUrlSlugU') then
+    --Add unique constraint on urlSlug for providers
+    if not exists (select 1 from pg_indexes where tablename = 'providers' and indexname = 'provUrlSlugU') then
       alter table "providers" add constraint "provUrlSlugU" UNIQUE ("urlSlug");
+      alter table "providers" alter column "urlSlug" set NOT NULL;
     end if;
 
     -- Make "sourceId" nullable in projects table
