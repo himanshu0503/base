@@ -153,6 +153,10 @@ do $$
       alter table "systemConfigs" add column "mktgUrl" varchar(255);
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'segmentMktgKey') then
+      alter table "systemConfigs" add column "segmentMktgKey" varchar(255);
+    end if;
+
     -- Alter any defaults here:
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'serverEnabled') then
       alter table "systemConfigs" alter column "serverEnabled" set default false;
@@ -248,7 +252,8 @@ do $$
             "technicalSupportAvailable"={{TECHNICAL_SUPPORT_AVAILABLE}},
             "customNodesAdminOnly"={{CUSTOM_NODES_ADMIN_ONLY}},
             "mktgPort"={{MKTG_PORT}},
-            "mktgUrl"='{{MKTG_URL}}'
+            "mktgUrl"='{{MKTG_URL}}',
+            "segmentMktgKey"='{{SEGMENT_MKTG_KEY}}'
         where id=1;
     end if;
 
@@ -309,7 +314,8 @@ do $$
             "technicalSupportAvailable",
             "customNodesAdminOnly",
             "mktgPort",
-            "mktgUrl"
+            "mktgUrl",
+            "segmentMktgKey"
           )
         values
           (
@@ -360,7 +366,8 @@ do $$
             {{TECHNICAL_SUPPORT_AVAILABLE}},
             {{CUSTOM_NODES_ADMIN_ONLY}},
             {{MKTG_PORT}},
-            '{{MKTG_URL}}'
+            '{{MKTG_URL}}',
+            '{{SEGMENT_MKTG_KEY}}'
           );
     end if;
   end
