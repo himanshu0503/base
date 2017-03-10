@@ -2057,6 +2057,8 @@ do $$
     -- Add urlSlug column to providers
     if not exists (select 1 from information_schema.columns where table_name = 'providers' and column_name = 'urlSlug') then
       alter table "providers" add column "urlSlug" varchar(255);
+      update "providers" set "urlSlug" = 'github' where "name" = 'github' and "urlSlug" is null;
+      update "providers" set "urlSlug" = 'bitbucket' where "name" = 'bitbucket' and "urlSlug" is null;
     end if;
 
     --Add unique constraint on urlSlug for providers
