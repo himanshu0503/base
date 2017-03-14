@@ -244,6 +244,11 @@
       ]
     },
     {
+      "name": "clearbitKeys",
+      "type": "generic",
+      "services" : []
+    },
+    {
       "name": "VAULT",
       "type": "secretsBackend",
       "services": []

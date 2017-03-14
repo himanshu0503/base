@@ -170,6 +170,10 @@
     {
       "type": "generic",
       "name": "segmentKeys"
+    },
+    {
+      "type": "generic",
+      "name": "clearbitKeys"
     }
   ],
   "systemIntegrations": [
@@ -202,6 +206,16 @@
         {
           "value": "xxxxx",
           "label": "segmentApiToken"
+        }
+      ]
+    },
+    {
+      "name": "clearbit",
+      "masterName": "clearbitKeys",
+      "formJSONValues": [
+        {
+          "value": "",
+          "label": "clearbitApiToken"
         }
       ]
     },
