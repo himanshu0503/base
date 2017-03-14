@@ -1501,7 +1501,7 @@ do $$
 
     -- masterIntegrationFields for clearbitKeys
     if not exists (select 1 from "masterIntegrationFields" where "id" = 194) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure", "createdBy", "updatedBy", "createdAt", "updatedAt")
       values (194, '58c78481e34468d32114e125', 'clearbitApiToken', 'string', true, true, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-03-14', '2017-03-14');
     end if;
 
