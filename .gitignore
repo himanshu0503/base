@@ -22,3 +22,4 @@ scripts/remote/system_configs_data.sql
 *.swo
 *.tfstate
 *.tfstate.backup
+.idea/
