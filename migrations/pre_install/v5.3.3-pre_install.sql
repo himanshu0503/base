@@ -1,0 +1,1 @@
+update "subscriptions" set "systemMachineImageId" = "systemMachineImages"."id" from "systemMachineImages" where "systemMachineImages"."isDefault" = true and "subscriptions"."systemMachineImageId" is null;
