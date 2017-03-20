@@ -5767,5 +5767,10 @@ do $$
       create index "subProviderIdOrgNameI" on "subscriptions" using btree("providerId", "orgName");
     end if;
 
+    -- Remove systemCodes.propertyBag
+    if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'propertyBag') then
+      alter table "systemCodes" drop column "propertyBag";
+    end if;
+
   end
 $$;
