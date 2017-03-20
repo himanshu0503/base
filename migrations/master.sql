@@ -5725,6 +5725,11 @@ do $$
       alter table "accounts" drop column "isOpsUser";
     end if;
 
+    -- Add clearbitProfileId to accounts
+    if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'clearbitProfileId') then
+      alter table "accounts" add column "clearbitProfileId" uuid;
+    end if;
+
     -- gitlabKeys master integration
     if not exists (select 1 from "masterIntegrations" where "name" = 'gitlabKeys' and "typeCode" = 5012) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
