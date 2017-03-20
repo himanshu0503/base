@@ -5772,5 +5772,32 @@ do $$
       alter table "systemCodes" drop column "propertyBag";
     end if;
 
+    -- Drop cdmContainers column
+    if exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'cdmContainers') then
+      alter table "systemNodeStats" drop column "cdmContainers";
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'cdmContainers') then
+      alter table "clusterNodeStats" drop column "cdmContainers";
+    end if;
+
+    -- Drop disks column
+    if exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'disks') then
+      alter table "systemNodeStats" drop column "disks";
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'disks') then
+      alter table "clusterNodeStats" drop column "disks";
+    end if;
+
+    -- Drop memory column
+    if exists (select 1 from information_schema.columns where table_name = 'systemNodeStats' and column_name = 'memory') then
+      alter table "systemNodeStats" drop column "memory";
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'clusterNodeStats' and column_name = 'memory') then
+      alter table "clusterNodeStats" drop column "memory";
+    end if;
+
   end
 $$;
