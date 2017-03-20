@@ -5727,7 +5727,7 @@ do $$
 
     -- Add clearbitProfileId to accounts
     if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'clearbitProfileId') then
-      alter table "accounts" add column "clearbitProfileId" uuid;
+      alter table "accounts" add column "clearbitProfileId" varchar(36);
     end if;
 
     -- gitlabKeys master integration
