@@ -5757,6 +5757,18 @@ do $$
       values (201, '58a160e8c2845c9d5fb82041', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-02-13', '2017-02-13');
     end if;
 
+    -- keyValuePair master integration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'keyValuePair' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('58a160e8c2845c9d5fb82042', 63, 'keyValuePair', 'Key-Value pair', 'generic', true, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-02-13', '2017-02-13');
+    end if;
+
+    -- masterIntegrationFields for keyValuePair
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 203) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (203, '58a160e8c2845c9d5fb82042', 'envs', 'object', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-02-13', '2017-02-13');
+    end if;
+
     -- Add "defaultAccountViewId" to accounts
     if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'defaultViewId') then
       alter table "accounts" add column "defaultViewId" INTEGER;
