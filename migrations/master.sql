@@ -5809,6 +5809,16 @@ do $$
       alter table "subscriptions" drop column "pipelineCount";
     end if;
 
+    -- Drop isAuthorized column
+    if exists (select 1 from information_schema.columns where table_name = 'accountProfiles' and column_name = 'isAuthorized') then
+      alter table "accountProfiles" drop column "isAuthorized";
+    end if;
+
+    -- Drop enforceScopes column
+    if exists (select 1 from information_schema.columns where table_name = 'accountProfiles' and column_name = 'enforceScopes') then
+      alter table "accountProfiles" drop column "enforceScopes";
+    end if;
+    
     -- Remove segmentApiToken from masterIntegrationFields
     if exists (select 1 from "masterIntegrationFields" where "name" = 'segmentApiToken' and "masterIntegrationId" = '58be812395141b7ad115b909') then
       delete from "masterIntegrationFields" where "name" = 'segmentApiToken' and "masterIntegrationId" = '58be812395141b7ad115b909';
