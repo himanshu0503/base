@@ -1481,18 +1481,6 @@ do $$
       values (192, '5811a2e9e73d22829eb01121', 'hubspotApiToken', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- segmentKeys master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'segmentKeys' and "typeCode" = 5012) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58be812395141b7ad115b909', 57, 'segmentKeys', 'Segment Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-03-07', '2017-03-07');
-    end if;
-
-    -- masterIntegrationFields for segmentKeys
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 193) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (193, '58be812395141b7ad115b909', 'segmentApiToken', 'string', true, true, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-03-07', '2017-03-07');
-    end if;
-
     -- clearbitKeys master integration
     if not exists (select 1 from "masterIntegrations" where "name" = 'clearbitKeys' and "typeCode" = 5012) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -5829,6 +5817,16 @@ do $$
     -- Drop enforceScopes column
     if exists (select 1 from information_schema.columns where table_name = 'accountProfiles' and column_name = 'enforceScopes') then
       alter table "accountProfiles" drop column "enforceScopes";
+    end if;
+    
+    -- Remove segmentApiToken from masterIntegrationFields
+    if exists (select 1 from "masterIntegrationFields" where "name" = 'segmentApiToken' and "masterIntegrationId" = '58be812395141b7ad115b909') then
+      delete from "masterIntegrationFields" where "name" = 'segmentApiToken' and "masterIntegrationId" = '58be812395141b7ad115b909';
+    end if;
+
+    -- Remove segmentKeys from masterIntegrations
+    if exists (select 1 from "masterIntegrations" where "name" = 'segmentKeys' and "id" = '58be812395141b7ad115b909') then
+      delete from "masterIntegrations" where "name" = 'segmentKeys' and "id" = '58be812395141b7ad115b909';
     end if;
 
   end
