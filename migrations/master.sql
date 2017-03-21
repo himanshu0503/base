@@ -5816,5 +5816,10 @@ do $$
       alter table "clusterNodeStats" drop column "memory";
     end if;
 
+    -- Drop pipelineCount column
+    if exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'pipelineCount') then
+      alter table "subscriptions" drop column "pipelineCount";
+    end if;
+
   end
 $$;
