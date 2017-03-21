@@ -5,7 +5,6 @@ do $$
       create table "systemConfigs" (
         "id" INT PRIMARY KEY NOT NULL,
         "defaultMinionCount" INT DEFAULT 1 NOT NULL,
-        "defaultPipelineCount" INT DEFAULT 1 NOT NULL,
         "autoSelectBuilderToken" BOOLEAN DEFAULT false NOT NULL,
         "buildTimeoutMS" INT DEFAULT 3600000 NOT NULL,
         "defaultPrivateJobQuota" INT DEFAULT 150 NOT NULL,
@@ -41,6 +40,10 @@ do $$
 
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'serverEnabled') then
       alter table "systemConfigs" drop column "serverEnabled";
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'defaultPipelineCount') then
+      alter table "systemConfigs" drop column "defaultPipelineCount";
     end if;
 
     -- Add new fields here:
@@ -203,7 +206,6 @@ do $$
     if exists (select 1 from "systemConfigs" where "id" = 1) then
         update "systemConfigs" SET
             "defaultMinionCount"={{DEFAULT_MINION_COUNT}},
-            "defaultPipelineCount"={{DEFAULT_PIPELINE_COUNT}},
             "autoSelectBuilderToken"={{AUTO_SELECT_BUILDER_TOKEN}},
             "buildTimeoutMS"={{BUILD_TIMEOUT_MS}},
             "defaultPrivateJobQuota"={{DEFAULT_PRIVATE_JOB_QUOTA}},
@@ -263,7 +265,6 @@ do $$
           (
             "id",
             "defaultMinionCount",
-            "defaultPipelineCount",
             "autoSelectBuilderToken",
             "buildTimeoutMS",
             "defaultPrivateJobQuota",
@@ -314,7 +315,6 @@ do $$
           (
             1,
             {{DEFAULT_MINION_COUNT}},
-            {{DEFAULT_PIPELINE_COUNT}},
             {{AUTO_SELECT_BUILDER_TOKEN}},
             {{BUILD_TIMEOUT_MS}},
             {{DEFAULT_PRIVATE_JOB_QUOTA}},

@@ -72,10 +72,6 @@ generate_system_config() {
   local default_minion_count=$(cat $STATE_FILE | jq -r '.systemSettings.defaultMinionCount')
   sed "s#{{DEFAULT_MINION_COUNT}}#$default_minion_count#g" $system_configs_template > $system_configs_sql
 
-  __process_msg "Updating : defaultPipelineCount"
-  local default_pipeline_count=$(cat $STATE_FILE | jq -r '.systemSettings.defaultPipelineCount')
-  sed -i "s#{{DEFAULT_PIPELINE_COUNT}}#$default_pipeline_count#g" $system_configs_sql
-
  __process_msg "Updating : autoSelectBuilderToken"
   local auto_select_builder_token=$(cat $STATE_FILE | jq -r '.systemSettings.autoSelectBuilderToken')
   sed -i "s#{{AUTO_SELECT_BUILDER_TOKEN}}#$auto_select_builder_token#g" $system_configs_sql
