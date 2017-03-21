@@ -1481,18 +1481,6 @@ do $$
       values (192, '5811a2e9e73d22829eb01121', 'hubspotApiToken', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- clearbitKeys master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'clearbitKeys' and "typeCode" = 5012) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58c78481e34468d32114e125', 58, 'clearbitKeys', 'Clearbit Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-03-14', '2017-03-14');
-    end if;
-
-    -- masterIntegrationFields for clearbitKeys
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 194) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (194, '58c78481e34468d32114e125', 'clearbitApiToken', 'string', true, true, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2017-03-14', '2017-03-14');
-    end if;
-
     -- Removing redundant master integrations
 
     -- AWS-ROOT
@@ -5818,7 +5806,7 @@ do $$
     if exists (select 1 from information_schema.columns where table_name = 'accountProfiles' and column_name = 'enforceScopes') then
       alter table "accountProfiles" drop column "enforceScopes";
     end if;
-    
+
     -- Remove segmentApiToken from masterIntegrationFields
     if exists (select 1 from "masterIntegrationFields" where "name" = 'segmentApiToken' and "masterIntegrationId" = '58be812395141b7ad115b909') then
       delete from "masterIntegrationFields" where "name" = 'segmentApiToken' and "masterIntegrationId" = '58be812395141b7ad115b909';
@@ -5827,6 +5815,16 @@ do $$
     -- Remove segmentKeys from masterIntegrations
     if exists (select 1 from "masterIntegrations" where "name" = 'segmentKeys' and "id" = '58be812395141b7ad115b909') then
       delete from "masterIntegrations" where "name" = 'segmentKeys' and "id" = '58be812395141b7ad115b909';
+    end if;
+
+    -- remove masterIntegrationFields for clearbitKeys. Delete using objectId()
+    if exists (select 1 from "masterIntegrationFields" where "masterIntegrationId" = '58c78481e34468d32114e125' and name = 'clearbitApiToken') then
+      delete from "masterIntegrationFields" where "masterIntegrationId"= '58c78481e34468d32114e125';
+    end if;
+
+    -- remove master integration for clearbitKeys
+    if exists (select 1 from "masterIntegrations" where "name" = 'clearbitKeys' and "id" = '58c78481e34468d32114e125') then
+      delete from "masterIntegrations" where "id"= '58c78481e34468d32114e125';
     end if;
 
   end
