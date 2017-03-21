@@ -252,6 +252,11 @@
       "name": "VAULT",
       "type": "secretsBackend",
       "services": []
+    },
+    {
+      "name": "keyValuePair",
+      "type": "generic",
+      "services": []
     }
   ],
   "serviceConfigs": [
