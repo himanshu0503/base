@@ -204,16 +204,6 @@
       ]
     },
     {
-      "name": "segment",
-      "masterName": "segmentKeys",
-      "formJSONValues": [
-        {
-          "value": "xxxxx",
-          "label": "segmentApiToken"
-        }
-      ]
-    },
-    {
       "name": "clearbit",
       "masterName": "clearbitKeys",
       "formJSONValues": [
@@ -510,6 +500,19 @@
             "dbHost": "",
             "dbPort": "",
             "dbDialect": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "segment",
+      "masterName": "keyValuePair",
+      "formJSONValues": [
+        {
+          "label": "envs",
+          "value": {
+            "segmentApiKey": "",
+            "segmentMktgKey": ""
           }
         }
       ]
