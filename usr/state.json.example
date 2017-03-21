@@ -169,10 +169,6 @@
     },
     {
       "type": "generic",
-      "name": "segmentKeys"
-    },
-    {
-      "type": "generic",
       "name": "clearbitKeys"
     },
     {
