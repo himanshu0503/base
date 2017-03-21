@@ -2622,6 +2622,11 @@ do $$
       alter table "jobs" add column "proxyBuildJobPropertyBag" TEXT;
     end if;
 
+    -- Add genericIntegrations column in jobs table
+    if not exists (select 1 from information_schema.columns where table_name = 'jobs' and column_name = 'genericIntegrations') then
+      alter table "jobs" add column "genericIntegrations" TEXT;
+    end if;
+
     -- remove outdated routeRoles
     if exists (select 1 from information_schema.columns where table_name = 'routeRoles') then
       delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='GET';
