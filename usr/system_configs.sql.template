@@ -46,6 +46,10 @@ do $$
       alter table "systemConfigs" drop column "defaultPipelineCount";
     end if;
 
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'segmentMktgKey') then
+      alter table "systemConfigs" drop column "segmentMktgKey";
+    end if;
+
     -- Add new fields here:
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePrivateKey') then
       alter table "systemConfigs" add column "systemNodePrivateKey" TEXT;
@@ -159,10 +163,6 @@ do $$
       alter table "systemConfigs" add column "mktgUrl" varchar(255);
     end if;
 
-    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'segmentMktgKey') then
-      alter table "systemConfigs" add column "segmentMktgKey" varchar(255);
-    end if;
-
     -- Alter any defaults here:
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'autoSelectBuilderToken') then
       alter table "systemConfigs" alter column "autoSelectBuilderToken" set default false;
@@ -248,8 +248,7 @@ do $$
             "technicalSupportAvailable"={{TECHNICAL_SUPPORT_AVAILABLE}},
             "customNodesAdminOnly"={{CUSTOM_NODES_ADMIN_ONLY}},
             "mktgPort"={{MKTG_PORT}},
-            "mktgUrl"='{{MKTG_URL}}',
-            "segmentMktgKey"='{{SEGMENT_MKTG_KEY}}'
+            "mktgUrl"='{{MKTG_URL}}'
         where id=1;
     end if;
 
@@ -308,8 +307,7 @@ do $$
             "technicalSupportAvailable",
             "customNodesAdminOnly",
             "mktgPort",
-            "mktgUrl",
-            "segmentMktgKey"
+            "mktgUrl"
           )
         values
           (
@@ -358,8 +356,7 @@ do $$
             {{TECHNICAL_SUPPORT_AVAILABLE}},
             {{CUSTOM_NODES_ADMIN_ONLY}},
             {{MKTG_PORT}},
-            '{{MKTG_URL}}',
-            '{{SEGMENT_MKTG_KEY}}'
+            '{{MKTG_URL}}'
           );
     end if;
   end
