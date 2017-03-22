@@ -7,6 +7,7 @@ usr/machines.json
 usr/state.json
 usr/state.json.backup
 usr/credentials
+usr/apiResponse
 scripts/local/data
 scripts/local/gitlab
 scripts/local/vault/scripts/keys.txt

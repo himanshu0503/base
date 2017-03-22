@@ -24,6 +24,7 @@ readonly MAX_DEFAULT_LOG_COUNT=6
 readonly REMOTE_SCRIPTS_DIR="$ROOT_DIR/scripts/remote"
 readonly LOCAL_SCRIPTS_DIR="$ROOT_DIR/scripts/local"
 readonly STATE_FILE="$USR_DIR/state.json"
+readonly API_RESPONSE_FILE="$USR_DIR/apiResponse"
 readonly STATE_FILE_BACKUP="$USR_DIR/state.json.backup"
 readonly STATE_FILE_ARCHIVE_DIR="$USR_DIR/states"
 readonly MAX_DEFAULT_STATE_COUNT=6
@@ -50,6 +51,7 @@ source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptLocal.sh"
 source "$SCRIPTS_DIR/_manageState.sh"
+source "$SCRIPTS_DIR/_shippableAdapter.sh"
 
 main() {
   __check_logsdir
