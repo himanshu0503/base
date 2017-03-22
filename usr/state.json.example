@@ -169,10 +169,6 @@
     },
     {
       "type": "generic",
-      "name": "clearbitKeys"
-    },
-    {
-      "type": "generic",
       "name": "keyValuePair"
     }
   ],
@@ -196,16 +192,6 @@
         {
           "value": "https://mybbs.com",
           "label": "wwwUrl"
-        }
-      ]
-    },
-    {
-      "name": "clearbit",
-      "masterName": "clearbitKeys",
-      "formJSONValues": [
-        {
-          "value": "",
-          "label": "clearbitApiToken"
         }
       ]
     },
@@ -509,6 +495,18 @@
           "value": {
             "segmentApiKey": "",
             "segmentMktgKey": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "clearbit",
+      "masterName": "keyValuePair",
+      "formJSONValues": [
+        {
+          "label": "envs",
+          "value": {
+            "clearbitApiKey": "",
           }
         }
       ]
