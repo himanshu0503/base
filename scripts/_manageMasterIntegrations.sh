@@ -6,18 +6,15 @@ export HTTP_RESPONSE_FILE="$LOGS_DIR/http_response"
 get_available_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
 
-  local api_url=""
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local master_integrations_get_endpoint="$api_url/masterIntegrations"
+  _shippable_get_masterIntegrations
 
-  local response=$(curl -H "Content-Type: application/json"\
-    -H "Authorization: apiToken $api_token" \
-    -X GET $master_integrations_get_endpoint \
-    --silent)
-  response=$(echo $response | jq '.')
+  if [ $response_status_code -gt 299 ]; then
+    __process_msg "Error GET-ing master integration list: $response"
+    __process_msg "Status code: $response_status_code"
+    exit 1
+  fi
+
   local response_length=$(echo $response | jq '. | length')
-
   if [ $response_length -gt 5 ]; then
     ## NOTE: we're assuming we have at least 5 master integrations in global list
     __process_msg "Successfully fetched master integration list: $response_length"
@@ -28,7 +25,7 @@ get_available_masterIntegrations() {
   fi
 }
 
-validate_masterIntegrations(){
+validate_masterIntegrations() {
   __process_msg "Validating master integrations in state.json"
 
   local enabled_master_integrations=$(cat $STATE_FILE | jq '.masterIntegrations')
