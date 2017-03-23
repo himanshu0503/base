@@ -1,10 +1,16 @@
+\echo 'Updating isOrphaned to false wherever it is null'
 update projects set "isOrphaned" = false where "isOrphaned" is NULL;
+\echo 'Creating temp table for projects.id'
 create temp table temp_pa as select id from projects;
+\echo 'Removing projects from temp table where project.id is present in projectAccounts'
 delete from temp_pa using "projectAccounts" where "projectAccounts"."projectId" = temp_pa.id;
+\echo 'Updating projects.isOrphaned to true if project.id is present in temp table'
 update projects set "isOrphaned" = true from temp_pa where temp_pa.id = projects.id;
+\echo 'Dropping temp table'
 drop table temp_pa;
 
 -- Migration Script to populate jobstatesMap
+\echo "Running migrations to populate jobstatesMap"
 do $$
   begin
     if not exists(select 1 from "jobStatesMap" where "createdAt" < '2017-02-15 11:59:24.172+00' limit 1) then
@@ -140,6 +146,10 @@ do $$
     end if;
   end
 $$;
+\echo "Completed running migrations to populate jobstatesMap"
 
 -- Migrations to populate `endedAt` property in builds table
+\echo 'Updating builds.endedAt to buildJobs.endedAt where builds.endedAt is null'
 update builds set "endedAt" = "buildJobs"."endedAt" from "buildJobs" where builds.id = "buildJobs"."buildId" and builds."endedAt" is null;
+
+\echo "Sucessfully completed post_install migrations"
