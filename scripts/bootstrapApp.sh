@@ -251,6 +251,10 @@ generate_system_config() {
   local segment_mktg_key=$(cat $STATE_FILE | jq -r '.systemSettings.segmentMktgKey')
   sed -i "s#{{SEGMENT_MKTG_KEY}}#$segment_mktg_key#g" $system_configs_sql
 
+    __process_msg "Updating : allowedSystemImageFamily"
+  local allowed_system_image_family=$(cat $STATE_FILE | jq -r '.systemSettings.allowedSystemImageFamily')
+  sed -i "s#{{ALLOWED_SYSTEM_IMAGE_FAMILY}}#$allowed_system_image_family#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 
