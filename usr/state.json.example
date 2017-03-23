@@ -8,7 +8,7 @@
       "type": "generic"
     },
     {
-      "name": "bitbucketserverKeys",
+      "name": "bitbucketServerKeys",
       "type": "generic"
     },
     {
@@ -179,7 +179,7 @@
   "systemIntegrations": [
     {
       "name": "auth",
-      "masterName": "bitbucketserverKeys",
+      "masterName": "bitbucketServerKeys",
       "formJSONValues": [
         {
           "value": "superSecret",
