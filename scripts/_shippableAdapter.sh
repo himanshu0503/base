@@ -6,6 +6,8 @@ __initialize() {
   RESPONSE_CODE=404
   RESPONSE_DATA=""
   CURL_EXIT_CODE=0
+
+  touch $API_RESPONSE_FILE
 }
 
 __shippable_get() {
