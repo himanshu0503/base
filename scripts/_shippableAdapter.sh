@@ -5,20 +5,34 @@ __initialize() {
   API_TOKEN=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
   RESPONSE_CODE=404
   RESPONSE_DATA=""
+  CURL_EXIT_CODE=0
 }
 
 __shippable_get() {
   __initialize
 
-  local url=$API_URL"/"$1
-  RESPONSE_CODE=$(curl -H "Content-Type: application/json"\
-    -H "Authorization: apiToken $API_TOKEN" \
-    -X GET $url \
-    --silent --write-out "%{http_code}\n" \
-    --output $API_RESPONSE_FILE)
+  local url="$API_URL/$1"
+  {
+    RESPONSE_CODE=$(curl \
+      -H "Content-Type: application/json" \
+      -H "Authorization: apiToken $API_TOKEN" \
+      -X GET $url \
+      --silent --write-out "%{http_code}\n" \
+      --output $API_RESPONSE_FILE)
+  } || {
+    CURL_EXIT_CODE=$(echo $?)
+  }
 
-  response_status_code="$RESPONSE_CODE"
-  response=$(cat $API_RESPONSE_FILE)
+  if [ $CURL_EXIT_CODE -gt 0 ]; then
+    # we are assuming that if curl cmd failed, API is unavailable
+    response="curl failed with error code $CURL_EXIT_CODE. API might be down."
+    response_status_code=503
+  else
+    response_status_code="$RESPONSE_CODE"
+    response=$(cat $API_RESPONSE_FILE)
+  fi
+
+  rm -f $API_RESPONSE_FILE
 }
 
 _shippable_get_masterIntegrations() {

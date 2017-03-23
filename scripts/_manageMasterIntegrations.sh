@@ -10,6 +10,7 @@ get_available_masterIntegrations() {
 
   if [ $response_status_code -gt 299 ]; then
     __process_msg "Error GET-ing master integration list: $response"
+    __process_msg "Status code: $response_status_code"
     exit 1
   fi
 
