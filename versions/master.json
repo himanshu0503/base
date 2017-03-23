@@ -14,7 +14,8 @@
     "timeTrigger",
     "versionTrigger",
     "nexec",
-    "logup"
+    "logup",
+    "segmentListener"
   ],
   "integrationServices": [
     {
