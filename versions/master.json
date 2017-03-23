@@ -238,18 +238,6 @@
       ]
     },
     {
-      "name": "segmentKeys",
-      "type": "generic",
-      "services" : [
-        "segmentListener"
-      ]
-    },
-    {
-      "name": "clearbitKeys",
-      "type": "generic",
-      "services" : []
-    },
-    {
       "name": "VAULT",
       "type": "secretsBackend",
       "services": []
