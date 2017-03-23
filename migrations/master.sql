@@ -1409,13 +1409,18 @@ do $$
       values (182, '577de63321333398d11a1118', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- bitbucketserverKeys master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucketserverKeys' and "typeCode" = 5012) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('577de63321333398d11a1119', 54, 'bitbucketserverKeys', 'Bitbucket Server Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    -- update bitbucketserverKeys to bitbucketServerKeys
+    if exists (select 1 from "masterIntegrations" where "name" = 'bitbucketserverKeys' and "typeCode" = 5012) then
+        update "masterIntegrations" set "name" = 'bitbucketServerKeys' where "name" = 'bitbucketserverKeys' and "typeCode" = 5012;
     end if;
 
-    -- bitbucketserverKeys master integration fields
+    -- bitbucketServerKeys master integration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucketServerKeys' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('577de63321333398d11a1119', 54, 'bitbucketServerKeys', 'Bitbucket Server Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- bitbucketServerKeys master integration fields
     if not exists (select 1 from "masterIntegrationFields" where "id" = 183) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (183, '577de63321333398d11a1119', 'clientId', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
