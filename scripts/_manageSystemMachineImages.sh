@@ -5,14 +5,13 @@ local EXISTING_SYSTEM_MACHINE_IMAGES=""
 get_available_systemMachineImages() {
   __process_msg "GET-ing available system machine images from db"
 
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local system_machine_images_endpoint="$api_url/systemMachineImages"
+  _shippable_get_systemMachineImages
 
-  local response=$(curl -H "Content-Type: application/json" -H \
-    "Authorization: apiToken $api_token" \
-    -X GET $system_machine_images_endpoint \
-    --silent)
+  if [ $response_status_code -gt 299 ]; then
+    __process_msg "Error GET-ing system machine images list: $response"
+    __process_msg "Status code: $response_status_code"
+    exit 1
+  fi
 
   EXISTING_SYSTEM_MACHINE_IMAGES=$(echo $response | jq '.')
 }
