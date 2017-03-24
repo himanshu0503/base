@@ -3,7 +3,6 @@
 export ENABLED_MASTER_INTEGRATIONS=""
 export ENABLED_SYSTEM_INTEGRATIONS=""
 export DB_SYSTEM_INTEGRATIONS=""
-export HTTP_RESPONSE_FILE="$LOGS_DIR/http_response"
 
 get_enabled_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
@@ -115,9 +114,6 @@ upsert_systemIntegrations() {
   local db_system_integrations_length=$(echo $db_system_integrations \
     | jq -r '. | length')
 
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-
   for i in $(seq 1 $enabled_system_integrations_length); do
     local enabled_system_integration=$(echo $enabled_system_integrations \
       | jq '.['"$i-1"']')
@@ -165,21 +161,14 @@ upsert_systemIntegrations() {
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.isEnabled=true')
 
-      local integrations_put_endpoint="$api_url/systemIntegrations/$db_system_integration_id"
-      local post_call_resp_code=$(curl \
-        -H "Content-Type: application/json" \
-        -H "Authorization: apiToken $api_token" \
-        -X PUT \
-        -d "$enabled_system_integration" \
-        $integrations_put_endpoint \
-        --write-out "%{http_code}\n" \
-        --silent \
-        --output $HTTP_RESPONSE_FILE)
-      if [ "$post_call_resp_code" -gt "299" ]; then
-        echo "Error adding integration for $enabled_system_integration_master_name(status code $post_call_resp_code)"
+      _shippable_putById_systemIntegrations $db_system_integration_id "$enabled_system_integration"
+
+      if [ $response_status_code -gt 299 ]; then
+        __process_msg "Error updating system integration $enabled_system_integration_master_name: $response"
+        __process_msg "Status code: $response_status_code"
         exit 1
       else
-        echo "Sucessfully added integration for $enabled_system_integration_master_name"
+        __process_msg "Sucessfully updated integration for $enabled_system_integration_master_name"
       fi
     else
       # find the master integration for this system integration
@@ -202,18 +191,11 @@ upsert_systemIntegrations() {
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.isEnabled=true')
 
-      local integrations_post_endpoint="$api_url/systemIntegrations"
-      local post_call_resp_code=$(curl \
-        -H "Content-Type: application/json" \
-        -H "Authorization: apiToken $api_token" \
-        -X POST \
-        -d "$enabled_system_integration" \
-        $integrations_post_endpoint \
-        --write-out "%{http_code}\n" \
-        --silent \
-        --output $HTTP_RESPONSE_FILE)
-      if [ "$post_call_resp_code" -gt "299" ]; then
-        __process_msg "Error adding integration for $enabled_system_integration_master_name(status code $post_call_resp_code)"
+      _shippable_post_systemIntegrations "$enabled_system_integration"
+
+      if [ $response_status_code -gt 299 ]; then
+        __process_msg "Error adding system integration $enabled_system_integration_master_name: $response"
+        __process_msg "Status code: $response_status_code"
         exit 1
       else
         __process_msg "Sucessfully added integration for $enabled_system_integration_master_name"
@@ -228,8 +210,6 @@ delete_systemIntegrations() {
   # if there is no MI, ask user to delete SI from list
   #   and try again
   __process_msg "DELETE-ing removed system integrations from state.json, from db, if any"
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
 
   local system_integrations=$(cat $STATE_FILE | jq '.systemIntegrations')
 
@@ -251,20 +231,15 @@ delete_systemIntegrations() {
     if [ $system_integration_length -eq 0 ]; then
       local db_system_integration_id=$(echo $db_system_integration \
         | jq -r '.id')
-      local integrations_delete_endpoint="$api_url/systemIntegrations/$db_system_integration_id"
-      local delete_call_resp_code=$(curl \
-        -H "Content-Type: application/json" \
-        -H "Authorization: apiToken $api_token" \
-        -X DELETE \
-        $integrations_delete_endpoint \
-        --write-out "%{http_code}\n" \
-        --silent \
-        --output $HTTP_RESPONSE_FILE)
-      if [ "$delete_call_resp_code" -gt "299" ]; then
-        echo "Error deleting integration for $db_system_integration_master_name(status code $delete_call_resp_code)"
+
+      _shippable_deleteById_systemIntegrations $db_system_integration_id
+
+      if [ $response_status_code -gt 299 ]; then
+        __process_msg "Error deleting system integration $db_system_integration_master_name: $response"
+        __process_msg "Status code: $response_status_code"
         exit 1
       else
-        echo "Sucessfully deleted integration for $db_system_integration_master_name"
+        __process_msg "Sucessfully deleted integration for $db_system_integration_master_name"
       fi
     fi
   done
