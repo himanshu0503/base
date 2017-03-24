@@ -9,17 +9,14 @@ get_enabled_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
   # TODO: after GET route is fixed, use filters only
 
-  local api_url=""
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local master_integrations_get_endpoint="$api_url/masterIntegrations"
+  _shippable_get_masterIntegrations
 
-  local response=$(curl \
-    -H "Content-Type: application/json" \
-    -H "Authorization: apiToken $api_token" \
-    -X GET $master_integrations_get_endpoint \
-    --silent)
-  response=$(echo $response | jq '.')
+  if [ $response_status_code -gt 299 ]; then
+    __process_msg "Error GET-ing master integration list: $response"
+    __process_msg "Status code: $response_status_code"
+    exit 1
+  fi
+
   local response_length=$(echo $response | jq '. | length')
 
   if [ $response_length -gt 5 ]; then
@@ -37,16 +34,14 @@ get_enabled_masterIntegrations() {
 
 get_enabled_systemIntegrations() {
   __process_msg "GET-ing enabled system integrations from db"
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local system_integrations_get_endpoint="$api_url/systemIntegrations"
 
-  local response=$(curl \
-    -H "Content-Type: application/json" \
-    -H "Authorization: apiToken $api_token" \
-    -X GET $system_integrations_get_endpoint \
-    --silent)
-  response=$(echo $response | jq '.')
+  _shippable_get_systemIntegrations
+
+  if [ $response_status_code -gt 299 ]; then
+    __process_msg "Error GET-ing system integration list: $response"
+    __process_msg "Status code: $response_status_code"
+    exit 1
+  fi
 
   DB_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
   local db_system_integrations_length=$(echo $DB_SYSTEM_INTEGRATIONS | jq -r '. | length')

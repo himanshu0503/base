@@ -41,3 +41,13 @@ _shippable_get_masterIntegrations() {
   local master_integrations_get_endpoint="masterIntegrations"
   __shippable_get $master_integrations_get_endpoint
 }
+
+_shippable_get_systemIntegrations() {
+  local system_integrations_get_endpoint="systemIntegrations"
+  __shippable_get $system_integrations_get_endpoint
+}
+
+_shippable_get_systemMachineImages() {
+  local system_machine_images_get_endpoint="systemMachineImages"
+  __shippable_get $system_machine_images_get_endpoint
+}
