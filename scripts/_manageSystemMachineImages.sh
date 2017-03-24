@@ -36,10 +36,6 @@ update_exec_runsh_images() {
 save_systemMachineImages(){
   __process_msg "Saving available system machine images into db"
 
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local system_machine_images_endpoint="$api_url/systemMachineImages"
-
   local system_machine_images=$(cat $STATE_FILE | jq -r '.systemMachineImages')
   local system_machine_images_length=$(echo $system_machine_images | jq -r '. | length')
 
@@ -49,24 +45,21 @@ save_systemMachineImages(){
     local system_machine_image_id=$(echo $EXISTING_SYSTEM_MACHINE_IMAGES | jq -r '.[] | select (.name=='"$system_machine_image_name"') | .id')
 
     if [ -z "$system_machine_image_id" ]; then
-      local post_call_resp_code=$(curl -H "Content-Type: application/json" \
-        -H "Authorization: apiToken $api_token" \
-        -X POST -d "$system_machine_image" \
-        $system_machine_images_endpoint \
-        --write-out "%{http_code}\n" --output /dev/null)
-      if [ "$post_call_resp_code" -gt "299" ]; then
-        echo "Error inserting system machine image(status code $post_call_resp_code)"
+      _shippable_post_systemMachineImages "$system_machine_image"
+
+      if [ $response_status_code -gt 299 ]; then
+        __process_msg "Error inserting system machine image $system_machine_image_name: $response"
+        __process_msg "Status code: $response_status_code"
         exit 1
       else
         echo "Sucessfully inserted system machine image: $system_machine_image_name"
       fi
     else
-      local put_call_resp_code=$(curl -H "Content-Type: application/json" \
-      -H "Authorization: apiToken $api_token" \
-      -X PUT -d "$system_machine_image" $system_machine_images_endpoint/$system_machine_image_id \
-      --write-out "%{http_code}\n" --silent --output /dev/null)
-      if [ "$put_call_resp_code" -gt "299" ]; then
-        echo "Error updating system machine image: $system_machine_image_name (status code $put_call_resp_code)"
+      _shippable_putById_systemMachineImages $system_machine_image_id "$system_machine_image"
+
+      if [ $response_status_code -gt 299 ]; then
+        __process_msg "Error updating system machine image $system_machine_image_name: $response"
+        __process_msg "Status code: $response_status_code"
         exit 1
       else
         __process_msg "Sucessfully updated system machine image: $system_machine_image_name"

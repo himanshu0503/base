@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 export AVAILABLE_MASTER_INTEGRATIONS=""
-export HTTP_RESPONSE_FILE="$LOGS_DIR/http_response"
 
 get_available_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
@@ -98,11 +97,6 @@ enable_masterIntegrations() {
   local available_master_integrations_length=$(echo $AVAILABLE_MASTER_INTEGRATIONS \
     | jq -r '. | length')
 
-  local api_token=$(cat $STATE_FILE \
-    | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE \
-    | jq -r '.systemSettings.apiUrl')
-
   for i in $(seq 1 $enabled_master_integrations_length); do
     local enabled_master_integration=$(echo $enabled_master_integrations \
       | jq '.['"$i-1"']')
@@ -132,18 +126,11 @@ enable_masterIntegrations() {
           local updated_master_integration=$(echo $available_master_integration \
             | jq '.isEnabled=true')
 
-          local master_integration_put_endpoint="$api_url/masterIntegrations/$available_master_integration_id"
-          local put_call_resp_code=$(curl \
-            -H "Content-Type: application/json" \
-            -H "Authorization: apiToken $api_token" \
-            -X PUT \
-            -d "$updated_master_integration" \
-            $master_integration_put_endpoint \
-            --write-out "%{http_code}\n" \
-            --silent \
-            --output $HTTP_RESPONSE_FILE)
-          if [ "$put_call_resp_code" -gt "299" ]; then
-            __process_msg "Error enabling master integration $available_master_integration_name(status code $put_call_resp_code)"
+          _shippable_putById_masterIntegrations $available_master_integration_id "$updated_master_integration"
+
+          if [ $response_status_code -gt 299 ]; then
+            __process_msg "Error enabling master integration $available_master_integration_name: $response"
+            __process_msg "Status code: $response_status_code"
             exit 1
           else
             __process_msg "Sucessfully enabled master integration $available_master_integration_name"
@@ -169,11 +156,6 @@ disable_masterIntegrations() {
     | jq -r '.masterIntegrations')
   local enabled_master_integrations_length=$(echo $enabled_master_integrations \
     | jq -r '. | length')
-
-  local api_token=$(cat $STATE_FILE \
-    | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE \
-    | jq -r '.systemSettings.apiUrl')
 
   for i in $(seq 1 $db_enabled_master_integrations_length); do
     local db_enabled_master_integration=$(echo $db_enabled_master_integrations \
@@ -207,18 +189,11 @@ disable_masterIntegrations() {
       local updated_master_integration=$(echo $db_enabled_master_integration \
         | jq '.isEnabled=false')
 
-      local master_integration_put_endpoint="$api_url/masterIntegrations/$db_enabled_master_integration_id"
-      local put_call_resp_code=$(curl \
-        -H "Content-Type: application/json" \
-        -H "Authorization: apiToken $api_token" \
-        -X PUT \
-        -d "$updated_master_integration" \
-        $master_integration_put_endpoint \
-        --silent \
-        --write-out "%{http_code}\n" \
-        --output $HTTP_RESPONSE_FILE)
-      if [ "$put_call_resp_code" -gt "299" ]; then
-        __process_msg "Error disabling integration $available_master_integration_name(status code $put_call_resp_code)"
+      _shippable_putById_masterIntegrations $db_enabled_master_integration_id "$updated_master_integration"
+
+      if [ $response_status_code -gt 299 ]; then
+        __process_msg "Error disabling master integration $db_enabled_master_integration_name: $response"
+        __process_msg "Status code: $response_status_code"
         exit 1
       else
         __process_msg "Sucessfully disabled master integration $db_enabled_master_integration_name"
