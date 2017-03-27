@@ -20,7 +20,7 @@
       "type": "generic"
     },
     {
-      "name": "githubenterpriseKeys",
+      "name": "githubEnterpriseKeys",
       "type": "generic"
     },
     {
@@ -128,7 +128,7 @@
       "type": "scm"
     },
     {
-      "name": "ghe",
+      "name": "githubEnterprise",
       "type": "scm"
     },
     {
@@ -197,7 +197,7 @@
     },
     {
       "name": "auth",
-      "masterName": "githubenterpriseKeys",
+      "masterName": "githubEnterpriseKeys",
       "formJSONValues": [
         {
           "value": "superSecret",

@@ -801,10 +801,15 @@ do $$
       values (36, '5723561699ddf70c00be27ed', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- ghe
-    if not exists (select 1 from "masterIntegrations" where "name" = 'ghe' and "typeCode" = 5000) then
+    -- update ghe scm masterIntegration name to githubEnterprise
+    if exists (select 1 from "masterIntegrations" where "name" = 'ghe' and "typeCode" = 5000) then
+        update "masterIntegrations" set "name" = 'githubEnterprise' where "name" = 'ghe' and "typeCode" = 5000;
+    end if;
+
+    -- githubEnterprise SCM masterIntegration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'githubEnterprise' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('563347d6046d220c002a3474', 15, 'ghe', 'Github Enterprise', 'scm', true, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('563347d6046d220c002a3474', 15, 'githubEnterprise', 'Github Enterprise', 'scm', true, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for ghe
@@ -1441,13 +1446,18 @@ do $$
       values (186, '577de63321333398d11a1119', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- githubenterpriseKeys master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'githubenterpriseKeys' and "typeCode" = 5012) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('507f1f77bcf86cd799431120', 55, 'githubenterpriseKeys', 'Github Enterprise Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    -- update githubenterpriseKeys to githubEnterpriseKeys
+    if exists (select 1 from "masterIntegrations" where "name" = 'githubenterpriseKeys' and "typeCode" = 5012) then
+        update "masterIntegrations" set "name" = 'githubEnterpriseKeys' where "name" = 'githubenterpriseKeys' and "typeCode" = 5012;
     end if;
 
-    -- masterIntegrationFields for githubenterpriseKeys
+    -- githubEnterpriseKeys master integration
+    if not exists (select 1 from "masterIntegrations" where "name" = 'githubEnterpriseKeys' and "typeCode" = 5012) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('507f1f77bcf86cd799431120', 55, 'githubEnterpriseKeys', 'Github Enterprise Keys', 'generic', false, 'generic', 5012, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- masterIntegrationFields for githubEnterpriseKeys
     if not exists (select 1 from "masterIntegrationFields" where "id" = 187) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (187, '507f1f77bcf86cd799431120', 'clientId', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
@@ -5484,6 +5494,11 @@ do $$
     -- remove master integration for clearbitKeys
     if exists (select 1 from "masterIntegrations" where "name" = 'clearbitKeys' and "id" = '58c78481e34468d32114e125') then
       delete from "masterIntegrations" where "id"= '58c78481e34468d32114e125';
+    end if;
+
+    -- updates providers with name `ghe` to `githubEnterprise`
+    if exists (select 1 from "providers" where "name" = 'ghe') then
+        update "providers" set "name" = 'githubEnterprise' where "name" = 'ghe';
     end if;
 
   end
