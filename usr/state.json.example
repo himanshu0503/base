@@ -540,7 +540,6 @@
     "truck": true,
     "hubspotTimeLimit": 10,
     "hubspotShouldSimulate": true,
-    "segmentMktgKey": "",
     "systemImagesRegistry": "374168611083.dkr.ecr.us-east-1.amazonaws.com",
     "serviceUserToken": "",
     "swarmWorkerToken": "",
