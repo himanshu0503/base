@@ -163,6 +163,10 @@ do $$
       alter table "systemConfigs" add column "mktgUrl" varchar(255);
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowedSystemImageFamily') then
+      alter table "systemConfigs" add column "allowedSystemImageFamily" TEXT;
+    end if;
+
     -- Alter any defaults here:
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'autoSelectBuilderToken') then
       alter table "systemConfigs" alter column "autoSelectBuilderToken" set default false;
@@ -248,7 +252,8 @@ do $$
             "technicalSupportAvailable"={{TECHNICAL_SUPPORT_AVAILABLE}},
             "customNodesAdminOnly"={{CUSTOM_NODES_ADMIN_ONLY}},
             "mktgPort"={{MKTG_PORT}},
-            "mktgUrl"='{{MKTG_URL}}'
+            "mktgUrl"='{{MKTG_URL}}',
+            "allowedSystemImageFamily"='{{ALLOWED_SYSTEM_IMAGE_FAMILY}}'
         where id=1;
     end if;
 
@@ -307,7 +312,8 @@ do $$
             "technicalSupportAvailable",
             "customNodesAdminOnly",
             "mktgPort",
-            "mktgUrl"
+            "mktgUrl",
+            "allowedSystemImageFamily"
           )
         values
           (
@@ -356,7 +362,9 @@ do $$
             {{TECHNICAL_SUPPORT_AVAILABLE}},
             {{CUSTOM_NODES_ADMIN_ONLY}},
             {{MKTG_PORT}},
-            '{{MKTG_URL}}'
+            '{{MKTG_URL}}',
+            '{{ALLOWED_SYSTEM_IMAGE_FAMILY}}'
+
           );
     end if;
   end
@@ -447,6 +455,10 @@ do $$
 
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'truck') then
       alter table "systemConfigs" alter column "truck" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowedSystemImageFamily') then
+      alter table "systemConfigs" alter column "allowedSystemImageFamily" set not null;
     end if;
   end
 $$;

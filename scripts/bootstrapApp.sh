@@ -247,6 +247,10 @@ generate_system_config() {
   local mktg_url=$(cat $STATE_FILE | jq -r '.systemSettings.mktgUrl')
   sed -i "s#{{MKTG_URL}}#$mktg_url#g" $system_configs_sql
 
+  __process_msg "Updating : allowedSystemImageFamily"
+  local allowed_system_image_family=$(cat $STATE_FILE | jq -r '.systemSettings.allowedSystemImageFamily')
+  sed -i "s#{{ALLOWED_SYSTEM_IMAGE_FAMILY}}#$allowed_system_image_family#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 
