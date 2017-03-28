@@ -5429,6 +5429,11 @@ do $$
       create index "subProviderIdOrgNameI" on "subscriptions" using btree("providerId", "orgName");
     end if;
 
+    -- Add subLowerOrgNameI index on subscriptions
+    if not exists (select 1 from pg_indexes where tablename = 'subscriptions' and indexname = 'subLowerOrgNameI') then
+      create index "subLowerOrgNameI" on subscriptions (lower("orgName"));
+    end if;
+
     -- Remove systemCodes.propertyBag
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'propertyBag') then
       alter table "systemCodes" drop column "propertyBag";
