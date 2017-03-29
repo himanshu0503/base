@@ -481,8 +481,7 @@
             "dbPassword": "",
             "dbHost": "",
             "dbPort": "",
-            "dbDialect": "",
-            "dbSchema": ""
+            "dbDialect": ""
           }
         }
       ]
