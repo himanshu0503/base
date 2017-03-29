@@ -215,6 +215,10 @@ do $$
       alter table "systemConfigs" add column "workers" TEXT;
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'mktgCTAAggsLastDtTm') then
+      alter table "systemConfigs" add column "mktgCTAAggsLastDtTm" timestamp with time zone;
+    end if;
+
     -- Alter any defaults here:
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'autoSelectBuilderToken') then
       alter table "systemConfigs" alter column "autoSelectBuilderToken" set default false;
