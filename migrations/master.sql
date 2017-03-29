@@ -5424,11 +5424,7 @@ do $$
       alter table "accounts" add column "defaultViewId" INTEGER;
     end if;
 
-    -- Add subProviderIdOrgNameI Index on subscriptions
-    if not exists (select 1 from pg_indexes where tablename = 'subscriptions' and indexname = 'subProviderIdOrgNameI') then
-      create index "subProviderIdOrgNameI" on "subscriptions" using btree("providerId", "orgName");
-    end if;
-
+    -- Add subProviderIdLowercaseOrgNameI Index on projects
     if not exists (select 1 from pg_indexes where tablename = 'subscriptions' and indexname = 'subProviderIdLowercaseOrgNameI') then
       create index "subProviderIdLowercaseOrgNameI" on "subscriptions" using btree("providerId", lower("orgName"::text));
     end if;
@@ -5436,6 +5432,11 @@ do $$
     -- Add projProviderIdLowercaseFullNameI Index on projects
     if not exists (select 1 from pg_indexes where tablename = 'projects' and indexname = 'projProviderIdLowercaseFullNameI') then
       create index "projProviderIdLowercaseFullNameI" on "projects" using btree("providerId", lower("fullName"::text));
+    end if;
+
+    -- Drop index subProviderIdOrgNameI
+    if exists (select 1 from pg_indexes where tablename = 'subscriptions' and indexname = 'subProviderIdOrgNameI') then
+      drop index "subProviderIdOrgNameI";
     end if;
 
     -- Remove systemCodes.propertyBag
