@@ -163,6 +163,10 @@ do $$
       alter table "systemConfigs" add column "mktgUrl" varchar(255);
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'mktgPageAggsLastDtTm') then
+      alter table "systemConfigs" add column "mktgPageAggsLastDtTm" timestamp with time zone;
+    end if;
+
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowedSystemImageFamily') then
       alter table "systemConfigs" add column "allowedSystemImageFamily" TEXT;
     end if;
