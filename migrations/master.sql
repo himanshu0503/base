@@ -5516,5 +5516,15 @@ do $$
         update "providers" set "name" = 'githubEnterprise' where "name" = 'ghe';
     end if;
 
+    -- Add execImage column to clusterNodes
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodes' and column_name = 'execImage') then
+      alter table "clusterNodes" add column "execImage" varchar(80);
+    end if;
+
+    -- Add execImage column to systemNodes
+    if not exists (select 1 from information_schema.columns where table_name = 'systemNodes' and column_name = 'execImage') then
+      alter table "systemNodes" add column "execImage" varchar(80);
+    end if;
+
   end
 $$;
