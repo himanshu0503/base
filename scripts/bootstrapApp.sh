@@ -251,6 +251,14 @@ generate_system_config() {
   local allowed_system_image_family=$(cat $STATE_FILE | jq -r '.systemSettings.allowedSystemImageFamily')
   sed -i "s#{{ALLOWED_SYSTEM_IMAGE_FAMILY}}#$allowed_system_image_family#g" $system_configs_sql
 
+  __process_msg "Updating : accessKey"
+  local access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
+  sed -i "s#{{ACCESS_KEY}}#$access_key#g" $system_configs_sql
+
+  __process_msg "Updating : secretKey"
+  local secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
+  sed -i "s#{{SECRET_KEY}}#$secret_key#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 

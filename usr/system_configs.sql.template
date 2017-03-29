@@ -167,6 +167,54 @@ do $$
       alter table "systemConfigs" add column "allowedSystemImageFamily" TEXT;
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'isBootstrapped') then
+      alter table "systemConfigs" add column "isBootstrapped" BOOLEAN default false NOT NULL;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'accessKey') then
+      alter table "systemConfigs" add column "accessKey" VARCHAR(255);
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'secretKey') then
+      alter table "systemConfigs" add column "secretKey" VARCHAR(255);
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'release') then
+      alter table "systemConfigs" add column "release" VARCHAR(24) default 'master' NOT NULL;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'services') then
+      alter table "systemConfigs" add column "services" TEXT;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'db') then
+      alter table "systemConfigs" add column "db" TEXT;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'msg') then
+      alter table "systemConfigs" add column "msg" TEXT;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'state') then
+      alter table "systemConfigs" add column "state" TEXT;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'secrets') then
+      alter table "systemConfigs" add column "secrets" TEXT;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'redis') then
+      alter table "systemConfigs" add column "redis" TEXT;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'master') then
+      alter table "systemConfigs" add column "master" TEXT;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'workers') then
+      alter table "systemConfigs" add column "workers" TEXT;
+    end if;
+
     -- Alter any defaults here:
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'autoSelectBuilderToken') then
       alter table "systemConfigs" alter column "autoSelectBuilderToken" set default false;
@@ -253,7 +301,9 @@ do $$
             "customNodesAdminOnly"={{CUSTOM_NODES_ADMIN_ONLY}},
             "mktgPort"={{MKTG_PORT}},
             "mktgUrl"='{{MKTG_URL}}',
-            "allowedSystemImageFamily"='{{ALLOWED_SYSTEM_IMAGE_FAMILY}}'
+            "allowedSystemImageFamily"='{{ALLOWED_SYSTEM_IMAGE_FAMILY}}',
+            "accessKey"='{{ACCESS_KEY}}',
+            "secretKey"='{{SECRET_KEY}}'
         where id=1;
     end if;
 
@@ -313,7 +363,9 @@ do $$
             "customNodesAdminOnly",
             "mktgPort",
             "mktgUrl",
-            "allowedSystemImageFamily"
+            "allowedSystemImageFamily",
+            "accessKey",
+            "secretKey"
           )
         values
           (
@@ -363,8 +415,9 @@ do $$
             {{CUSTOM_NODES_ADMIN_ONLY}},
             {{MKTG_PORT}},
             '{{MKTG_URL}}',
-            '{{ALLOWED_SYSTEM_IMAGE_FAMILY}}'
-
+            '{{ALLOWED_SYSTEM_IMAGE_FAMILY}}',
+            '{{ACCESS_KEY}}',
+            '{{SECRET_KEY}}'
           );
     end if;
   end
@@ -459,6 +512,14 @@ do $$
 
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowedSystemImageFamily') then
       alter table "systemConfigs" alter column "allowedSystemImageFamily" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'accessKey') then
+      alter table "systemConfigs" alter column "accessKey" set not null;
+    end if;
+
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'secretKey') then
+      alter table "systemConfigs" alter column "secretKey" set not null;
     end if;
   end
 $$;
