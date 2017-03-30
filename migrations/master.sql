@@ -5434,6 +5434,12 @@ do $$
       create index "projProviderIdLowercaseFullNameI" on "projects" using btree("providerId", lower("fullName"::text));
     end if;
 
+
+    -- Add projProviderIdLowercaseNameI Index on projects
+    if not exists (select 1 from pg_indexes where tablename = 'projects' and indexname = 'projProviderIdLowercaseNameI') then
+      create index "projProviderIdLowercaseNameI" on "projects" using btree("providerId", lower("name"::text));
+    end if;
+
     -- Drop index projProviderIdFullNameI
     if exists (select 1 from pg_indexes where tablename = 'projects' and indexname = 'projProviderIdFullNameI') then
       drop index "projProviderIdFullNameI";
