@@ -5445,6 +5445,11 @@ do $$
       drop index "projProviderIdFullNameI";
     end if;
 
+    -- Drop index projProviderIdNameI
+    if exists (select 1 from pg_indexes where tablename = 'projects' and indexname = 'projProviderIdNameI') then
+      drop index "projProviderIdNameI";
+    end if;
+
     -- Drop index subProviderIdOrgNameI
     if exists (select 1 from pg_indexes where tablename = 'subscriptions' and indexname = 'subProviderIdOrgNameI') then
       drop index "subProviderIdOrgNameI";
