@@ -506,7 +506,7 @@
         {
           "label": "envs",
           "value": {
-            "clearbitApiKey": "",
+            "clearbitApiKey": ""
           }
         }
       ]
