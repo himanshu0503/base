@@ -5512,6 +5512,16 @@ do $$
       create index "resourceTypeCodeI" on "resources" using btree("typeCode");
     end if;
 
+    -- Add versionsSubscriptionIdI Index on versions
+    if not exists (select 1 from pg_indexes where tablename = 'versions' and indexname = 'versionsSubscriptionIdI') then
+      create index "versionsSubscriptionIdI" on "versions" using btree("subscriptionId");
+    end if;
+
+    -- Add versionsProjectIdI Index on versions
+    if not exists (select 1 from pg_indexes where tablename = 'versions' and indexname = 'versionsProjectIdI') then
+      create index "versionsProjectIdI" on "versions" using btree("projectId");
+    end if;
+
     -- Remove systemCodes.propertyBag
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'propertyBag') then
       alter table "systemCodes" drop column "propertyBag";
