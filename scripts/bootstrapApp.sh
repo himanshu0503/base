@@ -406,7 +406,7 @@ generate_api_config() {
 
   __process_msg "Generating api port mapping"
   local api_port=$(cat $STATE_FILE | jq -r '.systemSettings.apiPort')
-  local api_port_mapping=" --publish $api_port:$api_port/tcp"
+  local api_port_mapping=" --publish mode=host,target=$api_port,published=$api_port,protocol=tcp"
   __process_msg "api port mapping : $api_port_mapping"
 
   local api_port_update=$(cat $STATE_FILE | jq '

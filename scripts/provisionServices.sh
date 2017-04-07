@@ -310,7 +310,7 @@ __run_service() {
 provision_www() {
   local restart=true
   local port=$(cat $STATE_FILE | jq -r '.systemSettings.wwwPort')
-  __save_service_config www " --publish $port:$port/tcp" "--mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
+  __save_service_config www " --publish mode=host,target=$port,published=$port,protocol=tcp" " --mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
   __run_service "www" $restart
 }
 
@@ -320,7 +320,7 @@ provision_mktg() {
     local restart=true
     local replicas=$(cat $STATE_FILE | jq --arg service "mktg" -r '.services[] | select (.name=="mktg") | .replicas')
     local port=$(cat $STATE_FILE | jq -r '.systemSettings.mktgPort')
-    __save_service_config mktg " --publish $port:$port/tcp" "--mode global --name mktg --network ingress --with-registry-auth --endpoint-mode vip"
+    __save_service_config mktg " --publish mode=host,target=$port,published=$port,protocol=tcp" "--mode global --name mktg --network ingress --with-registry-auth --endpoint-mode vip"
     __run_service "mktg" $restart
   fi
 }
