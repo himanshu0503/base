@@ -5492,6 +5492,11 @@ do $$
       create index "buildsStatusCodeI" on "builds" using btree("statusCode");
     end if;
 
+    -- Add jobDependenciesOpOpResIdI Index on jobDependencies
+    if not exists (select 1 from pg_indexes where tablename = 'jobDependencies' and indexname = 'jobDependenciesOpOpResIdI') then
+      create index "jobDependenciesOpOpResIdI" on "jobDependencies" using btree("operation", "operationResourceId");
+    end if;
+
     -- Remove systemCodes.propertyBag
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'propertyBag') then
       alter table "systemCodes" drop column "propertyBag";
