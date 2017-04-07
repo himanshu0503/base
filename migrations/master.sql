@@ -5477,6 +5477,21 @@ do $$
       create index "buildJobsProjectIdI" on "buildJobs" using btree("projectId");
     end if;
 
+    -- Add buildsSubscriptionIdI Index on builds
+    if not exists (select 1 from pg_indexes where tablename = 'builds' and indexname = 'buildsSubscriptionIdI') then
+      create index "buildsSubscriptionIdI" on "builds" using btree("subscriptionId");
+    end if;
+
+    -- Add buildsProjectIdI Index on builds
+    if not exists (select 1 from pg_indexes where tablename = 'builds' and indexname = 'buildsProjectIdI') then
+      create index "buildsProjectIdI" on "builds" using btree("projectId");
+    end if;
+
+    -- Add buildsStatusCodeI Index on builds
+    if not exists (select 1 from pg_indexes where tablename = 'builds' and indexname = 'buildsStatusCodeI') then
+      create index "buildsStatusCodeI" on "builds" using btree("statusCode");
+    end if;
+
     -- Remove systemCodes.propertyBag
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'propertyBag') then
       alter table "systemCodes" drop column "propertyBag";
