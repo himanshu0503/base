@@ -5497,6 +5497,21 @@ do $$
       create index "jobDependenciesOpOpResIdI" on "jobDependencies" using btree("operation", "operationResourceId");
     end if;
 
+    -- Add resourceSubscriptionIdI Index on resources
+    if not exists (select 1 from pg_indexes where tablename = 'resources' and indexname = 'resourceSubscriptionIdI') then
+      create index "resourceSubscriptionIdI" on "resources" using btree("subscriptionId");
+    end if;
+
+    -- Add resourceProjectIdI Index on resources
+    if not exists (select 1 from pg_indexes where tablename = 'resources' and indexname = 'resourceProjectIdI') then
+      create index "resourceProjectIdI" on "resources" using btree("projectId");
+    end if;
+
+    -- Add resourceTypeCodeI Index on resources
+    if not exists (select 1 from pg_indexes where tablename = 'resources' and indexname = 'resourceTypeCodeI') then
+      create index "resourceTypeCodeI" on "resources" using btree("typeCode");
+    end if;
+
     -- Remove systemCodes.propertyBag
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'propertyBag') then
       alter table "systemCodes" drop column "propertyBag";
