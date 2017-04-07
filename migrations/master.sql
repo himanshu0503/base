@@ -5467,6 +5467,16 @@ do $$
       drop index "subProviderIdOrgNameI";
     end if;
 
+    -- Add buildJobsSubscriptionIdI Index on buildJobs
+    if not exists (select 1 from pg_indexes where tablename = 'buildJobs' and indexname = 'buildJobsSubscriptionIdI') then
+      create index "buildJobsSubscriptionIdI" on "buildJobs" using btree("subscriptionId");
+    end if;
+
+    -- Add buildJobsProjectIdI Index on buildJobs
+    if not exists (select 1 from pg_indexes where tablename = 'buildJobs' and indexname = 'buildJobsProjectIdI') then
+      create index "buildJobsProjectIdI" on "buildJobs" using btree("projectId");
+    end if;
+
     -- Remove systemCodes.propertyBag
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'propertyBag') then
       alter table "systemCodes" drop column "propertyBag";
