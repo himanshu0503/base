@@ -548,7 +548,7 @@ install_gitlab() {
     __process_msg "Installing Gitlab"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq -r '.ip')
-    local gitlab_system_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select (.name=="gitlab")')
+    local gitlab_system_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select (.name=="state")')
 
     local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="password")|.value')
     local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="url")|.value')
