@@ -1497,9 +1497,9 @@ do $$
     end if;
 
     -- Azure DC/OS master integration
-    if not exists (select 1 from "masterIntegrations" where "name" = 'azure-dc/os' and "typeCode" = 5002) then
+    if not exists (select 1 from "masterIntegrations" where "name" = 'AZURE-DC/OS' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('58ecb1a8f318373d7f5645f4', 64, 'azure-dc/os', 'Azure DC/OS', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('58ecb1a8f318373d7f5645f4', 64, 'AZURE-DC/OS', 'Azure DC/OS', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for azure-dc/os
