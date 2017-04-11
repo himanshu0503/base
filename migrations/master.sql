@@ -1515,12 +1515,12 @@ do $$
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 206) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (206, '58ecb1a8f318373d7f5645f4', 'dcosPublicKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (206, '58ecb1a8f318373d7f5645f4', 'dcosPublicKey', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 207) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (207, '58ecb1a8f318373d7f5645f4', 'dcosPrivateKey', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (207, '58ecb1a8f318373d7f5645f4', 'dcosPrivateKey', 'string', false, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
     -- Removing redundant master integrations
 
