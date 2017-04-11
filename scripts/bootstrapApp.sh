@@ -464,7 +464,7 @@ provision_api() {
 provision_api_local() {
   __process_msg "Provisioning API..."
 
-  local port_mapping=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .port')
+  local port_mapping="--publish 50000:50000/tcp"
   local env_variables=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .env')
   local name=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .name')
   local opts=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .opts')

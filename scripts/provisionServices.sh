@@ -309,8 +309,12 @@ __run_service() {
 
 provision_www() {
   local restart=true
-  local port=$(cat $STATE_FILE | jq -r '.systemSettings.wwwPort')
-  __save_service_config www " --publish mode=host,target=$port,published=$port,protocol=tcp" " --mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
+  if [ "$INSTALL_MODE" == "production" ]; then
+    local port=$(cat $STATE_FILE | jq -r '.systemSettings.wwwPort')
+    __save_service_config www " --publish mode=host,target=$port,published=$port,protocol=tcp" " --mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
+  else
+    __save_service_config www " --publish 50001:50001/tcp" " --mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
+  fi
   __run_service "www" $restart
 }
 
@@ -319,8 +323,12 @@ provision_mktg() {
   if [ ! -z "$mktg" ]; then
     local restart=true
     local replicas=$(cat $STATE_FILE | jq --arg service "mktg" -r '.services[] | select (.name=="mktg") | .replicas')
-    local port=$(cat $STATE_FILE | jq -r '.systemSettings.mktgPort')
-    __save_service_config mktg " --publish mode=host,target=$port,published=$port,protocol=tcp" "--mode global --name mktg --network ingress --with-registry-auth --endpoint-mode vip"
+    if [ "$INSTALL_MODE" == "production" ]; then
+      local port=$(cat $STATE_FILE | jq -r '.systemSettings.mktgPort')
+      __save_service_config mktg " --publish mode=host,target=$port,published=$port,protocol=tcp" "--mode global --name mktg --network ingress --with-registry-auth --endpoint-mode vip"
+    else
+      __save_service_config mktg " --publish 50002:50002/tcp" "--mode global --name mktg --network ingress --with-registry-auth --endpoint-mode vip"
+    fi
     __run_service "mktg" $restart
   fi
 }
