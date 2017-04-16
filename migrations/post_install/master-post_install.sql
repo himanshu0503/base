@@ -17,10 +17,10 @@ do $$
       -- Migration Script to populate jobstatesMap for runs
       create temp table tjsm as WITH cte AS
       (
-         SELECT "id","projectId","branchName","runNumber","createdAt","statusCode","isGitTag","isPullRequest","isRelease","gitTagName","releaseName","subscriptionId", "createdBy", "updatedBy", "updatedAt", ROW_NUMBER() OVER (PARTITION BY "projectId","branchName","statusCode","isGitTag","isPullRequest","isRelease" ORDER BY "createdAt" desc)
+         SELECT "id","projectId","branchName","runNumber","createdAt","statusCode","isGitTag","isPullRequest","pullRequestNumber","isRelease","gitTagName","releaseName","subscriptionId", "createdBy", "updatedBy", "updatedAt", ROW_NUMBER() OVER (PARTITION BY "projectId","branchName","statusCode","isGitTag","isPullRequest","isRelease" ORDER BY "createdAt" desc)
       AS rn FROM runs WHERE "statusCode" in (30,50,60,80) and "branchName" is not null
       )
-      SELECT "id", "projectId" as pid,"branchName" as bn,"runNumber","createdAt","statusCode","isGitTag","isPullRequest","isRelease","gitTagName","releaseName","subscriptionId", "createdBy", "updatedBy", "updatedAt"
+      SELECT "id", "projectId" as pid,"branchName" as bn,"runNumber","createdAt","statusCode","isGitTag","isPullRequest","pullRequestNumber" as prnumber,"isRelease","gitTagName","releaseName","subscriptionId", "createdBy", "updatedBy", "updatedAt"
       FROM cte
       WHERE rn = 1;
 
@@ -36,7 +36,7 @@ do $$
       -- update contextTypeCode, contextValue
       update tjsm set "contextTypeCode" = 302, "contextValue" = tjsm."gitTagName" where "isGitTag" = true;
       update tjsm set "contextTypeCode" = 303, "contextValue" = tjsm."releaseName" where "isRelease" = true;
-      update tjsm set "contextTypeCode" = 304, "contextValue" = tjsm.bn where "isPullRequest" = true;
+      update tjsm set "contextTypeCode" = 304, "contextValue" = tjsm.prnumber where "isPullRequest" = true;
       update tjsm set "contextTypeCode" = 301, "contextValue" = tjsm.bn where "isPullRequest" = false and "isGitTag" = false and "isRelease" = false;
       update tjsm set "updatedBy" = tjsm."createdBy" where "updatedBy" is null;
 
