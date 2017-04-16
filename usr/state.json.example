@@ -591,8 +591,7 @@
     "customNodesAdminOnly": false,
     "mktgPort": 50002,
     "nodeScriptsLocation": "/home/shippable/scripts/node",
-    "allowedSystemImageFamily": "shippable/minv2|drydock/",
-    "hubspotRSyncLastSyncTime": ""
+    "allowedSystemImageFamily": "shippable/minv2|drydock/"
   },
   "machines": [],
   "installStatus": {
