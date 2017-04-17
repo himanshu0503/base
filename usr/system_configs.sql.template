@@ -167,6 +167,10 @@ do $$
       alter table "systemConfigs" add column "mktgPageAggsLastDtTm" timestamp with time zone;
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotProjectsLastSyncTime') then
+      alter table "systemConfigs" add column "hubspotProjectsLastSyncTime" timestamp with time zone;
+    end if;
+
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowedSystemImageFamily') then
       alter table "systemConfigs" add column "allowedSystemImageFamily" TEXT;
     end if;
