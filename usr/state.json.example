@@ -591,7 +591,8 @@
     "customNodesAdminOnly": false,
     "mktgPort": 50002,
     "nodeScriptsLocation": "/home/shippable/scripts/node",
-    "allowedSystemImageFamily": "shippable/minv2|drydock/"
+    "allowedSystemImageFamily": "shippable/minv2|drydock/",
+    "defaultMinionInstanceSize": "c4.large"
   },
   "machines": [],
   "installStatus": {
