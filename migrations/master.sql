@@ -5627,5 +5627,10 @@ do $$
       alter table "subscriptions" add column "earlyAdopterMinionCount" INTEGER;
     end if;
 
+    -- Add minionInstanceSize to subscriptions
+    if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'minionInstanceSize') then
+      alter table "subscriptions" add column "minionInstanceSize" varchar(255);
+    end if;
+
   end
 $$;
