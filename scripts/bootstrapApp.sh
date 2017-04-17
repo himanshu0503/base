@@ -259,6 +259,10 @@ generate_system_config() {
   local secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
   sed -i "s#{{SECRET_KEY}}#$secret_key#g" $system_configs_sql
 
+  __process_msg "Updating : defaultMinionInstanceSize"
+  local default_minion_instance_size=$(cat $STATE_FILE | jq -r '.systemSettings.defaultMinionInstanceSize')
+  sed -i "s#{{DEFAULT_MINION_INSTANCE_SIZE}}#$default_minion_instance_size#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 

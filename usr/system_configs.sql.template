@@ -319,7 +319,8 @@ do $$
             "mktgUrl"='{{MKTG_URL}}',
             "allowedSystemImageFamily"='{{ALLOWED_SYSTEM_IMAGE_FAMILY}}',
             "accessKey"='{{ACCESS_KEY}}',
-            "secretKey"='{{SECRET_KEY}}'
+            "secretKey"='{{SECRET_KEY}}',
+            "defaultMinionInstanceSize"='{{DEFAULT_MINION_INSTANCE_SIZE}}'
         where id=1;
     end if;
 
@@ -381,7 +382,8 @@ do $$
             "mktgUrl",
             "allowedSystemImageFamily",
             "accessKey",
-            "secretKey"
+            "secretKey",
+            "defaultMinionInstanceSize"
           )
         values
           (
@@ -433,7 +435,8 @@ do $$
             '{{MKTG_URL}}',
             '{{ALLOWED_SYSTEM_IMAGE_FAMILY}}',
             '{{ACCESS_KEY}}',
-            '{{SECRET_KEY}}'
+            '{{SECRET_KEY}}',
+            '{{DEFAULT_MINION_INSTANCE_SIZE}}'
           );
     end if;
   end
