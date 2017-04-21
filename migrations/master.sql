@@ -5658,5 +5658,9 @@ do $$
       alter table "subscriptions" add column "minionInstanceSize" varchar(255);
     end if;
 
+    -- Add pullRequestRepoFullName column to runs
+    if not exists (select 1 from information_schema.columns where table_name = 'runs' and column_name = 'pullRequestRepoFullName') then
+      alter table "runs" add column "pullRequestRepoFullName" varchar(255);
+    end if;
   end
 $$;
