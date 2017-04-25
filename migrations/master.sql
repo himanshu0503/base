@@ -409,6 +409,11 @@ do $$
       values (6100, 'serviceUser', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    if not exists (select 1 from "systemCodes" where code = 6110) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (6110, 'publicPipelineUser', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
     -- Codes for nodeType
     if not exists (select 1 from "systemCodes" where code = 7000) then
       insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -1923,6 +1928,10 @@ do $$
       alter table "builds" add column "projectId" varchar(24);
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'builds' and column_name = 'propertyBag') then
+      alter table "builds" add column "propertyBag" TEXT;
+    end if;
+
   -- Set projectIds for builds where projectId is null
     UPDATE builds SET "projectId" = (SELECT "projectId" FROM resources WHERE id="resourceId") WHERE "projectId" IS NULL;
 
@@ -2651,6 +2660,12 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'GET',
+      roleCode := 6110
+    );
+
+    perform set_route_role(
       routePattern := '/builds',
       httpVerb := 'POST',
       roleCode := 6010
@@ -2728,6 +2743,12 @@ do $$
       routePattern := '/buildJobs',
       httpVerb := 'GET',
       roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs',
+      httpVerb := 'GET',
+      roleCode := 6110
     );
 
     perform set_route_role(
@@ -2856,6 +2877,12 @@ do $$
       routePattern := '/buildJobs/:buildJobId/consoles',
       httpVerb := 'GET',
       roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6110
     );
 
     perform set_route_role(
