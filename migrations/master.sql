@@ -2597,6 +2597,13 @@ do $$
       roleCode := 6060
     );
 
+    -- set addons routeRoles
+    perform set_route_role(
+      routePattern := '/addons',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set builds routeRoles
 
     perform set_route_role(
