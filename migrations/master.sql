@@ -5696,5 +5696,10 @@ do $$
     if not exists (select 1 from information_schema.columns where table_name = 'runs' and column_name = 'pullRequestRepoFullName') then
       alter table "runs" add column "pullRequestRepoFullName" varchar(255);
     end if;
+
+    -- Add isPaid to subscriptions
+    if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'isPaid') then
+      alter table "subscriptions" add column "isPaid" BOOLEAN;
+    end if;
   end
 $$;
