@@ -1852,11 +1852,6 @@ do $$
        alter table "subscriptions" add column "minionCount" integer NOT NULL DEFAULT 1;
      end if;
 
-  -- Add pipelineCount in subscriptions
-     if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'pipelineCount') then
-       alter table "subscriptions" add column "pipelineCount" integer NOT NULL DEFAULT 1;
-     end if;
-
   -- Add discount in transactions
      if not exists (select 1 from information_schema.columns where table_name = 'transactions' and column_name = 'discount') then
        alter table "transactions" add column "discount" numeric NOT NULL DEFAULT 0;
