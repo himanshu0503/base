@@ -5696,5 +5696,16 @@ do $$
     if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'isPaid') then
       alter table "subscriptions" add column "isPaid" BOOLEAN;
     end if;
+
+    -- Add hubspotProjectsLastSyncTime and hubspotRSyncLastSyncTime to systemSettings
+    if exists (select 1 from information_schema.columns where table_name = 'systemSettings') then
+      if not exists (select 1 from information_schema.columns where table_name = 'systemSettings' and column_name = 'hubspotProjectsLastSyncTime') then
+        alter table "systemSettings" add column "hubspotProjectsLastSyncTime" timestamp with time zone;
+      end if;
+
+      if not exists (select 1 from information_schema.columns where table_name = 'systemSettings' and column_name = 'hubspotRSyncLastSyncTime') then
+        alter table "systemSettings" add column "hubspotRSyncLastSyncTime" timestamp with time zone;
+      end if;
+    end if;
   end
 $$;
