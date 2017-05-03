@@ -2802,6 +2802,12 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6110
+    );
+
+    perform set_route_role(
       routePattern := '/buildJobs',
       httpVerb := 'POST',
       roleCode := 6060
@@ -3484,6 +3490,12 @@ do $$
       routePattern := '/jobs/:jobId/artifactUrl',
       httpVerb := 'GET',
       roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/artifactUrl',
+      httpVerb := 'GET',
+      roleCode := 6040
     );
 
     perform set_route_role(
