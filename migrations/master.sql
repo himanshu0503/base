@@ -5689,9 +5689,9 @@ do $$
       alter table "systemNodes" add column "execImage" varchar(80);
     end if;
 
-    -- Add earlyAdopterMinionCount to subscriptions
-    if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'earlyAdopterMinionCount') then
-      alter table "subscriptions" add column "earlyAdopterMinionCount" INTEGER;
+    -- Drop earlyAdopterMinionCount from subscriptions
+    if exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'earlyAdopterMinionCount') then
+      alter table "subscriptions" drop column "earlyAdopterMinionCount";
     end if;
 
     -- Add minionInstanceSize to subscriptions
