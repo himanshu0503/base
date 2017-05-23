@@ -1,4 +1,4 @@
-FROM drydock/microbase:v5.5.3
+FROM drydock/microbase:{{%TAG%}}
 
 # base
 ADD . /home/shippable/base
