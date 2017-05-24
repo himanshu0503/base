@@ -5790,6 +5790,13 @@ do $$
       if not exists (select 1 from information_schema.columns where table_name = 'systemSettings' and column_name = 'hubspotRSyncLastSyncTime') then
         alter table "systemSettings" add column "hubspotRSyncLastSyncTime" timestamp with time zone;
       end if;
+
+    -- Add masterIntegrationId to subscriptionIntegrations and set the value to accountIntegration.masterIntegrationId
+    if not exists (select 1 from information_schema.columns where table_name = 'subscriptionIntegrations' and column_name = 'masterIntegrationId') then
+      alter table "subscriptionIntegrations" add column "masterIntegrationId" varchar(24);
+      update "subscriptionIntegrations" set "masterIntegrationId" = "accountIntegrations"."masterIntegrationId" from "accountIntegrations" where "subscriptionIntegrations"."accountIntegrationId" = "accountIntegrations"."id" and "subscriptionIntegrations"."masterIntegrationId" is null;
+    end if;
+
     end if;
   end
 $$;
